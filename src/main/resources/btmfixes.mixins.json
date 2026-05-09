@@ -1,0 +1,16 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "io.github.btmfixes.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "dynamictrees.NormalSeasonManagerMixin",
+    "hyle.RoughNoiseSamplerMixin"
+  ],
+  "client": [
+    "apotheosis.EnchModuleClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}
