@@ -1,5 +1,6 @@
 package io.github.btmfixes;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import io.github.btmfixes.config.BtmFixesConfig;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -10,6 +11,7 @@ public final class BoundToMatterFixes {
     public static final String MOD_ID = "btmfixes";
 
     public BoundToMatterFixes() {
+        MixinExtrasBootstrap.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BtmFixesConfig.SPEC);
     }
 }

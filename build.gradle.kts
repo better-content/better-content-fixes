@@ -8,6 +8,7 @@ plugins {
 
 group = property("mod_group_id") as String
 version = property("mod_version") as String
+val mixinExtrasVersion = "0.5.0"
 
 base {
     archivesName.set(property("mod_id") as String)
@@ -20,6 +21,7 @@ java {
 minecraft {
     mappings("parchment", property("parchment_version") as String)
     copyIdeResources = true
+    jarJar.enable()
 
     runs {
         configureEach {
@@ -41,11 +43,14 @@ minecraft {
 repositories {
     maven("https://maven.minecraftforge.net")
     maven("https://repo.spongepowered.org/repository/maven-public/")
+    maven("https://maven.llamalad7.mixinextras.org/releases/")
     mavenCentral()
 }
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
 }
 
 tasks.named<Jar>("jar") {
