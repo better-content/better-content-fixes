@@ -7,8 +7,10 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec SPEC;
 
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP;
+    public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS;
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
+    public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
 
@@ -22,6 +24,12 @@ public final class BtmFixesConfig {
                         "This is intended to prevent ConcurrentModificationException during parallel feature generation, especially with C2ME threaded features.",
                         "Disable this if Dynamic Trees changes this internals or if diagnosing unrelated season behavior.")
                 .define("seasonContextConcurrentMap", true);
+        DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS = builder
+                .comment(
+                        "Registers Unearthed/Hyle regolith and overgrown stone surface blocks as Dynamic Trees dirt-like soils.",
+                        "Keeps Unearthed dirt replacement enabled while allowing Dynamic Trees worldgen to place forest trees on replaced forest surfaces.",
+                        "Disable only when diagnosing Dynamic Trees soil registration behavior.")
+                .define("unearthedRegolithSoils", true);
         builder.pop();
 
         builder.push("hyle");
@@ -40,6 +48,15 @@ public final class BtmFixesConfig {
                         "This prevents C2ME's safe-random guard from reporting off-thread world random access during EMI tooltip indexing.",
                         "Normal render-thread tooltips are left unchanged.")
                 .define("skipOffThreadTooltips", true);
+        builder.pop();
+
+        builder.push("advancedLootInfo");
+        ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION = builder
+                .comment(
+                        "Skips Advanced Loot Info's EMI data registration when EMI runs it off the Minecraft client thread.",
+                        "ALI creates example entities during EMI indexing; some entity constructors touch world random and trip C2ME's safe-random guard off-thread.",
+                        "Normal render-thread ALI behavior is left unchanged.")
+                .define("skipOffThreadEmiRegistration", true);
         builder.pop();
 
         builder.push("lostCities");
@@ -67,12 +84,20 @@ public final class BtmFixesConfig {
         return isLoaded("dynamictrees") && DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP.get();
     }
 
+    public static boolean dynamicTreesUnearthedRegolithSoils() {
+        return DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS.get() && isLoaded("dynamictrees") && isLoaded("unearthed");
+    }
+
     public static boolean hyleSafeTertiarySelection() {
         return isLoaded("hyle") && HYLE_SAFE_TERTIARY_SELECTION.get();
     }
 
     public static boolean apotheosisSkipOffThreadTooltips() {
         return isLoaded("apotheosis") && APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS.get();
+    }
+
+    public static boolean advancedLootInfoSkipOffThreadEmiRegistration() {
+        return isLoaded("ali") && isLoaded("emi") && ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION.get();
     }
 
     public static boolean lostCitiesSerializeDhC2meFeaturePlacement() {

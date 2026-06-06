@@ -11,6 +11,7 @@
     "lostcities.LostCityFeatureMixin"
   ],
   "client": [
+    "ali.EmiCompatibilityMixin",
     "apotheosis.EnchModuleClientMixin"
   ],
   "injectors": {
