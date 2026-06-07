@@ -11,6 +11,7 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
+    public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
 
@@ -59,6 +60,15 @@ public final class BtmFixesConfig {
                 .define("skipOffThreadEmiRegistration", true);
         builder.pop();
 
+        builder.push("structureGenerationImprover");
+        SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM = builder
+                .comment(
+                        "Runs Hyle's stone replacer again after Structure Generation Improver conforms structure terrain.",
+                        "SGI writes new vanilla terrain after normal biome decoration, which means Hyle/Unearthed has already run and cannot replace those blocks.",
+                        "This post-pass keeps SGI foundations and blended terrain in the same Unearthed stone/regolith palette as surrounding terrain.")
+                .define("rerunHyleAfterSurfaceConform", true);
+        builder.pop();
+
         builder.push("lostCities");
         LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT = builder
                 .comment(
@@ -98,6 +108,13 @@ public final class BtmFixesConfig {
 
     public static boolean advancedLootInfoSkipOffThreadEmiRegistration() {
         return isLoaded("ali") && isLoaded("emi") && ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION.get();
+    }
+
+    public static boolean sgiRerunHyleAfterSurfaceConform() {
+        return SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM.get()
+                && isLoaded("structure_generation_improver")
+                && isLoaded("hyle")
+                && isLoaded("unearthed");
     }
 
     public static boolean lostCitiesSerializeDhC2meFeaturePlacement() {
