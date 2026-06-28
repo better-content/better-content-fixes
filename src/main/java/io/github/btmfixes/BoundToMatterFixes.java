@@ -1,8 +1,10 @@
 package io.github.btmfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+import io.github.btmfixes.compat.DynamicTreesUnsupportedTreeFallover;
 import io.github.btmfixes.compat.DynamicTreesUnearthedSoils;
 import io.github.btmfixes.config.BtmFixesConfig;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -16,5 +18,6 @@ public final class BoundToMatterFixes {
         MixinExtrasBootstrap.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BtmFixesConfig.SPEC);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
+        MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
     }
 }

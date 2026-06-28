@@ -8,6 +8,7 @@ public final class BtmFixesConfig {
 
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS;
+    public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES;
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
@@ -31,6 +32,12 @@ public final class BtmFixesConfig {
                         "Keeps Unearthed dirt replacement enabled while allowing Dynamic Trees worldgen to place forest trees on replaced forest surfaces.",
                         "Disable only when diagnosing Dynamic Trees soil registration behavior.")
                 .define("unearthedRegolithSoils", true);
+        DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES = builder
+                .comment(
+                        "Deconstructs Dynamic Trees trees when their rooty soil block no longer has a solid supporting block underneath.",
+                        "Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.",
+                        "Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.")
+                .define("destroyUnsupportedTrees", true);
         builder.pop();
 
         builder.push("hyle");
@@ -96,6 +103,10 @@ public final class BtmFixesConfig {
 
     public static boolean dynamicTreesUnearthedRegolithSoils() {
         return DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS.get() && isLoaded("dynamictrees") && isLoaded("unearthed");
+    }
+
+    public static boolean dynamicTreesDestroyUnsupportedTrees() {
+        return DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES.get() && isLoaded("dynamictrees");
     }
 
     public static boolean hyleSafeTertiarySelection() {
