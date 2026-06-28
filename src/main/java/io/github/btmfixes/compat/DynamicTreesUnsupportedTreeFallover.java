@@ -8,6 +8,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.PalettedContainer;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,8 +49,42 @@ public final class DynamicTreesUnsupportedTreeFallover {
         if (!(event.getChunk() instanceof LevelChunk chunk)) {
             return;
         }
-        for (BlockPos pos : chunk.getBlockEntitiesPos()) {
-            destroyUnsupportedTree(level, pos);
+        scanChunkForUnsupportedTrees(level, chunk);
+    }
+
+    private static void scanChunkForUnsupportedTrees(final ServerLevel level, final LevelChunk chunk) {
+        if (!resolveReflection()) {
+            return;
+        }
+
+        final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        final int minSectionY = chunk.getMinSection();
+        final LevelChunkSection[] sections = chunk.getSections();
+
+        for (int sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+            final LevelChunkSection section = sections[sectionIndex];
+            if (section == null || section.hasOnlyAir()) {
+                continue;
+            }
+
+            final int sectionY = (minSectionY + sectionIndex) << 4;
+            final PalettedContainer<BlockState> states = section.getStates();
+            for (int localY = 0; localY < 16; localY++) {
+                for (int localZ = 0; localZ < 16; localZ++) {
+                    for (int localX = 0; localX < 16; localX++) {
+                        final BlockState state = states.get(localX, localY, localZ);
+                        if (!isRootyBlock(state.getBlock())) {
+                            continue;
+                        }
+                        cursor.set(
+                                chunk.getPos().getMinBlockX() + localX,
+                                sectionY + localY,
+                                chunk.getPos().getMinBlockZ() + localZ
+                        );
+                        destroyUnsupportedTree(level, cursor);
+                    }
+                }
+            }
         }
     }
 
@@ -74,7 +110,7 @@ public final class DynamicTreesUnsupportedTreeFallover {
     }
 
     private static boolean isRootyBlock(final Block block) {
-        return rootyBlockClass.isInstance(block);
+        return rootyBlockClass != null && rootyBlockClass.isInstance(block);
     }
 
     private static boolean isSupported(final LevelAccessor level, final BlockPos pos) {

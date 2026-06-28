@@ -37,6 +37,12 @@ minecraft {
         }
         create("client")
         create("server") { arg("--nogui") }
+        create("gameTestServer") {
+            property("forge.enableGameTest", "true")
+            property("forge.gameTestServer", "true")
+            property("forge.enabledGameTestNamespaces", property("mod_id") as String)
+            arg("--nogui")
+        }
     }
 }
 
