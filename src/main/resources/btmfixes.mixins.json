@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
+    "dynamictrees.FallingTreeEntityMixin",
     "dynamictrees.NormalSeasonManagerMixin",
     "hyle.RoughNoiseSamplerMixin",
     "lostcities.ChunkGeneratorMixin",

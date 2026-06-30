@@ -9,6 +9,7 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES;
+    public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_RECONSTRUCT_FALLEN_LOGS;
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
@@ -38,6 +39,12 @@ public final class BtmFixesConfig {
                         "Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.",
                         "Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.")
                 .define("destroyUnsupportedTrees", true);
+        DYNAMIC_TREES_RECONSTRUCT_FALLEN_LOGS = builder
+                .comment(
+                        "When a Dynamic Trees falling tree lands, tries to reconstruct it as placed primitive logs instead of only dropping log items.",
+                        "Uses the tree's destroyed branch voxel data to place sideways logs that roughly match the fallen shape, then leaves only any unplaced remainder as item drops.",
+                        "Disable this if Dynamic Trees changes its falling tree internals or if placed-log reconstruction causes compatibility issues.")
+                .define("reconstructFallenLogs", true);
         builder.pop();
 
         builder.push("hyle");
@@ -107,6 +114,10 @@ public final class BtmFixesConfig {
 
     public static boolean dynamicTreesDestroyUnsupportedTrees() {
         return DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES.get() && isLoaded("dynamictrees");
+    }
+
+    public static boolean dynamicTreesReconstructFallenLogs() {
+        return DYNAMIC_TREES_RECONSTRUCT_FALLEN_LOGS.get() && isLoaded("dynamictrees");
     }
 
     public static boolean hyleSafeTertiarySelection() {

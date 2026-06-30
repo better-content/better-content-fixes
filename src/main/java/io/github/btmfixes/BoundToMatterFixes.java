@@ -1,6 +1,7 @@
 package io.github.btmfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+import io.github.btmfixes.compat.DynamicTreesFallenTreeSweepCommand;
 import io.github.btmfixes.compat.DynamicTreesUnsupportedTreeFallover;
 import io.github.btmfixes.compat.DynamicTreesUnearthedSoils;
 import io.github.btmfixes.compat.DynamicTreesSupportSweepCommand;
@@ -24,6 +25,7 @@ public final class BoundToMatterFixes {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
+        MinecraftForge.EVENT_BUS.register(DynamicTreesFallenTreeSweepCommand.class);
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
