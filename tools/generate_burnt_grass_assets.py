@@ -106,7 +106,13 @@ def resolve_source_textures(source_id: str) -> tuple[str | None, str | None]:
     return side, bottom
 
 
-def extract_texture(texture_ref: str | None, fallback_ref: str, destination: Path, burntify: bool):
+def extract_texture(
+    texture_ref: str | None,
+    fallback_ref: str,
+    destination: Path,
+    burntify: bool,
+    crest_overlay_path: Path | None = None,
+):
     texture_ref = texture_ref or fallback_ref
     namespace, path = parse_id(texture_ref)
     if namespace == "minecraft":
@@ -123,8 +129,11 @@ def extract_texture(texture_ref: str | None, fallback_ref: str, destination: Pat
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(data)
     if burntify:
+        command = ["java", "-cp", str(MOD_ROOT / "tools"), "BurntifyPng", str(destination), str(destination)]
+        if crest_overlay_path is not None:
+            command.append(str(crest_overlay_path))
         subprocess.run(
-            ["java", "-cp", str(MOD_ROOT / "tools"), "BurntifyPng", str(destination), str(destination)],
+            command,
             check=True,
             cwd=MOD_ROOT,
         )
@@ -149,6 +158,8 @@ def clean_generated_roots():
 def main():
     subprocess.run(["javac", str(MOD_ROOT / "tools/BurntifyPng.java")], check=True, cwd=MOD_ROOT)
     clean_generated_roots()
+    crest_overlay_path = MOD_ROOT / "build/tmp/burnt_grass_crest_overlay.png"
+    extract_texture("burnt:block/burnt_grass", "burnt:block/burnt_grass", crest_overlay_path, burntify=False)
     entries = load_entries()
     for entry in entries:
         if entry.get("target", "").startswith("burnt:"):
@@ -197,7 +208,13 @@ def main():
             },
         )
 
-        extract_texture(side_ref, "burnt:block/burnt_grass_side", side_texture_path, burntify=True)
+        extract_texture(
+            side_ref,
+            "burnt:block/burnt_grass_side",
+            side_texture_path,
+            burntify=True,
+            crest_overlay_path=crest_overlay_path,
+        )
         extract_texture(bottom_ref, "burnt:block/burnt_dirt", bottom_texture_path, burntify=True)
 
 
