@@ -16,6 +16,7 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
+    public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -44,7 +45,7 @@ public final class BtmFixesConfig {
                         "When a Dynamic Trees falling tree lands, tries to reconstruct it as placed primitive logs instead of only dropping log items.",
                         "Uses the tree's destroyed branch voxel data to place sideways logs that roughly match the fallen shape, then leaves only any unplaced remainder as item drops.",
                         "Disable this if Dynamic Trees changes its falling tree internals or if placed-log reconstruction causes compatibility issues.")
-                .define("reconstructFallenLogs", true);
+                .define("reconstructFallenLogs", false);
         builder.pop();
 
         builder.push("hyle");
@@ -72,6 +73,15 @@ public final class BtmFixesConfig {
                         "ALI creates example entities during EMI indexing; some entity constructors touch world random and trip C2ME's safe-random guard off-thread.",
                         "Normal render-thread ALI behavior is left unchanged.")
                 .define("skipOffThreadEmiRegistration", true);
+        builder.pop();
+
+        builder.push("burnt");
+        BURNT_MODDED_GRASS_REPLACEMENTS = builder
+                .comment(
+                        "Replaces Burnt's generic burnt grass result with pack-specific burnt variants for modded grass-like blocks.",
+                        "Uses native Burnt outputs when they exist and btmfixes-owned burnt palette blocks otherwise.",
+                        "Disable only when diagnosing Burnt grass spread behavior.")
+                .define("moddedGrassReplacements", true);
         builder.pop();
 
         builder.push("structureGenerationImprover");
@@ -130,6 +140,10 @@ public final class BtmFixesConfig {
 
     public static boolean advancedLootInfoSkipOffThreadEmiRegistration() {
         return isLoaded("ali") && isLoaded("emi") && ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION.get();
+    }
+
+    public static boolean burntModdedGrassReplacements() {
+        return isLoaded("burnt") && BURNT_MODDED_GRASS_REPLACEMENTS.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {

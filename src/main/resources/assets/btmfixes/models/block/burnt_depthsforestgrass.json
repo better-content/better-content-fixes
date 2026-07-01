@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "btmfixes:block/burnt_depthsforestgrass_bottom",
+    "up": "burnt:block/burnt_grass",
+    "north": "btmfixes:block/burnt_depthsforestgrass_side",
+    "east": "btmfixes:block/burnt_depthsforestgrass_side",
+    "south": "btmfixes:block/burnt_depthsforestgrass_side",
+    "west": "btmfixes:block/burnt_depthsforestgrass_side",
+    "particle": "btmfixes:block/burnt_depthsforestgrass_bottom"
+  },
+  "render_type": "solid"
+}
