@@ -118,13 +118,11 @@ public final class DynamicTreesFallenTreeReconstruction {
             }
 
             final ItemStack matchingPayload = findPayloadStackForBlock(payload, branch.block());
-            if (matchingPayload == null) {
-                continue;
-            }
-
             final BlockState placedState = orientLogState(branch.block().defaultBlockState(), branch.axis());
             if (level.setBlock(targetPos, placedState, FALLEN_TREE_PLACEMENT_FLAGS)) {
-                matchingPayload.shrink(1);
+                if (matchingPayload != null) {
+                    matchingPayload.shrink(1);
+                }
             }
         }
     }
@@ -141,6 +139,9 @@ public final class DynamicTreesFallenTreeReconstruction {
         for (int i = 0; i < leavesCount; i++) {
             final BlockPos relPos = (BlockPos) getLeavesRelPosMethod.invoke(destroyData, i);
             final BlockState leafState = (BlockState) getLeavesBlockStateMethod.invoke(destroyData, i);
+            if (relPos == null || leafState == null) {
+                continue;
+            }
             if (!(leafState.getBlock() instanceof LeavesBlock)) {
                 continue;
             }
@@ -164,7 +165,9 @@ public final class DynamicTreesFallenTreeReconstruction {
 
         @SuppressWarnings("unchecked")
         final List<Object> leavesDrops = (List<Object>) leavesDropsField.get(destroyData);
-        leavesDrops.clear();
+        if (leavesDrops != null) {
+            leavesDrops.clear();
+        }
     }
 
     private static Block getPrimitiveLog(final BlockState branchState) throws ReflectiveOperationException {
