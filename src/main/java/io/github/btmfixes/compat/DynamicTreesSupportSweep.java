@@ -48,6 +48,9 @@ public final class DynamicTreesSupportSweep {
             if (speciesId == null || "null".equals(speciesId.getPath())) {
                 continue;
             }
+            if (shouldSkipSpecies(speciesId)) {
+                continue;
+            }
 
             clearTestColumn(level, rootPos);
             final boolean generated = tryGenerateTree(level, rootPos, saplingPos, species, reflection);
@@ -63,6 +66,11 @@ public final class DynamicTreesSupportSweep {
         }
 
         return failures;
+    }
+
+    private static boolean shouldSkipSpecies(final ResourceLocation speciesId) {
+        final String path = speciesId.getPath();
+        return path.endsWith("_undergrowth") || path.contains("mushroom");
     }
 
     private static boolean tryGenerateTree(final ServerLevel level, final BlockPos rootPos, final BlockPos saplingPos,

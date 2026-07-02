@@ -1,0 +1,82 @@
+---- Minecraft Crash Report ----
+// But it works on my machine.
+
+Time: 2026-06-30 11:55:46
+Description: Exception in server tick loop
+
+java.lang.RuntimeException: Could not find structure file gameteststructures/empty.snbt, and the structure is not available in the world structures either.
+	at net.minecraft.gametest.framework.StructureUtils.getStructureTemplate(StructureUtils.java:246) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.StructureUtils.spawnStructure(StructureUtils.java:139) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.GameTestBatchRunner.createStructuresForBatch(GameTestBatchRunner.java:108) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.GameTestBatchRunner.runBatch(GameTestBatchRunner.java:64) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.GameTestBatchRunner.start(GameTestBatchRunner.java:52) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.GameTestRunner.runTestBatches(GameTestRunner.java:50) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading}
+	at net.minecraft.gametest.framework.GameTestServer.startTests(GameTestServer.java:177) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.gametest.framework.GameTestServer.tickServer(GameTestServer.java:122) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:661) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading,pl:accesstransformer:B}
+	at net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:251) ~[forge-1.20.1-47.4.13_mapped_official_1.20.1.jar%23181!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.lang.Thread.run(Thread.java:840) ~[?:?] {}
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.20.1
+	Minecraft Version ID: 1.20.1
+	Operating System: Linux (amd64) version 6.12.90+deb13.1-amd64
+	Java Version: 17.0.19, Debian
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Debian
+	Memory: 1203653632 bytes (1147 MiB) / 2885681152 bytes (2752 MiB) up to 16223567872 bytes (15472 MiB)
+	CPUs: 12
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 5 9600X 6-Core Processor
+	Identifier: AuthenticAMD Family 26 Model 68 Stepping 0
+	Microarchitecture: unknown
+	Frequency (GHz): -0.00
+	Number of physical packages: 1
+	Number of physical CPUs: 6
+	Number of logical CPUs: 12
+	Graphics card #0 name: unknown
+	Graphics card #0 vendor: unknown
+	Graphics card #0 VRAM (MB): 0.00
+	Graphics card #0 deviceId: unknown
+	Graphics card #0 versionInfo: unknown
+	Virtual memory max (MB): 70982.27
+	Virtual memory used (MB): 25506.24
+	Swap memory total (MB): 40047.00
+	Swap memory used (MB): 0.50
+	JVM Flags: 0 total; 
+	Server Running: true
+	Player Count: 0 / 1; []
+	Data Packs: vanilla, mod:forge, mod:dynamictrees (incompatible), mod:btmfixes
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Stable
+	Type: Game test server
+	ModLauncher: 10.0.9+10.0.9+main.dcd20f30
+	ModLauncher launch target: forgegametestserveruserdev
+	ModLauncher naming: mcp
+	ModLauncher services: 
+		mixin-0.8.5.jar mixin PLUGINSERVICE 
+		eventbus-6.0.5.jar eventbus PLUGINSERVICE 
+		fmlloader-1.20.1-47.4.13.jar slf4jfixer PLUGINSERVICE 
+		fmlloader-1.20.1-47.4.13.jar object_holder_definalize PLUGINSERVICE 
+		fmlloader-1.20.1-47.4.13.jar runtime_enum_extender PLUGINSERVICE 
+		fmlloader-1.20.1-47.4.13.jar capability_token_subclass PLUGINSERVICE 
+		accesstransformers-8.0.4.jar accesstransformer PLUGINSERVICE 
+		fmlloader-1.20.1-47.4.13.jar runtimedistcleaner PLUGINSERVICE 
+		modlauncher-10.0.9.jar mixin TRANSFORMATIONSERVICE 
+		modlauncher-10.0.9.jar fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		minecraft@1.0
+		lowcodefml@null
+		javafml@null
+	Mod List: 
+		forge-1.20.1-47.4.13_mapped_official_1.20.1.jar   |Minecraft                     |minecraft                     |1.20.1              |DONE      |Manifest: a1:d4:5e:04:4f:d3:d6:e0:7b:37:97:cf:77:b0:de:ad:4a:47:ce:8c:96:49:5f:0a:cf:8c:ae:b2:6d:4b:8a:3f
+		                                                  |Forge                         |forge                         |47.4.13             |DONE      |Manifest: NOSIGNATURE
+		DynamicTrees-1.20.1-1.4.9_mapped_official_1.20.1.j|Dynamic Trees                 |dynamictrees                  |1.20.1-1.4.9        |DONE      |Manifest: NOSIGNATURE
+		main                                              |Better Content Fixes          |btmfixes                      |0.1.0               |DONE      |Manifest: NOSIGNATURE
+	Crash Report UUID: 65a987b4-02eb-4392-b394-6692a8431321
+	FML: 47.4
+	Forge: net.minecraftforge:47.4.13

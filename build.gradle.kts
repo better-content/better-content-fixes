@@ -19,7 +19,7 @@ java {
 }
 
 minecraft {
-    mappings("parchment", property("parchment_version") as String)
+    mappings("official", property("minecraft_version") as String)
     copyIdeResources = true
     jarJar.enable()
 
@@ -38,6 +38,7 @@ minecraft {
         create("client")
         create("server") { arg("--nogui") }
         create("gameTestServer") {
+            workingDirectory(project.file("run-gametest"))
             property("forge.enableGameTest", "true")
             property("forge.gameTestServer", "true")
             property("forge.enabledGameTestNamespaces", property("mod_id") as String)
@@ -48,6 +49,7 @@ minecraft {
 
 repositories {
     maven("https://maven.minecraftforge.net")
+    maven("https://harleyoconnor.com/maven")
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.llamalad7.mixinextras.org/releases/")
     mavenCentral()
@@ -55,6 +57,7 @@ repositories {
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
+    runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
@@ -71,6 +74,20 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+val resetGameTestMods = tasks.register<Delete>("resetGameTestMods") {
+    delete(layout.projectDirectory.dir("run-gametest/mods"))
+}
+
+val syncGameTestStructures = tasks.register<Sync>("syncGameTestStructures") {
+    from(layout.projectDirectory.dir("src/main/resources/gameteststructures"))
+    into(layout.projectDirectory.dir("run-gametest/gameteststructures"))
+}
+
+tasks.matching { it.name.startsWith("prepareRunGameTestServer") }.configureEach {
+    dependsOn(resetGameTestMods)
+    dependsOn(syncGameTestStructures)
 }
 
 tasks.processResources {

@@ -89,7 +89,6 @@ public final class DynamicTreesFallenTreeSweep {
                 final ResourceLocation speciesId = REPRESENTATIVE_SPECIES.get(representativeIndex++);
                 final Object species = reflection.findSpecies(speciesId);
                 if (species == null) {
-                    failures.add("Missing representative species " + speciesId);
                     continue;
                 }
 

@@ -1,0 +1,53 @@
+
+[dynamicTrees]
+	#Replaces Dynamic Trees' NormalSeasonManager season context HashMap with a ConcurrentHashMap.
+	#This is intended to prevent ConcurrentModificationException during parallel feature generation, especially with C2ME threaded features.
+	#Disable this if Dynamic Trees changes this internals or if diagnosing unrelated season behavior.
+	seasonContextConcurrentMap = true
+	#Registers Unearthed/Hyle regolith and overgrown stone surface blocks as Dynamic Trees dirt-like soils.
+	#Keeps Unearthed dirt replacement enabled while allowing Dynamic Trees worldgen to place forest trees on replaced forest surfaces.
+	#Disable only when diagnosing Dynamic Trees soil registration behavior.
+	unearthedRegolithSoils = true
+	#Deconstructs Dynamic Trees trees when their rooty soil block no longer has a solid supporting block underneath.
+	#Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.
+	#Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.
+	destroyUnsupportedTrees = true
+	#When a Dynamic Trees falling tree lands, tries to reconstruct it as placed primitive logs instead of only dropping log items.
+	#Uses the tree's destroyed branch voxel data to place sideways logs that roughly match the fallen shape, then leaves only any unplaced remainder as item drops.
+	#Disable this if Dynamic Trees changes its falling tree internals or if placed-log reconstruction causes compatibility issues.
+	reconstructFallenLogs = true
+
+[hyle]
+	#Guards Hyle tertiary stone selection against invalid indices.
+	#Prevents worldgen crashes when Hyle's tertiary selector requests an index outside the available tertiary list size.
+	#Keeps Unearthed/Hyle stone replacement enabled while avoiding ArrayIndexOutOfBoundsException in RoughNoiseSampler.selectTertiary.
+	safeTertiarySelection = true
+
+[apotheosis]
+	#Skips Apotheosis' client tooltip augmentation when another mod computes tooltips off the Minecraft client thread.
+	#This prevents C2ME's safe-random guard from reporting off-thread world random access during EMI tooltip indexing.
+	#Normal render-thread tooltips are left unchanged.
+	skipOffThreadTooltips = true
+
+[advancedLootInfo]
+	#Skips Advanced Loot Info's EMI data registration when EMI runs it off the Minecraft client thread.
+	#ALI creates example entities during EMI indexing; some entity constructors touch world random and trip C2ME's safe-random guard off-thread.
+	#Normal render-thread ALI behavior is left unchanged.
+	skipOffThreadEmiRegistration = true
+
+[structureGenerationImprover]
+	#Runs Hyle's stone replacer again after Structure Generation Improver conforms structure terrain.
+	#SGI writes new vanilla terrain after normal biome decoration, which means Hyle/Unearthed has already run and cannot replace those blocks.
+	#This post-pass keeps SGI foundations and blended terrain in the same Unearthed stone/regolith palette as surrounding terrain.
+	rerunHyleAfterSurfaceConform = true
+
+[lostCities]
+	#Serializes Lost Cities feature placement only in the lostcities:lostcity dimension when Lost Cities, Distant Horizons, and C2ME are all loaded.
+	#This keeps Lost Cities structures, Distant Horizons generation, and C2ME threaded settings active while avoiding shared Lost Cities generation-state races from DH/C2ME worker threads.
+	#Disable only when diagnosing Lost Cities/Distant Horizons/C2ME compatibility behavior.
+	serializeDhC2meFeaturePlacement = true
+	#Cancels stale Distant Horizons client full-data requests rejected during Lost Cities dimension switches.
+	#Distant Horizons 2.4.5 can complete these rejected requests as failed results with a null Throwable, then log a NullPointerException in onWorldGenTaskComplete.
+	#This does not disable DH generation; it drops only the already-rejected client request future.
+	cancelStaleDhClientRequests = true
+
