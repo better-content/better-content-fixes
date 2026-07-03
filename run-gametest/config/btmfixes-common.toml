@@ -51,3 +51,9 @@
 	#This does not disable DH generation; it drops only the already-rejected client request future.
 	cancelStaleDhClientRequests = true
 
+[burnt]
+	#Replaces Burnt's generic burnt grass result with pack-specific burnt variants for modded grass-like blocks.
+	#Uses native Burnt outputs when they exist and btmfixes-owned burnt palette blocks otherwise.
+	#Disable only when diagnosing Burnt grass spread behavior.
+	moddedGrassReplacements = true
+
