@@ -30,23 +30,38 @@ public final class BurntGrassReplacementDefinitions {
                         .getResourceAsStream("data/" + BoundToMatterFixes.MOD_ID + "/burnt_grass_replacements.json"),
                 "Missing burnt grass replacement resource"), StandardCharsets.UTF_8)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonArray values = root.getAsJsonArray("values");
-            List<Entry> entries = new ArrayList<>(values.size());
-            for (int i = 0; i < values.size(); i++) {
-                JsonObject value = values.get(i).getAsJsonObject();
-                ResourceLocation sourceId = ResourceLocation.tryParse(value.get("source").getAsString());
-                ResourceLocation targetId = value.has("target")
-                        ? ResourceLocation.tryParse(value.get("target").getAsString())
-                        : ResourceLocation.fromNamespaceAndPath(BoundToMatterFixes.MOD_ID, "burnt_" + sourceId.getPath());
-                if (sourceId == null || targetId == null) {
-                    throw new IllegalArgumentException("Invalid burnt replacement entry: " + value);
-                }
-                entries.add(new Entry(sourceId, targetId));
-            }
-            return Collections.unmodifiableList(entries);
+            return Collections.unmodifiableList(parseEntries(root));
         } catch (IOException | NullPointerException e) {
             throw new IllegalStateException("Failed to load burnt grass replacement definitions", e);
         }
+    }
+
+    static List<Entry> parseEntries(final JsonObject root) {
+        JsonArray values = root.getAsJsonArray("values");
+        List<Entry> entries = new ArrayList<>(values.size());
+        for (int i = 0; i < values.size(); i++) {
+            JsonObject value = values.get(i).getAsJsonObject();
+            entries.add(parseEntry(value));
+        }
+        return entries;
+    }
+
+    static Entry parseEntry(final JsonObject value) {
+        ResourceLocation sourceId = ResourceLocation.tryParse(value.get("source").getAsString());
+        if (sourceId == null) {
+            throw new IllegalArgumentException("Invalid burnt replacement entry: " + value);
+        }
+        ResourceLocation targetId = value.has("target")
+                ? ResourceLocation.tryParse(value.get("target").getAsString())
+                : defaultTargetId(sourceId);
+        if (targetId == null) {
+            throw new IllegalArgumentException("Invalid burnt replacement entry: " + value);
+        }
+        return new Entry(sourceId, targetId);
+    }
+
+    static ResourceLocation defaultTargetId(final ResourceLocation sourceId) {
+        return ResourceLocation.fromNamespaceAndPath(BoundToMatterFixes.MOD_ID, "burnt_" + sourceId.getPath());
     }
 
     public record Entry(ResourceLocation sourceId, ResourceLocation targetId) {

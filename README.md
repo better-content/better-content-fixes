@@ -5,9 +5,9 @@ Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 ## Common commands
 
 ```bash
-./gradlew test
-./gradlew runGameTestServer
-./gradlew clean build reobfJar
+./gradlew verifyFast
+./gradlew verifyFull
+./gradlew stageRuntimeJar
 ```
 
 ## Release artifact

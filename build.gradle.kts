@@ -1,6 +1,7 @@
 plugins {
     idea
     `maven-publish`
+    jacoco
     id("net.minecraftforge.gradle") version "[6.0.24,6.2)"
     id("org.parchmentmc.librarian.forgegradle") version "1.2.0"
     id("org.spongepowered.mixin") version "0.7.+"
@@ -89,12 +90,26 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.register("headlessGameTest") {
     group = "verification"
     description = "Runs Forge game tests in a headless dedicated server."
     dependsOn(tasks.named("runGameTestServer"))
+}
+
+tasks.register("verifyFast") {
+    group = "verification"
+    description = "Runs deterministic unit/resource checks without Forge game tests."
+    dependsOn(tasks.named("check"))
+}
+
+tasks.register("verifyFull") {
+    group = "verification"
+    description = "Runs the full verification lane including headless Forge game tests."
+    dependsOn(tasks.named("verifyFast"))
+    dependsOn(tasks.named("headlessGameTest"))
 }
 
 val resetGameTestMods = tasks.register<Delete>("resetGameTestMods") {
@@ -127,4 +142,50 @@ tasks.processResources {
 
 mixin {
     config("btmfixes.mixins.json")
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it) {
+                include(
+                    "io/github/btmfixes/compat/BurntGrassReplacementDefinitions*"
+                )
+            }
+        })
+    )
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn(tasks.jacocoTestReport)
+    classDirectories.setFrom(tasks.jacocoTestReport.map { it.classDirectories })
+    violationRules {
+        rule {
+            element = "CLASS"
+            includes = listOf("io.github.btmfixes.compat.BurntGrassReplacementDefinitions")
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.90".toBigDecimal()
+            }
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.75".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestCoverageVerification)
 }
