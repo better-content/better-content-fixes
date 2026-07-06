@@ -1,5 +1,6 @@
 package io.github.btmfixes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
@@ -29,6 +30,17 @@ final class BtmFixesResourceTest {
         assertTrue(!config.get("required").getAsBoolean(), "optional compatibility mixins must stay non-required");
         assertTrue(config.getAsJsonObject("injectors").get("defaultRequire").getAsInt() == 0,
                 "optional compatibility injectors should not require target matches");
+    }
+
+    @Test
+    void fluidGeneratedBlocksAllowlistDefaultsToObsidianOnly() throws IOException {
+        Path tagPath = Path.of("src/main/resources/data/btmfixes/tags/blocks/allowed_fluid_generated_blocks.json");
+        JsonObject tag = JsonParser.parseReader(Files.newBufferedReader(tagPath)).getAsJsonObject();
+        JsonArray values = tag.getAsJsonArray("values");
+
+        assertEquals(1, values.size(), "fluid-generated allowlist should stay narrow by default");
+        assertEquals("minecraft:obsidian", values.get(0).getAsString(),
+                "obsidian should remain the only default allowed fluid-generated block");
     }
 
     private static void assertMixinClassesExist(String packageName, JsonArray mixins) {

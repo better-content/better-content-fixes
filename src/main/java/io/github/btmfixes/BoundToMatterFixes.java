@@ -2,13 +2,16 @@ package io.github.btmfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import io.github.btmfixes.compat.BurntGrassPalette;
+import io.github.btmfixes.compat.FluidMixBlocker;
 import io.github.btmfixes.compat.DynamicTreesFallenTreeSweepCommand;
 import io.github.btmfixes.compat.DynamicTreesUnsupportedTreeFallover;
 import io.github.btmfixes.compat.DynamicTreesUnearthedSoils;
 import io.github.btmfixes.compat.DynamicTreesSupportSweepCommand;
 import io.github.btmfixes.config.BtmFixesConfig;
 import io.github.btmfixes.gametest.BurntGrassReplacementGameTests;
+import io.github.btmfixes.gametest.DaylightProtectionGameTests;
 import io.github.btmfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
+import io.github.btmfixes.gametest.FluidMixBlockerGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -27,6 +30,7 @@ public final class BoundToMatterFixes {
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
+        MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesFallenTreeSweepCommand.class);
@@ -34,6 +38,8 @@ public final class BoundToMatterFixes {
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
         event.register(BurntGrassReplacementGameTests.class);
+        event.register(DaylightProtectionGameTests.class);
         event.register(DynamicTreesUnsupportedTreeGameTests.class);
+        event.register(FluidMixBlockerGameTests.class);
     }
 }

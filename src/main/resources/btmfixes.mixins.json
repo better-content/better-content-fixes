@@ -11,6 +11,7 @@
     "hyle.RoughNoiseSamplerMixin",
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
+    "minecraft.MobMixin",
     "sgi.TerrainConformUtilMixin"
   ],
   "client": [

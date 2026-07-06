@@ -17,6 +17,8 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
     public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
+    public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
+    public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -84,6 +86,24 @@ public final class BtmFixesConfig {
                 .define("moddedGrassReplacements", true);
         builder.pop();
 
+        builder.push("fluidMixing");
+        FLUID_MIXING_BLOCK_GENERATED_BLOCKS = builder
+                .comment(
+                        "Reverts fluid-generated block placements unless the produced block is explicitly allowlisted.",
+                        "This preserves the current pack policy from Cobble-Gen-Haters while moving ownership into btmfixes.",
+                        "The default allowlist is data-driven through the btmfixes:allowed_fluid_generated_blocks block tag.")
+                .define("blockGeneratedBlocks", true);
+        builder.pop();
+
+        builder.push("mobs");
+        MOBS_DISABLE_SUN_BURN_TICK = builder
+                .comment(
+                        "Forces Mob.isSunBurnTick() to return false.",
+                        "This preserves the current pack policy from Protect Mobs From Daylight while moving ownership into btmfixes.",
+                        "Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.")
+                .define("disableSunBurnTick", true);
+        builder.pop();
+
         builder.push("structureGenerationImprover");
         SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM = builder
                 .comment(
@@ -144,6 +164,14 @@ public final class BtmFixesConfig {
 
     public static boolean burntModdedGrassReplacements() {
         return isLoaded("burnt") && BURNT_MODDED_GRASS_REPLACEMENTS.get();
+    }
+
+    public static boolean fluidMixingBlockGeneratedBlocks() {
+        return FLUID_MIXING_BLOCK_GENERATED_BLOCKS.get();
+    }
+
+    public static boolean mobsDisableSunBurnTick() {
+        return MOBS_DISABLE_SUN_BURN_TICK.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {
