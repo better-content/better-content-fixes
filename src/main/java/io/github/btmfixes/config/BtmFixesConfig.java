@@ -18,6 +18,7 @@ public final class BtmFixesConfig {
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
     public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
+    public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
 
     static {
@@ -95,6 +96,15 @@ public final class BtmFixesConfig {
                 .define("blockGeneratedBlocks", true);
         builder.pop();
 
+        builder.push("farmland");
+        FARMLAND_PREVENT_TRAMPLE = builder
+                .comment(
+                        "Cancels farmland trampling from fall impacts.",
+                        "Prevents players and mobs from degrading cultivated soil back into dirt when landing on it.",
+                        "Disable only if a future system intentionally wants fall-impact farmland loss back.")
+                .define("preventTrample", true);
+        builder.pop();
+
         builder.push("mobs");
         MOBS_DISABLE_SUN_BURN_TICK = builder
                 .comment(
@@ -168,6 +178,10 @@ public final class BtmFixesConfig {
 
     public static boolean fluidMixingBlockGeneratedBlocks() {
         return FLUID_MIXING_BLOCK_GENERATED_BLOCKS.get();
+    }
+
+    public static boolean farmlandPreventTrample() {
+        return FARMLAND_PREVENT_TRAMPLE.get();
     }
 
     public static boolean mobsDisableSunBurnTick() {
