@@ -57,3 +57,15 @@
 	#Disable only when diagnosing Burnt grass spread behavior.
 	moddedGrassReplacements = true
 
+[fluidMixing]
+	#Reverts fluid-generated block placements unless the produced block is explicitly allowlisted.
+	#This preserves the current pack policy from Cobble-Gen-Haters while moving ownership into btmfixes.
+	#The default allowlist is data-driven through the btmfixes:allowed_fluid_generated_blocks block tag.
+	blockGeneratedBlocks = true
+
+[mobs]
+	#Forces Mob.isSunBurnTick() to return false.
+	#This preserves the current pack policy from Protect Mobs From Daylight while moving ownership into btmfixes.
+	#Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.
+	disableSunBurnTick = true
+
