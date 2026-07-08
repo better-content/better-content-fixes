@@ -6,7 +6,6 @@
   "mixins": [
     "burnt.GrassCatchProcedureMixin",
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
-    "dynamictrees.FallingTreeEntityMixin",
     "dynamictrees.NormalSeasonManagerMixin",
     "hyle.RoughNoiseSamplerMixin",
     "lostcities.ChunkGeneratorMixin",

@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import io.github.btmfixes.compat.BurntGrassPalette;
 import io.github.btmfixes.compat.FarmlandTrampleProtection;
 import io.github.btmfixes.compat.FluidMixBlocker;
-import io.github.btmfixes.compat.DynamicTreesFallenTreeSweepCommand;
 import io.github.btmfixes.compat.DynamicTreesUnsupportedTreeFallover;
 import io.github.btmfixes.compat.DynamicTreesUnearthedSoils;
 import io.github.btmfixes.compat.DynamicTreesSupportSweepCommand;
@@ -40,7 +39,6 @@ public final class BoundToMatterFixes {
         MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
-        MinecraftForge.EVENT_BUS.register(DynamicTreesFallenTreeSweepCommand.class);
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
     }
 

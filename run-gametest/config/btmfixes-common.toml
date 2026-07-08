@@ -12,10 +12,6 @@
 	#Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.
 	#Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.
 	destroyUnsupportedTrees = true
-	#When a Dynamic Trees falling tree lands, tries to reconstruct it as placed primitive logs instead of only dropping log items.
-	#Uses the tree's destroyed branch voxel data to place sideways logs that roughly match the fallen shape, then leaves only any unplaced remainder as item drops.
-	#Disable this if Dynamic Trees changes its falling tree internals or if placed-log reconstruction causes compatibility issues.
-	reconstructFallenLogs = true
 
 [hyle]
 	#Guards Hyle tertiary stone selection against invalid indices.
@@ -69,3 +65,8 @@
 	#Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.
 	disableSunBurnTick = true
 
+[farmland]
+	#Cancels farmland trampling from fall impacts.
+	#Prevents players and mobs from degrading cultivated soil back into dirt when landing on it.
+	#Disable only if a future system intentionally wants fall-impact farmland loss back.
+	preventTrample = true
