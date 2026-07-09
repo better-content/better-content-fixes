@@ -7,12 +7,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,7 +30,7 @@ public final class RegolithFarmlandTilling {
         final Level level = event.getLevel();
         final Player player = event.getEntity();
         final ItemStack stack = event.getItemStack();
-        if (!(stack.getItem() instanceof HoeItem) || event.getFace() == null) {
+        if (event.getFace() == null || !stack.canPerformAction(ToolActions.HOE_TILL)) {
             return;
         }
         if (event.getFace().getAxis().isVertical() && event.getFace().getStepY() < 0) {
@@ -48,7 +48,7 @@ public final class RegolithFarmlandTilling {
             return;
         }
 
-        final Optional<RegolithFarmlandDefinitions.Entry> entry = RegolithFarmlandPalette.lookupByGrassyRegolith(blockId);
+        final Optional<RegolithFarmlandDefinitions.Entry> entry = RegolithFarmlandPalette.lookupByTillableRegolith(blockId);
         if (entry.isEmpty()) {
             return;
         }

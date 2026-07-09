@@ -25,12 +25,13 @@ public final class RegolithFarmlandPalette {
             DeferredRegister.create(ForgeRegistries.ITEMS, BoundToMatterFixes.MOD_ID);
 
     private static final List<RegolithFarmlandDefinitions.Entry> ENTRIES = RegolithFarmlandDefinitions.entries();
-    private static final Map<ResourceLocation, RegolithFarmlandDefinitions.Entry> BY_GRASSY_REGOLITH = new LinkedHashMap<>();
+    private static final Map<ResourceLocation, RegolithFarmlandDefinitions.Entry> BY_TILLABLE_REGOLITH = new LinkedHashMap<>();
     private static final Map<ResourceLocation, RegistryObject<Block>> FARMLAND_BLOCKS = new LinkedHashMap<>();
 
     static {
         for (RegolithFarmlandDefinitions.Entry entry : ENTRIES) {
-            BY_GRASSY_REGOLITH.put(entry.grassyRegolithId(), entry);
+            BY_TILLABLE_REGOLITH.put(entry.grassyRegolithId(), entry);
+            BY_TILLABLE_REGOLITH.put(entry.plainRegolithId(), entry);
             final RegistryObject<Block> block = BLOCKS.register(entry.farmlandId().getPath(), () ->
                     new RegolithFarmlandBlock(resolvePlainRegolithBlock(entry.plainRegolithId())));
             FARMLAND_BLOCKS.put(entry.farmlandId(), block);
@@ -45,8 +46,8 @@ public final class RegolithFarmlandPalette {
         return ENTRIES;
     }
 
-    public static Optional<RegolithFarmlandDefinitions.Entry> lookupByGrassyRegolith(final ResourceLocation blockId) {
-        return Optional.ofNullable(BY_GRASSY_REGOLITH.get(blockId));
+    public static Optional<RegolithFarmlandDefinitions.Entry> lookupByTillableRegolith(final ResourceLocation blockId) {
+        return Optional.ofNullable(BY_TILLABLE_REGOLITH.get(blockId));
     }
 
     public static Optional<Block> getFarmlandBlock(final ResourceLocation farmlandId) {

@@ -21,11 +21,15 @@ final class RegolithFarmlandPaletteResourceTest {
         final Set<String> grassyRegolithIds = entries.stream()
                 .map(entry -> entry.grassyRegolithId().toString())
                 .collect(Collectors.toSet());
+        final Set<String> plainRegolithIds = entries.stream()
+                .map(entry -> entry.plainRegolithId().toString())
+                .collect(Collectors.toSet());
         final Set<String> farmlandIds = entries.stream()
                 .map(entry -> entry.farmlandId().toString())
                 .collect(Collectors.toSet());
 
         assertEquals(entries.size(), grassyRegolithIds.size(), "duplicate grassy regolith sources in farmland table");
+        assertEquals(entries.size(), plainRegolithIds.size(), "duplicate plain regolith sources in farmland table");
         assertEquals(entries.size(), farmlandIds.size(), "duplicate farmland ids in farmland table");
         assertEquals(17, entries.size(), "regolith farmland palette drifted from the authored Unearthed surface set");
         assertFalse(entries.isEmpty(), "regolith farmland table must not be empty");
