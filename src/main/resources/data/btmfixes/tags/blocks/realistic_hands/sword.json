@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "blue_skies:spider_webbing",
+    "burnt:smoldering_cobweb",
+    "minecraft:cobweb",
+    "minecraft:tripwire",
+    "projectvibrantjourneys:cattail",
+    "projectvibrantjourneys:crimson_nettle",
+    "projectvibrantjourneys:glowcap",
+    "projectvibrantjourneys:natural_cobweb",
+    "projectvibrantjourneys:sea_oats",
+    "projectvibrantjourneys:warped_nettle"
+  ]
+}
