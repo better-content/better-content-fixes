@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_farmland",
+  "textures": {
+    "dirt": "unearthed:block/granodiorite_regolith",
+    "top": "bcfixes:block/granodiorite_regolith_farmland_moist"
+  }
+}

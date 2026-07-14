@@ -9,9 +9,9 @@ from pathlib import Path
 
 MOD_ROOT = Path(__file__).resolve().parent.parent
 WORKSPACE_ROOT = MOD_ROOT.parent.parent.parent
-RESOURCE_PATH = MOD_ROOT / "src/main/resources/data/btmfixes/burnt_grass_replacements.json"
-ASSETS_ROOT = MOD_ROOT / "src/main/resources/assets/btmfixes"
-DATA_ROOT = MOD_ROOT / "src/main/resources/data/btmfixes"
+RESOURCE_PATH = MOD_ROOT / "src/main/resources/data/bcfixes/burnt_grass_replacements.json"
+ASSETS_ROOT = MOD_ROOT / "src/main/resources/assets/bcfixes"
+DATA_ROOT = MOD_ROOT / "src/main/resources/data/bcfixes"
 MOD_CACHE = WORKSPACE_ROOT / "generated/cache/packwiz-downloads/mods"
 
 
@@ -176,24 +176,24 @@ def main():
         side_texture_path = ASSETS_ROOT / "textures/block" / f"{target_path}_side.png"
         bottom_texture_path = ASSETS_ROOT / "textures/block" / f"{target_path}_bottom.png"
 
-        write_json(blockstate_path, {"variants": {"": {"model": f"btmfixes:block/{target_path}"}}})
+        write_json(blockstate_path, {"variants": {"": {"model": f"bcfixes:block/{target_path}"}}})
         write_json(
             block_model_path,
             {
                 "parent": "block/cube",
                 "textures": {
-                    "down": f"btmfixes:block/{target_path}_bottom",
+                    "down": f"bcfixes:block/{target_path}_bottom",
                     "up": "burnt:block/burnt_grass",
-                    "north": f"btmfixes:block/{target_path}_side",
-                    "east": f"btmfixes:block/{target_path}_side",
-                    "south": f"btmfixes:block/{target_path}_side",
-                    "west": f"btmfixes:block/{target_path}_side",
-                    "particle": f"btmfixes:block/{target_path}_bottom",
+                    "north": f"bcfixes:block/{target_path}_side",
+                    "east": f"bcfixes:block/{target_path}_side",
+                    "south": f"bcfixes:block/{target_path}_side",
+                    "west": f"bcfixes:block/{target_path}_side",
+                    "particle": f"bcfixes:block/{target_path}_bottom",
                 },
                 "render_type": "solid",
             },
         )
-        write_json(item_model_path, {"parent": f"btmfixes:block/{target_path}"})
+        write_json(item_model_path, {"parent": f"bcfixes:block/{target_path}"})
         write_json(
             loot_path,
             {
@@ -201,7 +201,7 @@ def main():
                 "pools": [
                     {
                         "rolls": 1,
-                        "entries": [{"type": "minecraft:item", "name": f"btmfixes:{target_path}"}],
+                        "entries": [{"type": "minecraft:item", "name": f"bcfixes:{target_path}"}],
                         "conditions": [{"condition": "minecraft:survives_explosion"}],
                     }
                 ],

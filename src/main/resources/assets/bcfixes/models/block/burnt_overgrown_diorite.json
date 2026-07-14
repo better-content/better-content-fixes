@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "bcfixes:block/burnt_overgrown_diorite_bottom",
+    "up": "burnt:block/burnt_grass",
+    "north": "bcfixes:block/burnt_overgrown_diorite_side",
+    "east": "bcfixes:block/burnt_overgrown_diorite_side",
+    "south": "bcfixes:block/burnt_overgrown_diorite_side",
+    "west": "bcfixes:block/burnt_overgrown_diorite_side",
+    "particle": "bcfixes:block/burnt_overgrown_diorite_bottom"
+  },
+  "render_type": "solid"
+}

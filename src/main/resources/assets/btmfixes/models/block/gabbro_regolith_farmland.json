@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/template_farmland",
-  "textures": {
-    "dirt": "unearthed:block/gabbro_regolith",
-    "top": "btmfixes:block/gabbro_regolith_farmland"
-  }
-}

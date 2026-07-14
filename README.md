@@ -1,4 +1,4 @@
-# Bound To Matter Fixes
+# Better Content Fixes
 
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
@@ -14,7 +14,7 @@ Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
 Deploy the reobfuscated jar from:
 
-- `build/libs/btmfixes-<version>.jar`
-- `build/libs/btmfixes-<version>-all.jar`
+- `build/libs/bcfixes-<version>.jar`
+- `build/libs/bcfixes-<version>-all.jar`
 
 The pack currently tracks the canonical release jar in `mods/`, not source outputs or IDE runtime state.

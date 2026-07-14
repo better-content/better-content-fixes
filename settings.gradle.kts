@@ -18,4 +18,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "bound-to-matter-fixes"
+rootProject.name = "better-content-fixes"

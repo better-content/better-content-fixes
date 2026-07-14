@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "bcfixes:block/burnt_wastelandgrassblock_bottom",
+    "up": "burnt:block/burnt_grass",
+    "north": "bcfixes:block/burnt_wastelandgrassblock_side",
+    "east": "bcfixes:block/burnt_wastelandgrassblock_side",
+    "south": "bcfixes:block/burnt_wastelandgrassblock_side",
+    "west": "bcfixes:block/burnt_wastelandgrassblock_side",
+    "particle": "bcfixes:block/burnt_wastelandgrassblock_bottom"
+  },
+  "render_type": "solid"
+}

@@ -141,7 +141,7 @@ tasks.processResources {
 }
 
 mixin {
-    config("btmfixes.mixins.json")
+    config("bcfixes.mixins.json")
 }
 
 jacoco {
@@ -158,7 +158,7 @@ tasks.jacocoTestReport {
         files(classDirectories.files.map {
             fileTree(it) {
                 include(
-                    "io/github/btmfixes/compat/BurntGrassReplacementDefinitions*"
+                    "io/github/bcfixes/compat/BurntGrassReplacementDefinitions*"
                 )
             }
         })
@@ -171,7 +171,7 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = "CLASS"
-            includes = listOf("io.github.btmfixes.compat.BurntGrassReplacementDefinitions")
+            includes = listOf("io.github.bcfixes.compat.BurntGrassReplacementDefinitions")
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"
