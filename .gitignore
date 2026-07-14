@@ -1,6 +1,9 @@
 .gradle/
 build/
 run/
+run-gametest/*
+!run-gametest/gameteststructures/
+!run-gametest/gameteststructures/**
 logs/
 out/
 bin/
