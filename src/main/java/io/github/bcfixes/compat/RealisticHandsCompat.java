@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -62,7 +63,7 @@ public final class RealisticHandsCompat {
     }
 
     private static boolean shouldDeny(final Player player, final BlockState state) {
-        if (player == null || state == null || player.isCreative()) {
+        if (player == null || state == null || hasCreativeBypass(player)) {
             return false;
         }
         if (!isPolicyBlock(state)) {
@@ -72,14 +73,14 @@ public final class RealisticHandsCompat {
     }
 
     private static boolean shouldForceHarvest(final Player player, final BlockState state) {
-        if (player == null || state == null || player.isCreative()) {
+        if (player == null || state == null || hasCreativeBypass(player)) {
             return false;
         }
         return state.is(RealisticHandsTags.FORCE_HARVEST) && hasMatchingTool(player, state);
     }
 
     private static boolean hasMatchingTool(final Player player, final BlockState state) {
-        if (player.isCreative()) {
+        if (hasCreativeBypass(player)) {
             return true;
         }
         if (state.is(RealisticHandsTags.HAND)) {
@@ -115,7 +116,7 @@ public final class RealisticHandsCompat {
     }
 
     private static void damageKnife(final Player player, final BlockState state) {
-        if (player == null || player.isCreative() || !state.is(RealisticHandsTags.KNIFE)) {
+        if (player == null || hasCreativeBypass(player) || !state.is(RealisticHandsTags.KNIFE)) {
             return;
         }
         final ItemStack stack = player.getMainHandItem();
@@ -123,5 +124,13 @@ public final class RealisticHandsCompat {
             return;
         }
         stack.hurtAndBreak(1, player, broken -> broken.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+    }
+
+    private static boolean hasCreativeBypass(final Player player) {
+        if (player.getAbilities().instabuild) {
+            return true;
+        }
+        return player instanceof net.minecraft.server.level.ServerPlayer serverPlayer
+                && serverPlayer.gameMode.getGameModeForPlayer() == GameType.CREATIVE;
     }
 }
