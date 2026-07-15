@@ -17,9 +17,13 @@ final class BcFixesResourceTest {
         Path configPath = Path.of("src/main/resources/bcfixes.mixins.json");
         JsonObject config = JsonParser.parseReader(Files.newBufferedReader(configPath)).getAsJsonObject();
         String packageName = config.get("package").getAsString();
+        JsonArray mixins = config.getAsJsonArray("mixins");
+        JsonArray clientMixins = config.getAsJsonArray("client");
 
-        assertMixinClassesExist(packageName, config.getAsJsonArray("mixins"));
-        assertMixinClassesExist(packageName, config.getAsJsonArray("client"));
+        assertTrue(mixins != null && mixins.size() > 0, "expected packaged mixin targets");
+        assertTrue(clientMixins != null && clientMixins.size() > 0, "expected packaged client mixin targets");
+        assertMixinClassesExist(packageName, mixins);
+        assertMixinClassesExist(packageName, clientMixins);
     }
 
     @Test

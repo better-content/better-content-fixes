@@ -27,7 +27,8 @@ public final class BurntGrassReplacementGameTests {
             Block sourceBlock = lookupBlock(entry.sourceId());
             Block expectedBlock = lookupBlock(entry.targetId());
             if (sourceBlock == null || expectedBlock == null) {
-                continue;
+                helper.fail("Missing burnt grass mapping runtime blocks for " + entry.sourceId() + " -> " + entry.targetId());
+                return;
             }
             BlockPos pos = helper.absolutePos(new BlockPos(2 + (index % width) * 2, 2, 2 + (index / width) * 2));
 
@@ -47,8 +48,8 @@ public final class BurntGrassReplacementGameTests {
             index++;
             validated++;
         }
-        if (validated == 0) {
-            helper.fail("No replacement entries could be validated in the standalone game-test runtime");
+        if (validated != BurntGrassPalette.entries().size()) {
+            helper.fail("Validated " + validated + " burnt grass mappings but expected " + BurntGrassPalette.entries().size());
             return;
         }
         helper.succeed();
