@@ -10,6 +10,8 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES;
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
+    public static final ForgeConfigSpec.BooleanValue HYLE_COMPLETE_BOTTOM_SECTION;
+    public static final ForgeConfigSpec.BooleanValue HYLE_RUN_AFTER_UNDERGROUND_DECORATION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
@@ -51,6 +53,18 @@ public final class BcFixesConfig {
                         "Prevents worldgen crashes when Hyle's tertiary selector requests an index outside the available tertiary list size.",
                         "Keeps Unearthed/Hyle stone replacement enabled while avoiding ArrayIndexOutOfBoundsException in RoughNoiseSampler.selectTertiary.")
                 .define("safeTertiarySelection", true);
+        HYLE_COMPLETE_BOTTOM_SECTION = builder
+                .comment(
+                        "Completes Hyle stone replacement in the Overworld's lowest chunk section.",
+                        "Hyle's bottom interpolation slice can resolve to its no-replacement sentinel, leaving deepslate and tuff below Y -48 untouched.",
+                        "The repair uses the nearest valid generated Hyle stratum for each column, so regional Unearthed geology remains continuous.")
+                .define("completeBottomSection", true);
+        HYLE_RUN_AFTER_UNDERGROUND_DECORATION = builder
+                .comment(
+                        "Moves Hyle's stone replacement pass to the end of underground decoration.",
+                        "This replaces stone-family blocks emitted after local modifications by underground structures, ores, and decoration features.",
+                        "Above-ground authored boulders and structure masonry remain outside this underground geology pass.")
+                .define("runAfterUndergroundDecoration", true);
         builder.pop();
 
         builder.push("apotheosis");
@@ -151,6 +165,14 @@ public final class BcFixesConfig {
 
     public static boolean hyleSafeTertiarySelection() {
         return isLoaded("hyle") && HYLE_SAFE_TERTIARY_SELECTION.get();
+    }
+
+    public static boolean hyleCompleteBottomSection() {
+        return isLoaded("hyle") && HYLE_COMPLETE_BOTTOM_SECTION.get();
+    }
+
+    public static boolean hyleRunAfterUndergroundDecoration() {
+        return isLoaded("hyle") && HYLE_RUN_AFTER_UNDERGROUND_DECORATION.get();
     }
 
     public static boolean apotheosisSkipOffThreadTooltips() {

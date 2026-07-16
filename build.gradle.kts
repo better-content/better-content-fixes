@@ -10,6 +10,8 @@ plugins {
 group = property("mod_group_id") as String
 version = property("mod_version") as String
 val mixinExtrasVersion = "0.5.0"
+val hyleCompileJar = System.getenv("BC_HYLE_JAR")
+    ?: "../../cache/packwiz-downloads/mods/Hyle-2.0.0-1.20.1-forge-all.jar"
 
 base {
     archivesName.set(property("mod_id") as String)
@@ -58,6 +60,7 @@ repositories {
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
+    compileOnly(files(hyleCompileJar))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
