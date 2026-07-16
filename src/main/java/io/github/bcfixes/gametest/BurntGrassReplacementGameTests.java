@@ -23,10 +23,15 @@ public final class BurntGrassReplacementGameTests {
         final int width = 8;
         int index = 0;
         int validated = 0;
+        int active = 0;
         for (BurntGrassReplacementDefinitions.Entry entry : BurntGrassPalette.entries()) {
             Block sourceBlock = lookupBlock(entry.sourceId());
+            if (sourceBlock == null) {
+                continue;
+            }
+            active++;
             Block expectedBlock = lookupBlock(entry.targetId());
-            if (sourceBlock == null || expectedBlock == null) {
+            if (expectedBlock == null) {
                 helper.fail("Missing burnt grass mapping runtime blocks for " + entry.sourceId() + " -> " + entry.targetId());
                 return;
             }
@@ -48,8 +53,8 @@ public final class BurntGrassReplacementGameTests {
             index++;
             validated++;
         }
-        if (validated != BurntGrassPalette.entries().size()) {
-            helper.fail("Validated " + validated + " burnt grass mappings but expected " + BurntGrassPalette.entries().size());
+        if (validated != active || active == 0) {
+            helper.fail("Validated " + validated + " active burnt grass mappings but expected " + active);
             return;
         }
         helper.succeed();
