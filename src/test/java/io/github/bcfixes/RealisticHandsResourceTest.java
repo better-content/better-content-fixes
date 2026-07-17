@@ -1,5 +1,6 @@
 package io.github.bcfixes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
@@ -14,49 +15,25 @@ import org.junit.jupiter.api.Test;
 
 final class RealisticHandsResourceTest {
     private static final Path ROOT = Path.of("src/main/resources/data/bcfixes");
+    private static final Path QUARANTINE = Path.of("quarantine/realistic-hands-exhaustive-policy");
 
     @Test
-    void requiredTagFilesExist() {
-        for (String relative : new String[] {
-                "tags/blocks/realistic_hands/hand.json",
-                "tags/blocks/realistic_hands/knife.json",
-                "tags/blocks/realistic_hands/axe.json",
-                "tags/blocks/realistic_hands/pickaxe.json",
-                "tags/blocks/realistic_hands/shovel.json",
-                "tags/blocks/realistic_hands/hoe.json",
-                "tags/blocks/realistic_hands/sword.json",
-                "tags/blocks/realistic_hands/force_harvest.json",
-                "tags/blocks/realistic_hands/knife_straw.json",
-                "tags/blocks/realistic_hands/knife_extra_sticks.json",
-                "tags/items/realistic_hands/tools/knife.json",
-                "tags/items/realistic_hands/tools/axe.json",
-                "tags/items/realistic_hands/tools/pickaxe.json",
-                "tags/items/realistic_hands/tools/shovel.json",
-                "tags/items/realistic_hands/tools/hoe.json",
-                "tags/items/realistic_hands/tools/sword.json",
-                "loot_modifiers/realistic_hands_knife_bonus.json"
-        }) {
-            assertTrue(Files.exists(ROOT.resolve(relative)), "missing Realistic Hands resource " + relative);
-        }
-        assertTrue(Files.exists(Path.of("src/main/resources/data/forge/loot_modifiers/global_loot_modifiers.json")));
+    void runtimePolicyContainsOnlyTheNoTreePunchingGate() throws IOException {
+        final Path blockTag = ROOT.resolve("tags/blocks/realistic_hands/axe.json");
+        final Path itemTag = ROOT.resolve("tags/items/realistic_hands/tools/axe.json");
+
+        assertEquals(Set.of("#minecraft:logs"), readValues(blockTag));
+        assertEquals(Set.of("#forge:tools/axes"), readValues(itemTag));
+        assertEquals(Set.of("axe.json"), fileNames(blockTag.getParent()));
+        assertEquals(Set.of("axe.json"), fileNames(itemTag.getParent()));
     }
 
     @Test
-    void representativePolicyMembershipStaysExplicit() throws IOException {
-        final Set<String> hand = readValues(ROOT.resolve("tags/blocks/realistic_hands/hand.json"));
-        final Set<String> shovel = readValues(ROOT.resolve("tags/blocks/realistic_hands/shovel.json"));
-        final Set<String> knife = readValues(ROOT.resolve("tags/blocks/realistic_hands/knife.json"));
-        final Set<String> sword = readValues(ROOT.resolve("tags/blocks/realistic_hands/sword.json"));
-        final Set<String> forceHarvest = readValues(ROOT.resolve("tags/blocks/realistic_hands/force_harvest.json"));
-        final Set<String> knifeTools = readValues(ROOT.resolve("tags/items/realistic_hands/tools/knife.json"));
-
-        assertTrue(hand.contains("minecraft:gravel"), "gravel must remain explicitly hand-allowed");
-        assertTrue(hand.contains("unearthed:siltstone_regolith"), "siltstone regolith must remain explicitly hand-allowed");
-        assertTrue(shovel.contains("unearthed:siltstone_regolith"), "siltstone regolith must remain explicitly shovel-allowed");
-        assertTrue(knife.contains("projectvibrantjourneys:short_grass"), "short grass must remain explicitly knife-gated");
-        assertTrue(sword.contains("minecraft:cobweb"), "cobweb must remain explicitly sword-gated");
-        assertTrue(forceHarvest.contains("unearthed:siltstone_regolith"), "siltstone regolith must remain force-harvest covered");
-        assertTrue(knifeTools.contains("additionalweaponry:butcher_knife"), "butcher knife must remain an explicit knife tool");
+    void exhaustivePolicyRemainsQuarantinedOutsideRuntimeResources() throws IOException {
+        assertTrue(Files.exists(QUARANTINE.resolve("README.md")));
+        assertTrue(fileNames(QUARANTINE.resolve("resources/tags/blocks")).size() >= 9);
+        assertTrue(fileNames(QUARANTINE.resolve("resources/tags/items")).size() >= 5);
+        assertTrue(fileNames(QUARANTINE.resolve("java")).contains("RealisticHandsKnifeLootModifier.java"));
     }
 
     private static Set<String> readValues(final Path path) throws IOException {
@@ -65,5 +42,13 @@ final class RealisticHandsResourceTest {
         final Set<String> result = new LinkedHashSet<>();
         values.forEach(element -> result.add(element.getAsString()));
         return result;
+    }
+
+    private static Set<String> fileNames(final Path directory) throws IOException {
+        try (var files = Files.list(directory)) {
+            final Set<String> names = new LinkedHashSet<>();
+            files.filter(Files::isRegularFile).forEach(path -> names.add(path.getFileName().toString()));
+            return names;
+        }
     }
 }

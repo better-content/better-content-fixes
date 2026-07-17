@@ -9,7 +9,6 @@ import io.github.bcfixes.compat.DynamicTreesUnearthedSoils;
 import io.github.bcfixes.compat.DynamicTreesSupportSweepCommand;
 import io.github.bcfixes.compat.RegolithFarmlandPalette;
 import io.github.bcfixes.compat.RegolithFarmlandTilling;
-import io.github.bcfixes.compat.RealisticHandsLootModifiers;
 import io.github.bcfixes.config.BcFixesConfig;
 import io.github.bcfixes.gametest.BurntGrassReplacementGameTests;
 import io.github.bcfixes.gametest.DaylightProtectionGameTests;
@@ -34,7 +33,6 @@ public final class BetterContentFixes {
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RealisticHandsLootModifiers.REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
