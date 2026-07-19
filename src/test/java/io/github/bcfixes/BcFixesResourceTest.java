@@ -47,6 +47,22 @@ final class BcFixesResourceTest {
                 "obsidian should remain the only default allowed fluid-generated block");
     }
 
+    @Test
+    void rainCollectorShipsAllVisibleLevelsAndWoodTierRecipe() throws IOException {
+        Path statePath = Path.of("src/main/resources/assets/bcfixes/blockstates/rain_collector.json");
+        JsonObject state = JsonParser.parseReader(Files.newBufferedReader(statePath)).getAsJsonObject();
+        String serialized = state.toString();
+        for (int level = 1; level <= 4; level++) {
+            assertTrue(serialized.contains("rain_collector_water_" + level), "missing visible level " + level);
+            assertTrue(Files.exists(Path.of("src/main/resources/assets/bcfixes/models/block/rain_collector_water_" + level + ".json")));
+        }
+
+        JsonObject recipe = JsonParser.parseReader(Files.newBufferedReader(
+                Path.of("src/main/resources/data/bcfixes/recipes/rain_collector.json"))).getAsJsonObject();
+        assertEquals("minecraft:planks", recipe.getAsJsonObject("key").getAsJsonObject("#").get("tag").getAsString());
+        assertEquals("bcfixes:rain_collector", recipe.getAsJsonObject("result").get("item").getAsString());
+    }
+
     private static void assertMixinClassesExist(String packageName, JsonArray mixins) {
         mixins.forEach(element -> {
             String relativeClass = element.getAsString().replace('.', '/') + ".java";

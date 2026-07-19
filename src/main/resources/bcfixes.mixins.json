@@ -13,6 +13,7 @@
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.MobMixin",
+    "pollution.PlayerEventsMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin"
   ],

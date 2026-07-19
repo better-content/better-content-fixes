@@ -21,6 +21,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
+    public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -44,6 +45,14 @@ public final class BcFixesConfig {
                         "Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.",
                         "Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.")
                 .define("destroyUnsupportedTrees", true);
+        builder.pop();
+
+        builder.push("pollution");
+        POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS = builder
+                .comment(
+                        "Cancels Pollution of the Realms emissions from its player block-break event only.",
+                        "World-level block-break emissions remain available to Create drills, contraptions, explosions, and other automation.")
+                .define("disablePlayerBlockBreakEmissions", true);
         builder.pop();
 
         builder.push("hyle");
@@ -197,6 +206,10 @@ public final class BcFixesConfig {
 
     public static boolean mobsDisableSunBurnTick() {
         return MOBS_DISABLE_SUN_BURN_TICK.get();
+    }
+
+    public static boolean pollutionDisablePlayerBlockBreakEmissions() {
+        return isLoaded("adpother") && POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {

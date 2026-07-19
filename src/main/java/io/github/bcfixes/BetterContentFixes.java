@@ -2,6 +2,7 @@ package io.github.bcfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import io.github.bcfixes.compat.BurntGrassPalette;
+import io.github.bcfixes.compat.ButcherKnifeDurability;
 import io.github.bcfixes.compat.FarmlandTrampleProtection;
 import io.github.bcfixes.compat.FluidMixBlocker;
 import io.github.bcfixes.compat.DynamicTreesUnsupportedTreeFallover;
@@ -15,6 +16,9 @@ import io.github.bcfixes.gametest.DaylightProtectionGameTests;
 import io.github.bcfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import io.github.bcfixes.gametest.FarmlandTrampleProtectionGameTests;
 import io.github.bcfixes.gametest.FluidMixBlockerGameTests;
+import io.github.bcfixes.water.RainCollectorRegistry;
+import io.github.bcfixes.water.SnowMeltHandler;
+import io.github.bcfixes.water.WaterSurvivalGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -33,6 +37,8 @@ public final class BetterContentFixes {
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RainCollectorRegistry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RainCollectorRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
@@ -40,6 +46,8 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
+        MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
+        MinecraftForge.EVENT_BUS.register(SnowMeltHandler.class);
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
@@ -48,5 +56,6 @@ public final class BetterContentFixes {
         event.register(DynamicTreesUnsupportedTreeGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
+        event.register(WaterSurvivalGameTests.class);
     }
 }
