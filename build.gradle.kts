@@ -14,8 +14,6 @@ val hyleCompileJar = System.getenv("BC_HYLE_JAR")
     ?: "../../cache/packwiz-downloads/mods/Hyle-2.0.0-1.20.1-forge-all.jar"
 val thirstCompileJar = System.getenv("BC_THIRST_JAR")
     ?: "../../cache/packwiz-downloads/mods/ThirstWasTaken-1.20.1-1.4.0.jar"
-val playerReviveCompileJar = System.getenv("BC_PLAYERREVIVE_JAR")
-    ?: "../../cache/packwiz-downloads/mods/PlayerRevive_FORGE_v2.0.31_mc1.20.1.jar"
 
 base {
     archivesName.set(property("mod_id") as String)
@@ -66,7 +64,6 @@ dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
     compileOnly(files(hyleCompileJar))
     compileOnly(files(thirstCompileJar))
-    compileOnly(files(playerReviveCompileJar))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
