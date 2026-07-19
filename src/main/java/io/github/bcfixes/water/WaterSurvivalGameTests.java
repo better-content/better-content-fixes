@@ -51,15 +51,18 @@ public final class WaterSurvivalGameTests {
         final BlockPos campfirePos = new BlockPos(3, 3, 3);
         final BlockPos lowerCorner = campfirePos.offset(-1, -1, -1);
         final BlockPos upperCorner = campfirePos.offset(1, 1, 1);
+        final BlockPos directlyAbove = campfirePos.above();
         final BlockPos outside = campfirePos.offset(2, 0, 0);
         helper.setBlock(lowerCorner, Blocks.SNOW_BLOCK);
         helper.setBlock(upperCorner, Blocks.SNOW_BLOCK);
+        helper.setBlock(directlyAbove, Blocks.SNOW_BLOCK);
         helper.setBlock(outside, Blocks.SNOW_BLOCK);
         helper.setBlock(campfirePos, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
         SnowMeltHandler.scheduleAroundCampfire(level, helper.absolutePos(campfirePos));
-        helper.runAfterDelay(105, () -> {
+        helper.runAfterDelay(125, () -> {
             helper.assertBlockPresent(Blocks.WATER, lowerCorner);
             helper.assertBlockPresent(Blocks.WATER, upperCorner);
+            helper.assertBlockPresent(Blocks.WATER, directlyAbove);
             helper.assertBlockPresent(Blocks.SNOW_BLOCK, outside);
             helper.assertBlockProperty(campfirePos, CampfireBlock.LIT, true);
             helper.succeed();
