@@ -9,16 +9,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public final class RegolithFarmlandPalette {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(ForgeRegistries.BLOCKS, BetterContentFixes.MOD_ID);
     public static final DeferredRegister<Item> ITEMS =
@@ -33,7 +28,7 @@ public final class RegolithFarmlandPalette {
             BY_TILLABLE_REGOLITH.put(entry.grassyRegolithId(), entry);
             BY_TILLABLE_REGOLITH.put(entry.plainRegolithId(), entry);
             final RegistryObject<Block> block = BLOCKS.register(entry.farmlandId().getPath(), () ->
-                    new RegolithFarmlandBlock(resolvePlainRegolithBlock(entry.plainRegolithId())));
+                    new RegolithFarmlandBlock(entry.plainRegolithId()));
             FARMLAND_BLOCKS.put(entry.farmlandId(), block);
             ITEMS.register(entry.farmlandId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
         }
@@ -53,14 +48,5 @@ public final class RegolithFarmlandPalette {
     public static Optional<Block> getFarmlandBlock(final ResourceLocation farmlandId) {
         final RegistryObject<Block> registryObject = FARMLAND_BLOCKS.get(farmlandId);
         return registryObject == null ? Optional.empty() : Optional.of(registryObject.get());
-    }
-
-    private static Block resolvePlainRegolithBlock(final ResourceLocation blockId) {
-        final Block block = ForgeRegistries.BLOCKS.getValue(blockId);
-        if (block == null || block == Blocks.AIR) {
-            LOGGER.warn("Falling back to dirt for missing regolith source block {}", blockId);
-            return Blocks.DIRT;
-        }
-        return block;
     }
 }
