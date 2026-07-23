@@ -26,6 +26,6 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
 [[dependencies.${mod_id}]]
     modId="weather2"
     mandatory=false
-    versionRange="[2.8.3,)"
+    versionRange="[1.20.1-2.8.3,)"
     ordering="AFTER"
     side="BOTH"
