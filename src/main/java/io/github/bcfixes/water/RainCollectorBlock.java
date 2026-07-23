@@ -63,7 +63,9 @@ public final class RainCollectorBlock extends Block {
     @Override
     public void tick(final BlockState state, final ServerLevel level, final BlockPos pos, final RandomSource random) {
         int stored = state.getValue(LEVEL);
-        if (stored < CAPACITY && level.canSeeSky(pos.above()) && level.isRainingAt(pos.above())) {
+        final BlockPos collectionPos = pos.above();
+        if (stored < CAPACITY && level.canSeeSky(collectionPos)
+                && (level.isRainingAt(collectionPos) || Weather2RainCompat.isPrecipitatingAt(level, collectionPos))) {
             level.setBlock(pos, state.setValue(LEVEL, stored + 1), Block.UPDATE_ALL);
         }
         level.scheduleTick(pos, this, FILL_INTERVAL_TICKS);

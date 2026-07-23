@@ -14,6 +14,8 @@ val hyleCompileJar = System.getenv("BC_HYLE_JAR")
     ?: "../../cache/packwiz-downloads/mods/Hyle-2.0.0-1.20.1-forge-all.jar"
 val thirstCompileJar = System.getenv("BC_THIRST_JAR")
     ?: "../../cache/packwiz-downloads/mods/ThirstWasTaken-1.20.1-1.4.0.jar"
+val weather2CompileJar = System.getenv("BC_WEATHER2_JAR")
+    ?: "../../cache/packwiz-downloads/mods/weather2-1.20.1-2.8.3.jar"
 
 base {
     archivesName.set(property("mod_id") as String)
@@ -64,6 +66,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
     compileOnly(files(hyleCompileJar))
     compileOnly(files(thirstCompileJar))
+    compileOnly(files(weather2CompileJar))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
