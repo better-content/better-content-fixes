@@ -19,6 +19,7 @@ import io.github.bcfixes.gametest.FluidMixBlockerGameTests;
 import io.github.bcfixes.water.RainCollectorRegistry;
 import io.github.bcfixes.water.SnowMeltHandler;
 import io.github.bcfixes.water.WaterSurvivalGameTests;
+import io.github.bcfixes.water.WaterBottleCurio;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -48,6 +49,8 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(SnowMeltHandler.class);
+        MinecraftForge.EVENT_BUS.register(WaterBottleCurio.class);
+        WaterBottleCurio.registerPredicate();
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {

@@ -16,6 +16,8 @@ val thirstCompileJar = System.getenv("BC_THIRST_JAR")
     ?: "../../cache/packwiz-downloads/mods/ThirstWasTaken-1.20.1-1.4.0.jar"
 val weather2CompileJar = System.getenv("BC_WEATHER2_JAR")
     ?: "../../cache/packwiz-downloads/mods/weather2-1.20.1-2.8.3.jar"
+val curiosCompileJar = System.getenv("BC_CURIOS_JAR")
+    ?: "../../cache/packwiz-downloads/mods/curios-forge-5.14.1+1.20.1.jar"
 
 base {
     archivesName.set(property("mod_id") as String)
@@ -67,6 +69,7 @@ dependencies {
     compileOnly(files(hyleCompileJar))
     compileOnly(files(thirstCompileJar))
     compileOnly(files(weather2CompileJar))
+    compileOnly(files(curiosCompileJar))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
