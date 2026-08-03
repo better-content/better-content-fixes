@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "burnt.GrassCatchProcedureMixin",
+    "create.HandCrankBlockMixin",
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
     "dynamictrees.NormalSeasonManagerMixin",
     "hyle.BiomeInjectorMixin",
