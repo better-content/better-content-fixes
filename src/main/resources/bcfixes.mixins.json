@@ -6,6 +6,8 @@
   "mixins": [
     "burnt.GrassCatchProcedureMixin",
     "create.HandCrankBlockMixin",
+    "tconstruct.PartBuilderBlockEntityMixin",
+    "tconstruct.PartBuilderContainerWrapperMixin",
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
     "dynamictrees.NormalSeasonManagerMixin",
     "hyle.BiomeInjectorMixin",
