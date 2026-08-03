@@ -2,6 +2,7 @@ package io.github.bcfixes.compat;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.piston.MovingPistonBlock;
@@ -21,13 +23,21 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.PlantType;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class RegolithFarmlandBlock extends FarmBlock {
-    private final Block baseRegolithBlock;
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    public RegolithFarmlandBlock(final Block baseRegolithBlock) {
-        super(BlockBehaviour.Properties.copy(baseRegolithBlock).randomTicks());
-        this.baseRegolithBlock = baseRegolithBlock;
+    private final ResourceLocation baseRegolithId;
+
+    public RegolithFarmlandBlock(final ResourceLocation baseRegolithId) {
+        // The Unearthed registry listener is not guaranteed to have run while bcfixes blocks are
+        // being constructed. Resolve the actual base block only when farmland needs to revert.
+        super(BlockBehaviour.Properties.copy(Blocks.DIRT).randomTicks());
+        this.baseRegolithId = baseRegolithId;
     }
 
     @Override
@@ -88,10 +98,30 @@ public final class RegolithFarmlandBlock extends FarmBlock {
                 && ForgeHooks.onFarmlandTrample(level, pos, fallbackState(), fallDistance, entity)) {
             turnToBase(entity, state, level, pos);
         }
-        super.fallOn(level, state, pos, entity, fallDistance);
+        // FarmBlock#fallOn hard-codes minecraft:dirt and would run the trample hook a second time.
+        entity.causeFallDamage(fallDistance, 1.0F, entity.damageSources().fall());
+    }
+
+    @Override
+    public boolean canSustainPlant(
+            final BlockState state,
+            final BlockGetter level,
+            final BlockPos pos,
+            final Direction facing,
+            final IPlantable plantable) {
+        if (facing == Direction.UP
+                && PlantType.CROP.equals(plantable.getPlantType(level, pos.relative(facing)))) {
+            return true;
+        }
+        return super.canSustainPlant(state, level, pos, facing, plantable);
     }
 
     private BlockState fallbackState() {
+        final Block baseRegolithBlock = ForgeRegistries.BLOCKS.getValue(baseRegolithId);
+        if (baseRegolithBlock == null || baseRegolithBlock == Blocks.AIR) {
+            LOGGER.warn("Falling back to dirt for missing regolith source block {}", baseRegolithId);
+            return Blocks.DIRT.defaultBlockState();
+        }
         return baseRegolithBlock.defaultBlockState();
     }
 
