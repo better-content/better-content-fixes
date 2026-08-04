@@ -6,8 +6,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -58,7 +56,9 @@ public final class PrestigeNetwork {
             return new ActionPacket(buffer.readEnum(Action.class), buffer.readBlockPos(), buffer.readUtf(256));
         }
         static void handle(ActionPacket packet, Supplier<NetworkEvent.Context> supplier) {
-            ServerPlayer player = supplier.get().getSender();
+            NetworkEvent.Context context = supplier.get();
+            context.setPacketHandled(true);
+            ServerPlayer player = context.getSender();
             if (player == null || !(player.containerMenu instanceof WorldCondenserMenu menu) || !menu.pos().equals(packet.pos)) return;
             try {
                 switch (packet.action) {
@@ -130,7 +130,8 @@ public final class PrestigeNetwork {
             return new StatePacket(status, worldName, pos, total, unspent, generation, biome, author, operator, biomes, uploads, entries);
         }
         static void handle(StatePacket packet, Supplier<NetworkEvent.Context> supplier) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PrestigeClientState.accept(packet));
+            supplier.get().setPacketHandled(true);
+            PrestigeClientState.accept(packet);
         }
     }
 
@@ -144,7 +145,8 @@ public final class PrestigeNetwork {
                     buffer.readByteArray((int) SchematicLibrary.MAX_BYTES));
         }
         static void handle(DownloadPacket packet, Supplier<NetworkEvent.Context> supplier) {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PrestigeClientState.saveDownload(packet));
+            supplier.get().setPacketHandled(true);
+            PrestigeClientState.saveDownload(packet);
         }
     }
 }
