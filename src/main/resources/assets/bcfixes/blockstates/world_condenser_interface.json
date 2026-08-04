@@ -1,0 +1,5 @@
+{
+  "multipart": [
+    { "apply": { "model": "bcfixes:block/world_condenser_interface" } }
+  ]
+}

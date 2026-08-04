@@ -17,16 +17,24 @@ import io.github.bcfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import io.github.bcfixes.gametest.FarmlandTrampleProtectionGameTests;
 import io.github.bcfixes.gametest.FluidMixBlockerGameTests;
 import io.github.bcfixes.prestige.PrestigeCoordinator;
+import io.github.bcfixes.prestige.PrestigeClient;
+import io.github.bcfixes.prestige.PrestigeNetwork;
+import io.github.bcfixes.prestige.PrestigeRegistry;
+import io.github.bcfixes.prestige.WorldCondenserGameTests;
 import io.github.bcfixes.water.RainCollectorRegistry;
 import io.github.bcfixes.water.SnowMeltHandler;
 import io.github.bcfixes.water.WaterSurvivalGameTests;
 import io.github.bcfixes.water.WaterBottleCurio;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraft.world.item.CreativeModeTabs;
 
 @Mod(BetterContentFixes.MOD_ID)
 public final class BetterContentFixes {
@@ -34,6 +42,7 @@ public final class BetterContentFixes {
 
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
+        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         BurntGrassPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -41,6 +50,13 @@ public final class BetterContentFixes {
         RegolithFarmlandPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RainCollectorRegistry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RainCollectorRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        PrestigeRegistry.BLOCKS.register(modBus);
+        PrestigeRegistry.ITEMS.register(modBus);
+        PrestigeRegistry.BLOCK_ENTITIES.register(modBus);
+        PrestigeRegistry.MENUS.register(modBus);
+        PrestigeNetwork.register();
+        modBus.addListener(this::onCreativeTab);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modBus.addListener(PrestigeClient::setup));
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
@@ -55,6 +71,13 @@ public final class BetterContentFixes {
         WaterBottleCurio.registerPredicate();
     }
 
+    private void onCreativeTab(final BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) {
+            event.accept(PrestigeRegistry.WORLD_CONDENSER_HULL_ITEM);
+            event.accept(PrestigeRegistry.WORLD_CONDENSER_INTERFACE_ITEM);
+        }
+    }
+
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
         event.register(BurntGrassReplacementGameTests.class);
         event.register(DaylightProtectionGameTests.class);
@@ -62,5 +85,6 @@ public final class BetterContentFixes {
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
         event.register(WaterSurvivalGameTests.class);
+        event.register(WorldCondenserGameTests.class);
     }
 }
