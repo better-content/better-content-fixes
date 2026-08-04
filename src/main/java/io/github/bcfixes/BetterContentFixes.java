@@ -16,6 +16,7 @@ import io.github.bcfixes.gametest.DaylightProtectionGameTests;
 import io.github.bcfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import io.github.bcfixes.gametest.FarmlandTrampleProtectionGameTests;
 import io.github.bcfixes.gametest.FluidMixBlockerGameTests;
+import io.github.bcfixes.prestige.PrestigeCoordinator;
 import io.github.bcfixes.water.RainCollectorRegistry;
 import io.github.bcfixes.water.SnowMeltHandler;
 import io.github.bcfixes.water.WaterSurvivalGameTests;
@@ -50,6 +51,7 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(SnowMeltHandler.class);
         MinecraftForge.EVENT_BUS.register(WaterBottleCurio.class);
+        MinecraftForge.EVENT_BUS.register(PrestigeCoordinator.class);
         WaterBottleCurio.registerPredicate();
     }
 
