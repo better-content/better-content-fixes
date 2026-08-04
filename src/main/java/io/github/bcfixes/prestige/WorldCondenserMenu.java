@@ -11,7 +11,7 @@ public final class WorldCondenserMenu extends AbstractContainerMenu {
     private final BlockPos pos;
 
     public WorldCondenserMenu(int id, Inventory inventory, FriendlyByteBuf data) {
-        this(id, inventory, data.readBlockPos());
+        this(id, inventory, data == null ? BlockPos.ZERO : data.readBlockPos());
     }
 
     public WorldCondenserMenu(int id, Inventory inventory, BlockPos pos) {

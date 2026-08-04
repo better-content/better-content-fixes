@@ -68,6 +68,7 @@ public final class WorldCondenserInterfaceBlock extends BaseEntityBlock {
         }
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             NetworkHooks.openScreen(serverPlayer, condenser, buffer -> buffer.writeBlockPos(pos));
+            PrestigeNetwork.sendState(serverPlayer);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

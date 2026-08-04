@@ -41,7 +41,10 @@ public final class PrestigeNetwork {
     }
 
     public static void sendState(ServerPlayer player) {
-        try { CHANNEL.sendTo(new StatePacket(PrestigeService.view(player)), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT); }
+        try {
+            BlockPos pos = player.containerMenu instanceof WorldCondenserMenu menu ? menu.pos() : BlockPos.ZERO;
+            CHANNEL.sendTo(new StatePacket(PrestigeService.view(player), pos), player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        }
         catch (Exception error) { player.displayClientMessage(Component.literal("World Condenser state failed: " + error.getMessage()), false); }
     }
 
@@ -94,17 +97,18 @@ public final class PrestigeNetwork {
     }
 
     public record ClientEntry(String id, String author, String name, long size, String sha256) {}
-    public record StatePacket(String status, String worldName, long total, long unspent, long generation, String selectedBiome,
+    public record StatePacket(String status, String worldName, BlockPos pos, long total, long unspent, long generation, String selectedBiome,
                               String author, boolean operator, List<String> biomes, List<String> uploads,
                               List<ClientEntry> published) {
-        StatePacket(PrestigeService.View view) {
-            this(view.status(), view.worldName(), view.lineage().totalPrestiges(), view.lineage().unspentPoints(), view.lineage().generation(),
+        StatePacket(PrestigeService.View view, BlockPos pos) {
+            this(view.status(), view.worldName(), pos, view.lineage().totalPrestiges(), view.lineage().unspentPoints(), view.lineage().generation(),
                     view.selectedBiome(), view.author(), view.operator(), view.allowedBiomes(), view.ownUploads(),
                     view.published().stream().map(entry -> new ClientEntry(entry.id(), entry.author(), entry.originalName(),
                             entry.size(), entry.sha256())).toList());
         }
         static void encode(StatePacket packet, FriendlyByteBuf buffer) {
-            buffer.writeUtf(packet.status, 64); buffer.writeUtf(packet.worldName, 128); buffer.writeLong(packet.total); buffer.writeLong(packet.unspent);
+            buffer.writeUtf(packet.status, 64); buffer.writeUtf(packet.worldName, 128); buffer.writeBlockPos(packet.pos);
+            buffer.writeLong(packet.total); buffer.writeLong(packet.unspent);
             buffer.writeLong(packet.generation); buffer.writeUtf(packet.selectedBiome, 256); buffer.writeUtf(packet.author, 32);
             buffer.writeBoolean(packet.operator);
             buffer.writeCollection(packet.biomes, (out, value) -> out.writeUtf(value, 256));
@@ -115,14 +119,15 @@ public final class PrestigeNetwork {
             });
         }
         static StatePacket decode(FriendlyByteBuf buffer) {
-            String status = buffer.readUtf(64); String worldName = buffer.readUtf(128); long total = buffer.readLong(); long unspent = buffer.readLong();
+            String status = buffer.readUtf(64); String worldName = buffer.readUtf(128); BlockPos pos = buffer.readBlockPos();
+            long total = buffer.readLong(); long unspent = buffer.readLong();
             long generation = buffer.readLong(); String biome = buffer.readUtf(256); String author = buffer.readUtf(32);
             boolean operator = buffer.readBoolean();
             List<String> biomes = buffer.readList(in -> in.readUtf(256));
             List<String> uploads = buffer.readList(in -> in.readUtf(256));
             List<ClientEntry> entries = buffer.readList(in -> new ClientEntry(in.readUtf(64), in.readUtf(32),
                     in.readUtf(256), in.readLong(), in.readUtf(64)));
-            return new StatePacket(status, worldName, total, unspent, generation, biome, author, operator, biomes, uploads, entries);
+            return new StatePacket(status, worldName, pos, total, unspent, generation, biome, author, operator, biomes, uploads, entries);
         }
         static void handle(StatePacket packet, Supplier<NetworkEvent.Context> supplier) {
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> PrestigeClientState.accept(packet));
