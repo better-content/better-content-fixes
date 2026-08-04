@@ -1,11 +1,11 @@
 package io.github.bcfixes.prestige;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +55,9 @@ public final class PrestigeService {
         for (String value : values) {
             PrestigeContracts.validateBiome(value);
             ResourceLocation id = new ResourceLocation(value);
-            if (!ForgeRegistries.BIOMES.containsKey(id)) throw new IllegalStateException("allowlisted biome is not registered: " + value);
+            if (!server.registryAccess().registryOrThrow(Registries.BIOME).containsKey(id)) {
+                throw new IllegalStateException("allowlisted biome is not registered: " + value);
+            }
         }
         return values;
     }
