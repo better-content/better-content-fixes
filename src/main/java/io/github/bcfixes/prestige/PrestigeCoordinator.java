@@ -1,9 +1,11 @@
 package io.github.bcfixes.prestige;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -41,6 +43,47 @@ public final class PrestigeCoordinator {
                         return 0;
                     }
                 }))
+                .then(Commands.literal("stage").requires(source -> source.hasPermission(4))
+                        .then(Commands.argument("biome", ResourceLocationArgument.id()).executes(context -> {
+                            try {
+                                MinecraftServer server = context.getSource().getServer();
+                                String biome = ResourceLocationArgument.getId(context, "biome").toString();
+                                String author = context.getSource().getPlayer() == null
+                                        ? "Server" : context.getSource().getPlayer().getGameProfile().getName();
+                                PrestigeService.saveDraft(server, biome, author);
+                                PrestigeService.stage(server);
+                                context.getSource().sendSuccess(() -> Component.literal("Staged prestige reset to biome "
+                                        + biome + "; commit with /prestige commit " + PrestigeService.worldName(server)), true);
+                                return 1;
+                            } catch (Exception error) {
+                                context.getSource().sendFailure(Component.literal("Prestige stage failed: " + error.getMessage()));
+                                return 0;
+                            }
+                        })))
+                .then(Commands.literal("cancel").requires(source -> source.hasPermission(4)).executes(context -> {
+                    try {
+                        PrestigeService.cancel(context.getSource().getServer());
+                        context.getSource().sendSuccess(() -> Component.literal("Cancelled staged prestige request"), true);
+                        return 1;
+                    } catch (Exception error) {
+                        context.getSource().sendFailure(Component.literal("Prestige cancel failed: " + error.getMessage()));
+                        return 0;
+                    }
+                }))
+                .then(Commands.literal("commit").requires(source -> source.hasPermission(4))
+                        .then(Commands.argument("world-name", StringArgumentType.word()).executes(context -> {
+                            try {
+                                String transaction = PrestigeService.commit(context.getSource().getServer(),
+                                        StringArgumentType.getString(context, "world-name"));
+                                context.getSource().getServer().getPlayerList().broadcastSystemMessage(Component.literal(
+                                        "Prestige committed " + transaction + " by operator command; all world and player state "
+                                                + "will be archived and reset."), false);
+                                return 1;
+                            } catch (Exception error) {
+                                context.getSource().sendFailure(Component.literal("Prestige commit failed: " + error.getMessage()));
+                                return 0;
+                            }
+                        })))
                 .then(Commands.literal("recovery").requires(source -> source.hasPermission(4))
                         .then(Commands.literal("cancel-staged").executes(context -> {
                             try {

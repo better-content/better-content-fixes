@@ -90,21 +90,28 @@ public final class PrestigeService {
     }
 
     public static void saveDraft(ServerPlayer player, String biome) throws IOException {
-        MinecraftServer server = player.server;
+        saveDraft(player.server, biome, player.getGameProfile().getName());
+    }
+
+    public static void saveDraft(MinecraftServer server, String biome, String author) throws IOException {
         if (Files.exists(control(server).resolve("staged-request-v2.tsv"))
                 || Files.exists(control(server).resolve("reset-request-v2.tsv"))) {
             throw new IllegalStateException("prestige selection is locked");
         }
         if (!allowedBiomes(server).contains(biome)) throw new IllegalArgumentException("biome is not allowlisted");
+        PrestigeContracts.validateAuthor(author);
         PrestigeContracts.Lineage lineage = lineage(server);
         PrestigeContracts.writeDraft(control(server).resolve("draft-v2.tsv"), new PrestigeContracts.Draft(
-                lineage.lineageId(), biome, player.getGameProfile().getName(), worldName(server)));
+                lineage.lineageId(), biome, author, worldName(server)));
     }
 
     public static void stage(ServerPlayer player, BlockPos interfacePos) throws IOException {
         requireOperator(player);
         requireCondenser(player, interfacePos);
-        MinecraftServer server = player.server;
+        stage(player.server);
+    }
+
+    public static void stage(MinecraftServer server) throws IOException {
         if (Files.exists(control(server).resolve("reset-request-v2.tsv"))) throw new IllegalStateException("reset already committed");
         PrestigeContracts.Draft draft = PrestigeContracts.readDraft(control(server).resolve("draft-v2.tsv"));
         PrestigeContracts.Lineage lineage = lineage(server);
@@ -118,7 +125,10 @@ public final class PrestigeService {
 
     public static void cancel(ServerPlayer player) throws IOException {
         requireOperator(player);
-        MinecraftServer server = player.server;
+        cancel(player.server);
+    }
+
+    public static void cancel(MinecraftServer server) throws IOException {
         if (Files.exists(control(server).resolve("reset-request-v2.tsv"))) throw new IllegalStateException("committed reset cannot be cancelled in-game");
         Files.deleteIfExists(control(server).resolve("staged-request-v2.tsv"));
     }
@@ -126,7 +136,10 @@ public final class PrestigeService {
     public static String commit(ServerPlayer player, BlockPos interfacePos, String confirmation) throws IOException {
         requireOperator(player);
         requireCondenser(player, interfacePos);
-        MinecraftServer server = player.server;
+        return commit(player.server, confirmation);
+    }
+
+    public static String commit(MinecraftServer server, String confirmation) throws IOException {
         if (!worldName(server).equals(confirmation)) throw new IllegalArgumentException("confirmation must exactly match the world name");
         Path resetPath = control(server).resolve("reset-request-v2.tsv");
         if (Files.exists(resetPath)) throw new IllegalStateException("reset already committed");
