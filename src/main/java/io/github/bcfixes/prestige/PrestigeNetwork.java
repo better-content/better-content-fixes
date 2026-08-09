@@ -46,7 +46,7 @@ public final class PrestigeNetwork {
         catch (Exception error) { player.displayClientMessage(Component.literal("World Condenser state failed: " + error.getMessage()), false); }
     }
 
-    public enum Action { REFRESH, SET_BIOME, STAGE, CANCEL, COMMIT, PUBLISH, DOWNLOAD, REMOVE }
+    public enum Action { REFRESH, SET_BIOME, STAGE, CANCEL, COMMIT, PUBLISH, DOWNLOAD, REMOVE, PERK_TOGGLE, VOTE_SETTING, SEED_PROPOSE }
 
     public record ActionPacket(Action action, BlockPos pos, String value) {
         static void encode(ActionPacket packet, FriendlyByteBuf buffer) {
@@ -63,7 +63,16 @@ public final class PrestigeNetwork {
             try {
                 switch (packet.action) {
                     case REFRESH -> { }
-                    case SET_BIOME -> PrestigeService.saveDraft(player, packet.value);
+                    case SET_BIOME -> {
+                        PrestigeService.saveDraft(player, packet.value);
+                        PrestigePerks.setSetting(player, "biome", packet.value);
+                    }
+                    case VOTE_SETTING -> {
+                        int separator = packet.value.indexOf('=');
+                        if (separator <= 0 || separator == packet.value.length() - 1) throw new IllegalArgumentException("setting vote is malformed");
+                        PrestigePerks.setSetting(player, packet.value.substring(0, separator), packet.value.substring(separator + 1));
+                    }
+                    case SEED_PROPOSE -> PrestigePerks.proposeSeed(player, packet.value);
                     case STAGE -> PrestigeService.stage(player, packet.pos);
                     case CANCEL -> PrestigeService.cancel(player);
                     case COMMIT -> {
@@ -88,6 +97,7 @@ public final class PrestigeNetwork {
                                 player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
                     }
                     case REMOVE -> PrestigeService.remove(player, packet.value);
+                    case PERK_TOGGLE -> PrestigePerks.toggleRank(player, packet.value);
                 }
             } catch (Exception error) {
                 player.displayClientMessage(Component.literal("World Condenser refused: " + error.getMessage()), false);
@@ -99,12 +109,16 @@ public final class PrestigeNetwork {
     public record ClientEntry(String id, String author, String name, long size, String sha256) {}
     public record StatePacket(String status, String worldName, BlockPos pos, long total, long unspent, long generation, String selectedBiome,
                               String author, boolean operator, List<String> biomes, List<String> uploads,
-                              List<ClientEntry> published) {
+                              List<ClientEntry> published, List<String> ownedPerks, List<String> projectedPerks,
+                              List<String> rankedPerks, int perkCapacity, String votedSeason, String votedHour,
+                              String votedMode, String seedProposal) {
         StatePacket(PrestigeService.View view, BlockPos pos) {
             this(view.status(), view.worldName(), pos, view.lineage().totalPrestiges(), view.lineage().unspentPoints(), view.lineage().generation(),
                     view.selectedBiome(), view.author(), view.operator(), view.allowedBiomes(), view.ownUploads(),
                     view.published().stream().map(entry -> new ClientEntry(entry.id(), entry.author(), entry.originalName(),
-                            entry.size(), entry.sha256())).toList());
+                            entry.size(), entry.sha256())).toList(), List.copyOf(view.perks().owned()),
+                    List.copyOf(view.perks().projected()), List.copyOf(view.perks().ranked()), view.perks().available(),
+                    view.perks().season(), view.perks().hour(), view.perks().mode(), view.perks().seedProposal());
         }
         static void encode(StatePacket packet, FriendlyByteBuf buffer) {
             buffer.writeUtf(packet.status, 64); buffer.writeUtf(packet.worldName, 128); buffer.writeBlockPos(packet.pos);
@@ -117,6 +131,12 @@ public final class PrestigeNetwork {
                 out.writeUtf(entry.id, 64); out.writeUtf(entry.author, 32); out.writeUtf(entry.name, 256);
                 out.writeLong(entry.size); out.writeUtf(entry.sha256, 64);
             });
+            buffer.writeCollection(packet.ownedPerks, (out, value) -> out.writeUtf(value, 64));
+            buffer.writeCollection(packet.projectedPerks, (out, value) -> out.writeUtf(value, 64));
+            buffer.writeCollection(packet.rankedPerks, (out, value) -> out.writeUtf(value, 64));
+            buffer.writeVarInt(packet.perkCapacity);
+            buffer.writeUtf(packet.votedSeason, 32); buffer.writeUtf(packet.votedHour, 32);
+            buffer.writeUtf(packet.votedMode, 32); buffer.writeUtf(packet.seedProposal, 64);
         }
         static StatePacket decode(FriendlyByteBuf buffer) {
             String status = buffer.readUtf(64); String worldName = buffer.readUtf(128); BlockPos pos = buffer.readBlockPos();
@@ -127,7 +147,14 @@ public final class PrestigeNetwork {
             List<String> uploads = buffer.readList(in -> in.readUtf(256));
             List<ClientEntry> entries = buffer.readList(in -> new ClientEntry(in.readUtf(64), in.readUtf(32),
                     in.readUtf(256), in.readLong(), in.readUtf(64)));
-            return new StatePacket(status, worldName, pos, total, unspent, generation, biome, author, operator, biomes, uploads, entries);
+            List<String> owned = buffer.readList(in -> in.readUtf(64));
+            List<String> projected = buffer.readList(in -> in.readUtf(64));
+            List<String> ranked = buffer.readList(in -> in.readUtf(64));
+            int capacity = buffer.readVarInt();
+            String votedSeason = buffer.readUtf(32); String votedHour = buffer.readUtf(32);
+            String votedMode = buffer.readUtf(32); String seedProposal = buffer.readUtf(64);
+            return new StatePacket(status, worldName, pos, total, unspent, generation, biome, author, operator, biomes, uploads,
+                    entries, owned, projected, ranked, capacity, votedSeason, votedHour, votedMode, seedProposal);
         }
         static void handle(StatePacket packet, Supplier<NetworkEvent.Context> supplier) {
             supplier.get().setPacketHandled(true);

@@ -5,11 +5,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.EntityArgument;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.LevelResource;
@@ -43,23 +47,25 @@ public final class PrestigeCoordinator {
                         return 0;
                     }
                 }))
+                .then(Commands.literal("gui")
+                        .executes(context -> openGui(context.getSource().getPlayerOrException(), 0))
+                        .then(Commands.argument("tab", StringArgumentType.word()).executes(context ->
+                                openGui(context.getSource().getPlayerOrException(), tab(StringArgumentType.getString(context, "tab")))))
+                        .then(Commands.argument("player", EntityArgument.player()).requires(source -> source.hasPermission(4))
+                                .then(Commands.argument("tab", StringArgumentType.word()).executes(context -> openGui(
+                                        EntityArgument.getPlayer(context, "player"), tab(StringArgumentType.getString(context, "tab")))))))
                 .then(Commands.literal("stage").requires(source -> source.hasPermission(4))
-                        .then(Commands.argument("biome", ResourceLocationArgument.id()).executes(context -> {
+                        .executes(context -> {
                             try {
-                                MinecraftServer server = context.getSource().getServer();
-                                String biome = ResourceLocationArgument.getId(context, "biome").toString();
-                                String author = context.getSource().getPlayer() == null
-                                        ? "Server" : context.getSource().getPlayer().getGameProfile().getName();
-                                PrestigeService.saveDraft(server, biome, author);
-                                PrestigeService.stage(server);
-                                context.getSource().sendSuccess(() -> Component.literal("Staged prestige reset to biome "
-                                        + biome + "; commit with /prestige commit " + PrestigeService.worldName(server)), true);
+                                PrestigeService.stage(context.getSource().getServer());
+                                context.getSource().sendSuccess(() -> Component.literal("Staged prestige votes; commit with /prestige commit "
+                                        + PrestigeService.worldName(context.getSource().getServer())), true);
                                 return 1;
                             } catch (Exception error) {
                                 context.getSource().sendFailure(Component.literal("Prestige stage failed: " + error.getMessage()));
                                 return 0;
                             }
-                        })))
+                        }))
                 .then(Commands.literal("cancel").requires(source -> source.hasPermission(4)).executes(context -> {
                     try {
                         PrestigeService.cancel(context.getSource().getServer());
@@ -100,6 +106,9 @@ public final class PrestigeCoordinator {
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         MinecraftServer server = event.getServer();
+        try { PrestigePerks.promoteIfSuccess(server); } catch (Exception error) {
+            server.sendSystemMessage(Component.literal("Prestige perk promotion failed: " + error.getMessage()));
+        }
         Path successorPath = PrestigeService.control(server).resolve("successor-request-v2.tsv");
         if (!Files.isRegularFile(successorPath)) return;
         try {
@@ -132,6 +141,27 @@ public final class PrestigeCoordinator {
         } catch (Exception error) {
             server.sendSystemMessage(Component.literal("Prestige successor health failed: " + error.getMessage()));
         }
+    }
+
+    private static int tab(String raw) {
+        return switch (raw.toLowerCase(java.util.Locale.ROOT)) {
+            case "reset" -> 0;
+            case "perks", "perk", "tree" -> 1;
+            case "schematics", "schematic" -> 2;
+            default -> throw new IllegalArgumentException("GUI tab must be reset, perks, or schematics");
+        };
+    }
+
+    private static int openGui(ServerPlayer player, int tab) {
+        NetworkHooks.openScreen(player, new SimpleMenuProvider(
+                (id, inventory, ignored) -> new WorldCondenserMenu(id, inventory, BlockPos.ZERO, true, tab),
+                Component.literal("Prestige")), buffer -> {
+            buffer.writeBlockPos(BlockPos.ZERO);
+            buffer.writeBoolean(true);
+            buffer.writeVarInt(tab);
+        });
+        PrestigeNetwork.sendState(player);
+        return 1;
     }
 
     private static boolean freshDirectory(Path path) throws java.io.IOException {

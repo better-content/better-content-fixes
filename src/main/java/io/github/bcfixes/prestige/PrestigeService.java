@@ -17,7 +17,7 @@ import java.util.Locale;
 public final class PrestigeService {
     public record View(String status, String worldName, PrestigeContracts.Lineage lineage, String selectedBiome,
                        String author, List<String> allowedBiomes, List<String> ownUploads,
-                       List<SchematicLibrary.Entry> published, boolean operator) {}
+                       List<SchematicLibrary.Entry> published, boolean operator, PrestigePerks.Snapshot perks) {}
 
     private PrestigeService() {}
 
@@ -86,7 +86,7 @@ public final class PrestigeService {
                 : SchematicLibrary.ownUploads(server, player.getGameProfile().getName()).stream()
                 .map(name -> player.getGameProfile().getName() + "/" + name).toList();
         return new View(status, worldName(server), lineage, biome, author, allowedBiomes(server), uploads,
-                SchematicLibrary.list(server), operator);
+                SchematicLibrary.list(server), operator, PrestigePerks.snapshot(player));
     }
 
     public static void saveDraft(ServerPlayer player, String biome) throws IOException {
@@ -121,6 +121,7 @@ public final class PrestigeService {
         if (!allowedBiomes(server).contains(draft.biome())) throw new IllegalStateException("draft biome is no longer allowlisted");
         PrestigeContracts.writeStaged(control(server).resolve("staged-request-v2.tsv"), new PrestigeContracts.Staged(
                 draft.lineageId(), draft.biome(), draft.author(), draft.worldName()));
+        PrestigePerks.stage(server);
     }
 
     public static void cancel(ServerPlayer player) throws IOException {
@@ -131,6 +132,7 @@ public final class PrestigeService {
     public static void cancel(MinecraftServer server) throws IOException {
         if (Files.exists(control(server).resolve("reset-request-v2.tsv"))) throw new IllegalStateException("committed reset cannot be cancelled in-game");
         Files.deleteIfExists(control(server).resolve("staged-request-v2.tsv"));
+        PrestigePerks.cancelStage(server);
     }
 
     public static String commit(ServerPlayer player, BlockPos interfacePos, String confirmation) throws IOException {
