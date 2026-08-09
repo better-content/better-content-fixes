@@ -202,7 +202,6 @@ public final class WorldCondenserScreen extends AbstractContainerScreen<WorldCon
         if (tab == 1) {
             graphics.drawString(font, "Rank up to " + state.perkCapacity() + " perks; winners apply after health.",
                     10, 50, 0xffffd08a, false);
-            graphics.drawString(font, "✓ owned   ◇ projected   number = ballot rank", 10, 230, 0xffb8d8ff, false);
         }
     }
 
