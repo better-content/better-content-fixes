@@ -65,7 +65,7 @@ public final class PrestigePerks {
         Path path = ownedPath(server);
         if (!Files.isRegularFile(path)) return Set.of();
         List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
-        if (lines.size() < 3 || !lines.get(0).equals(OWNED_MAGIC) || !lines.get(1).startsWith("lineage\t")) {
+        if (lines.size() < 2 || !lines.get(0).equals(OWNED_MAGIC) || !lines.get(1).startsWith("lineage\t")) {
             throw new IllegalArgumentException("invalid prestige perk ledger");
         }
         Set<String> result = new LinkedHashSet<>();
@@ -224,7 +224,6 @@ public final class PrestigePerks {
     }
 
     public static void stage(MinecraftServer server) throws IOException {
-        Set<String> owned = owned(server);
         List<String> winners = projected(server);
         PrestigeContracts.Lineage lineage = PrestigeService.lineage(server);
         List<String> lines = new ArrayList<>(List.of(STAGED_MAGIC, "lineage\t" + lineage.lineageId(),
