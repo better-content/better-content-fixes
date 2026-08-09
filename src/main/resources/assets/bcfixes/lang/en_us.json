@@ -16,11 +16,5 @@
   "block.bcfixes.slate_regolith_farmland": "Slate Regolith Farmland",
   "block.bcfixes.stone_regolith_farmland": "Stone Regolith Farmland",
   "block.bcfixes.white_granite_regolith_farmland": "White Granite Regolith Farmland",
-  "block.bcfixes.rain_collector": "Rain Collector",
-  "block.bcfixes.world_condenser_hull": "World Condenser Hull",
-  "block.bcfixes.world_condenser_interface": "World Condenser Interface",
-  "screen.bcfixes.world_condenser": "World Condenser",
-  "message.bcfixes.condenser_attuned": "The World Condenser accepts the Apprentice Blood Orb's signature.",
-  "message.bcfixes.condenser_needs_orb": "Attune the Interface with a bound Apprentice Blood Orb.",
-  "message.bcfixes.condenser_unformed": "Requires a hollow 3x3x3 shell: 25 Hulls and one outward-facing Interface."
+  "block.bcfixes.rain_collector": "Rain Collector"
 }
