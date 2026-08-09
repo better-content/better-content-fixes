@@ -138,7 +138,7 @@ public final class WorldCondenserScreen extends AbstractContainerScreen<WorldCon
             }
         }
         addRenderableWidget(Button.builder(Component.literal("Back to reset"), button -> { tab = 0; rebuild(); })
-                .bounds(x, topPos + 208, 188, 20).build());
+                .bounds(x, topPos + 194, 188, 20).build());
         addRenderableWidget(Button.builder(Component.literal("Refresh votes"), button ->
                 PrestigeNetwork.sendAction(PrestigeNetwork.Action.REFRESH, actionPos(), ""))
                 .bounds(x + 202, topPos + 208, 188, 20).build());
@@ -203,11 +203,6 @@ public final class WorldCondenserScreen extends AbstractContainerScreen<WorldCon
             graphics.drawString(font, "Rank up to " + state.perkCapacity() + " perks; winners apply after health.",
                     10, 50, 0xffffd08a, false);
             graphics.drawString(font, "✓ owned   ◇ projected   number = ballot rank", 10, 230, 0xffb8d8ff, false);
-        } else if (tab == 0) {
-            graphics.drawString(font, "Reset completes only after the successor is healthy.", 10, 145, 0xffffb0b0, false);
-            graphics.drawString(font, "Commit confirmation: type " + state.worldName(), 10, 155, 0xffffd08a, false);
-        } else {
-            graphics.drawString(font, "Schematics are plans; Create still requires every material.", 10, 196, 0xffb8d8ff, false);
         }
     }
 
