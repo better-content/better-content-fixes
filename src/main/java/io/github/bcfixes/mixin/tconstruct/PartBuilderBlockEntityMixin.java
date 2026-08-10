@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import slimeknights.tconstruct.tables.block.entity.table.PartBuilderBlockEntity;
+import io.github.bcfixes.tconstruct.FreehandPattern;
 
 /** Makes an empty Part Builder pattern slot behave like its reusable blank-pattern substrate. */
 @Mixin(value = PartBuilderBlockEntity.class, remap = false)
