@@ -41,10 +41,10 @@ public final class BcFixesConfig {
                 .define("unearthedRegolithSoils", true);
         DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES = builder
                 .comment(
-                        "Deconstructs Dynamic Trees trees when their rooty soil block no longer has a solid supporting block underneath.",
-                        "Catches both immediate support loss from block updates and preexisting floating rooty soils when a chunk loads.",
-                        "Applies to base Dynamic Trees rooty blocks and extension species that anchor through the same rooty soil system.")
-                .define("destroyUnsupportedTrees", true);
+                        "Opt-in administrative repair for unsupported Dynamic Trees only.",
+                        "Disabled by default because its chunk-load scan can alter an already-generated world.",
+                        "Enable only after a verified backup and an operator-approved maintenance window.")
+                .define("destroyUnsupportedTrees", false);
         builder.pop();
 
         builder.push("pollution");
