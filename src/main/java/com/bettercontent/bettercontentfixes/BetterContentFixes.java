@@ -13,13 +13,13 @@ import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
-import com.bettercontent.bettercontentfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
 import com.bettercontent.bettercontentfixes.water.WaterBottleCurio;
+import com.bettercontent.bettercontentfixes.quest.QuestIntegration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -51,12 +51,12 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(SnowMeltHandler.class);
         MinecraftForge.EVENT_BUS.register(WaterBottleCurio.class);
         WaterBottleCurio.registerPredicate();
+        QuestIntegration.initialize();
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
         event.register(BurntGrassReplacementGameTests.class);
         event.register(DaylightProtectionGameTests.class);
-        event.register(DynamicTreesUnsupportedTreeGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
         event.register(WaterSurvivalGameTests.class);

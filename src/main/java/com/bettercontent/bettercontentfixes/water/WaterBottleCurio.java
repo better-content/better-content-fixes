@@ -14,6 +14,7 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import top.theillusivec4.curios.api.CuriosApi;
+import com.bettercontent.bettercontentfixes.quest.QuestCriteria;
 
 public final class WaterBottleCurio {
     public static final String SLOT = "water";
@@ -42,6 +43,7 @@ public final class WaterBottleCurio {
                 ItemStack empty = new ItemStack(Items.GLASS_BOTTLE);
                 if (!player.getInventory().add(empty)) player.drop(empty, false);
                 slot.getStacks().setStackInSlot(0, stack);
+                QuestCriteria.trigger(player, "water_curio_drink");
             });
         }));
     }

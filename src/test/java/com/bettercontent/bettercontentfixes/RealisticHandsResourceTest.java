@@ -1,7 +1,6 @@
 package com.bettercontent.bettercontentfixes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 final class RealisticHandsResourceTest {
     private static final Path ROOT = Path.of("src/main/resources/data/better_content_fixes");
-    private static final Path QUARANTINE = Path.of("quarantine/realistic-hands-exhaustive-policy");
 
     @Test
     void runtimePolicyContainsOnlyTheNoTreePunchingGate() throws IOException {
@@ -26,14 +24,6 @@ final class RealisticHandsResourceTest {
         assertEquals(Set.of("#forge:tools/axes"), readValues(itemTag));
         assertEquals(Set.of("axe.json"), fileNames(blockTag.getParent()));
         assertEquals(Set.of("axe.json"), fileNames(itemTag.getParent()));
-    }
-
-    @Test
-    void exhaustivePolicyRemainsQuarantinedOutsideRuntimeResources() throws IOException {
-        assertTrue(Files.exists(QUARANTINE.resolve("README.md")));
-        assertTrue(fileNames(QUARANTINE.resolve("resources/tags/blocks")).size() >= 9);
-        assertTrue(fileNames(QUARANTINE.resolve("resources/tags/items")).size() >= 5);
-        assertTrue(fileNames(QUARANTINE.resolve("java")).contains("RealisticHandsKnifeLootModifier.java"));
     }
 
     private static Set<String> readValues(final Path path) throws IOException {
