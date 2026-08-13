@@ -1,7 +1,7 @@
-package io.github.bcfixes.compat;
+package com.bettercontent.bettercontentfixes.compat;
 
 import com.mojang.serialization.Codec;
-import io.github.bcfixes.BetterContentFixes;
+import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

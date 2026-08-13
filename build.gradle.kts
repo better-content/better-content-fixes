@@ -7,24 +7,11 @@ plugins {
     id("org.spongepowered.mixin") version "0.7.+"
 }
 
-group = property("mod_group_id") as String
+group = "com.bettercontent"
 version = property("mod_version") as String
 val mixinExtrasVersion = "0.5.0"
-val hyleCompileJar = System.getenv("BC_HYLE_JAR")
-    ?: "../../cache/packwiz-downloads/mods/Hyle-2.0.0-1.20.1-forge-all.jar"
-val thirstCompileJar = System.getenv("BC_THIRST_JAR")
-    ?: "../../cache/packwiz-downloads/mods/ThirstWasTaken-1.20.1-1.4.0.jar"
-val weather2CompileJar = System.getenv("BC_WEATHER2_JAR")
-    ?: "../../cache/packwiz-downloads/mods/weather2-1.20.1-2.8.3.jar"
-val curiosCompileJar = System.getenv("BC_CURIOS_JAR")
-    ?: "../../cache/packwiz-downloads/mods/curios-forge-5.14.1+1.20.1.jar"
-val tconCompileJar = System.getenv("BC_TCON_JAR")
-    ?: "../../cache/packwiz-downloads/mods/TConstruct-1.20.1-3.11.2.166.jar"
-val mantleCompileJar = System.getenv("BC_MANTLE_JAR")
-    ?: "../../cache/packwiz-downloads/mods/Mantle-1.20.1-1.11.104.jar"
-
 base {
-    archivesName.set(property("mod_id") as String)
+    archivesName.set(property("artifact_name") as String)
 }
 
 java {
@@ -65,17 +52,18 @@ repositories {
     maven("https://harleyoconnor.com/maven")
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.llamalad7.mixinextras.org/releases/")
+    maven("https://www.cursemaven.com") { content { includeGroup("curse.maven") } }
     mavenCentral()
 }
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
-    compileOnly(files(hyleCompileJar))
-    compileOnly(files(thirstCompileJar))
-    compileOnly(files(weather2CompileJar))
-    compileOnly(files(curiosCompileJar))
-    compileOnly(fg.deobf(files(mantleCompileJar)))
-    compileOnly(fg.deobf(files(tconCompileJar)))
+    compileOnly(fg.deobf("curse.maven:hyle-609850:7736352"))
+    compileOnly(fg.deobf("curse.maven:thirst-was-taken-679270:6660408"))
+    compileOnly(fg.deobf("curse.maven:weather-storms-tornadoes-237746:5244118"))
+    compileOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
+    compileOnly(fg.deobf("curse.maven:mantle-74924:7563777"))
+    compileOnly(fg.deobf("curse.maven:tinkers-construct-74072:7449219"))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
@@ -159,7 +147,7 @@ tasks.processResources {
 }
 
 mixin {
-    config("bcfixes.mixins.json")
+    config("better_content_fixes.mixins.json")
 }
 
 jacoco {
@@ -176,7 +164,7 @@ tasks.jacocoTestReport {
         files(classDirectories.files.map {
             fileTree(it) {
                 include(
-                    "io/github/bcfixes/compat/BurntGrassReplacementDefinitions*"
+                    "com/bettercontent/bettercontentfixes/compat/BurntGrassReplacementDefinitions*"
                 )
             }
         })
@@ -189,7 +177,7 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = "CLASS"
-            includes = listOf("io.github.bcfixes.compat.BurntGrassReplacementDefinitions")
+            includes = listOf("com.bettercontent.bettercontentfixes.compat.BurntGrassReplacementDefinitions")
             limit {
                 counter = "LINE"
                 value = "COVEREDRATIO"

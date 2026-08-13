@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{ "type": "minecraft:item", "name": "better_content_fixes:rain_collector" }],
+    "conditions": [{ "condition": "minecraft:survives_explosion" }]
+  }]
+}

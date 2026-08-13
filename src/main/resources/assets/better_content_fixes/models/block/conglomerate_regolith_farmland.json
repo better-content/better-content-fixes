@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_farmland",
+  "textures": {
+    "dirt": "unearthed:block/conglomerate_regolith",
+    "top": "better_content_fixes:block/conglomerate_regolith_farmland"
+  }
+}

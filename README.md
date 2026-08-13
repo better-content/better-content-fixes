@@ -18,11 +18,20 @@ log gate.
 
 Deploy the reobfuscated jar from:
 
-- `build/libs/bcfixes-<version>.jar`
-- `build/libs/bcfixes-<version>-all.jar`
+- `build/libs/better-content-fixes-<version>.jar`
+- `build/libs/better-content-fixes-<version>-all.jar`
 
 The pack currently tracks the canonical release jar in `mods/`, not source outputs or IDE runtime state.
 
 ## Community and support
 
 For modpack and mod discussion, playtest feedback, and bug reports, join the [Better Content Discord](https://discord.gg/EkRnZbzqS9).
+
+## Canonical identity
+
+- Repository and Gradle project: `better-content-fixes`
+- Mod ID and resource namespace: `better_content_fixes`
+- Maven group: `com.bettercontent`
+- Runtime artifact: `build/libs/better-content-fixes-<version>.jar`
+
+The canonical identity is a clean break. Legacy mod IDs, resource namespaces, configuration paths, commands, network channels, and saved-data keys are not migrated or aliased.

@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_bottom",
+    "up": "burnt:block/burnt_grass",
+    "north": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_side",
+    "east": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_side",
+    "south": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_side",
+    "west": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_side",
+    "particle": "better_content_fixes:block/burnt_rooty_frozen_aether_grass_block_bottom"
+  },
+  "render_type": "solid"
+}

@@ -1,4 +1,4 @@
-package io.github.bcfixes.compat;
+package com.bettercontent.bettercontentfixes.compat;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

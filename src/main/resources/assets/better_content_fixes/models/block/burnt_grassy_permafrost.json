@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "better_content_fixes:block/burnt_grassy_permafrost_bottom",
+    "up": "burnt:block/burnt_grass",
+    "north": "better_content_fixes:block/burnt_grassy_permafrost_side",
+    "east": "better_content_fixes:block/burnt_grassy_permafrost_side",
+    "south": "better_content_fixes:block/burnt_grassy_permafrost_side",
+    "west": "better_content_fixes:block/burnt_grassy_permafrost_side",
+    "particle": "better_content_fixes:block/burnt_grassy_permafrost_bottom"
+  },
+  "render_type": "solid"
+}

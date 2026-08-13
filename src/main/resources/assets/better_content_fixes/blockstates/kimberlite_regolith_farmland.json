@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "moisture=0": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=1": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=2": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=3": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=4": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=5": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=6": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland"
+    },
+    "moisture=7": {
+      "model": "better_content_fixes:block/kimberlite_regolith_farmland_moist"
+    }
+  }
+}

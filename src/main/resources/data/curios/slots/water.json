@@ -3,6 +3,6 @@
   "order": 90,
   "icon": "curios:slot/empty_curio_slot",
   "validators": [
-    "bcfixes:water_bottle"
+    "better_content_fixes:water_bottle"
   ]
 }
