@@ -50,12 +50,18 @@ final class QuestInfrastructureTest {
         assertEquals(Set.of("class_selector_start_finalized", "tcon_station_tool_repaired", "ship_assembled", "font_enter",
                 "font_aggregate_return", "water_curio_drink", "regolith_crop_harvest", "rich_soil_tilled",
                 "starcatcher_edible_catch", "first_finished_ferment", "frame_camouflaged", "frame_reshaped",
-                "frame_custom_surface", "functional_frame_used", "formed_tcon_smeltery", "manual_workcell_run"),
+                "frame_custom_surface", "functional_frame_used", "formed_tcon_smeltery", "manual_workcell_run",
+                "shelter_completed", "fresh_food_stored", "provisions_packed", "animal_husbandry",
+                "planted_harvest", "transplanted_food_harvest", "offseason_growing", "balanced_diet",
+                "ventilation_network", "book_burned"),
                 GameplayCriterionNames.SUPPORTED);
-        assertEquals(Set.of("fiahi_temperature_changed", "water_purity_3", "food_pouch_loaded",
+        Set<String> basePredicates = Set.of("fiahi_temperature_changed", "water_purity_3", "food_pouch_loaded",
                 "armor_with_inserted_insulation", "tempered_waterskin", "any_tcon_sand_cast",
-                "any_tcon_permanent_cast", "tcon_functional_metal_part", "tcon_tool_with_metal_functional_part"),
-                NamedStackPredicates.SUPPORTED);
+                "any_tcon_permanent_cast", "tcon_functional_metal_part", "tcon_tool_with_metal_functional_part");
+        assertTrue(NamedStackPredicates.SUPPORTED.containsAll(basePredicates));
+        assertTrue(NamedStackPredicates.SUPPORTED.contains("enchantment_ars_nouveau_reactive"));
+        assertTrue(NamedStackPredicates.SUPPORTED.contains("enchantment_minecraft_silk_touch"));
+        assertEquals(39, NamedStackPredicates.SUPPORTED.size());
     }
 
     @Test

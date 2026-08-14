@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -92,6 +93,14 @@ public final class QuestIntegration {
         if (player != null) completeCriterion(player, criterion);
     }
 
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || ServerQuestFile.INSTANCE == null) return;
+        TeamData data = ServerQuestFile.INSTANCE.getOrCreateTeamData(player);
+        Quest anchor = ServerQuestFile.INSTANCE.getQuest(policy.anchorQuest());
+        if (anchor != null && data.isCompleted(anchor)) completeCriterion(player, "book_burned");
+    }
+
     private static ServerPlayer reflectedPlayer(Object event) {
         for (String name : new String[]{"getPlayer", "player"}) {
             try {
@@ -124,6 +133,7 @@ public final class QuestIntegration {
         if (anchor == null || data.isCompleted(anchor)) return;
         for (Task task : anchor.getTasks()) data.setProgress(task, task.getMaxProgress());
         if (!data.isCompleted(anchor)) return;
+        completeCriterion(owner, "book_burned");
         book.discard();
         level.sendParticles(ParticleTypes.FLAME, book.getX(), book.getY(), book.getZ(), 24, .35, .35, .35, .03);
         level.sendParticles(ParticleTypes.ENCHANT, book.getX(), book.getY(), book.getZ(), 48, .5, .5, .5, .1);
