@@ -20,6 +20,7 @@ import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
 import com.bettercontent.bettercontentfixes.water.WaterBottleCurio;
 import com.bettercontent.bettercontentfixes.quest.QuestIntegration;
+import com.bettercontent.bettercontentfixes.quest.QuestPredicateGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -59,6 +60,7 @@ public final class BetterContentFixes {
         event.register(DaylightProtectionGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
+        event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
     }
 }
