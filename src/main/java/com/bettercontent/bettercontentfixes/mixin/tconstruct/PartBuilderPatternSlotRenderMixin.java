@@ -14,7 +14,16 @@ public abstract class PartBuilderPatternSlotRenderMixin {
     private static final String PATTERN_SLOT =
         "slimeknights.tconstruct.tables.menu.PartBuilderContainerMenu$PatternSlot";
 
-    @Inject(method = "renderSlot", at = @At("HEAD"), cancellable = true)
+    @Inject(
+        method = {
+            "renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V",
+            "m_280092_(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;)V"
+        },
+        at = @At("HEAD"),
+        cancellable = true,
+        require = 1,
+        remap = false
+    )
     private void better_content_fixes$hidePatternSlot(GuiGraphics graphics, Slot slot, CallbackInfo callback) {
         if (slot.getClass().getName().equals(PATTERN_SLOT)) {
             callback.cancel();

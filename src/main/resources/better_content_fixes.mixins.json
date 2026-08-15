@@ -27,6 +27,7 @@
   "client": [
     "ali.EmiCompatibilityMixin",
     "apotheosis.EnchModuleClientMixin",
+    "tconstruct.PartBuilderPatternSlotBackgroundMixin",
     "tconstruct.PartBuilderPatternSlotRenderMixin"
   ],
   "injectors": {
