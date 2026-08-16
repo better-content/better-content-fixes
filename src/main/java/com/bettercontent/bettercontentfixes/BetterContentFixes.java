@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
+import com.bettercontent.bettercontentfixes.compat.AmbientSurfaceSpawnControl;
 import com.bettercontent.bettercontentfixes.compat.BurntGrassPalette;
 import com.bettercontent.bettercontentfixes.compat.ButcherKnifeDurability;
 import com.bettercontent.bettercontentfixes.compat.FarmlandTrampleProtection;
@@ -11,6 +12,7 @@ import com.bettercontent.bettercontentfixes.compat.DynamicTreesSupportSweepComma
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
+import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
@@ -44,6 +46,7 @@ public final class BetterContentFixes {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
+        MinecraftForge.EVENT_BUS.register(AmbientSurfaceSpawnControl.class);
         MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
@@ -57,6 +60,7 @@ public final class BetterContentFixes {
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
         event.register(BurntGrassReplacementGameTests.class);
+        event.register(AmbientSurfaceSpawnGameTests.class);
         event.register(DaylightProtectionGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);

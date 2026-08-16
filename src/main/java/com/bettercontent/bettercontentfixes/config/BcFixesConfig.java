@@ -21,6 +21,8 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
+    public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_NATURAL_SURFACE_HOSTILES;
+    public static final ForgeConfigSpec.IntValue MOBS_NATURAL_SURFACE_DEPTH;
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
 
     static {
@@ -128,6 +130,17 @@ public final class BcFixesConfig {
                         "This preserves the current pack policy from Protect Mobs From Daylight while moving ownership intobetter_content_fixes.",
                         "Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.")
                 .define("disableSunBurnTick", true);
+        MOBS_BLOCK_NATURAL_SURFACE_HOSTILES = builder
+                .comment(
+                        "Denies natural and chunk-generation monsters near the Overworld terrain surface.",
+                        "The surface is measured with the leaf-ignoring motion-blocking heightmap, so tree canopies do not create ambient spawn pockets.",
+                        "Spawner, structure, event, summon, command, and scripted entity insertion remain unaffected.")
+                .define("blockNaturalSurfaceHostiles", true);
+        MOBS_NATURAL_SURFACE_DEPTH = builder
+                .comment(
+                        "Number of blocks below the local leaf-ignoring terrain surface that remain reserved from ambient monster spawning.",
+                        "A value of 6 denies the surface block and the six-block band beneath it while leaving deeper caves active.")
+                .defineInRange("naturalSurfaceDepth", 6, 0, 64);
         builder.pop();
 
         builder.push("structureGenerationImprover");
@@ -206,6 +219,14 @@ public final class BcFixesConfig {
 
     public static boolean mobsDisableSunBurnTick() {
         return MOBS_DISABLE_SUN_BURN_TICK.get();
+    }
+
+    public static boolean mobsBlockNaturalSurfaceHostiles() {
+        return MOBS_BLOCK_NATURAL_SURFACE_HOSTILES.get();
+    }
+
+    public static int mobsNaturalSurfaceDepth() {
+        return MOBS_NATURAL_SURFACE_DEPTH.get();
     }
 
     public static boolean pollutionDisablePlayerBlockBreakEmissions() {
