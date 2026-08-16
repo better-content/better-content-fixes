@@ -132,8 +132,9 @@ public final class BcFixesConfig {
                 .define("disableSunBurnTick", true);
         MOBS_BLOCK_NATURAL_SURFACE_HOSTILES = builder
                 .comment(
-                        "Denies natural and chunk-generation monsters near the Overworld terrain surface.",
+                        "Denies natural and chunk-generation monsters near the Overworld terrain surface and on tagged grass-covered ground at any depth.",
                         "The surface is measured with the leaf-ignoring motion-blocking heightmap, so tree canopies do not create ambient spawn pockets.",
+                        "The depth-independent ground list is data-driven through the better_content_fixes:ambient_spawn_denied_surfaces block tag.",
                         "Spawner, structure, event, summon, command, and scripted entity insertion remain unaffected.")
                 .define("blockNaturalSurfaceHostiles", true);
         MOBS_NATURAL_SURFACE_DEPTH = builder

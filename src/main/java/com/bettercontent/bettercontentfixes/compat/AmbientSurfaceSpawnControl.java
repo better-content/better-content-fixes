@@ -1,16 +1,22 @@
 package com.bettercontent.bettercontentfixes.compat;
 
+import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-/** Keeps ordinary ambient monsters below the Overworld surface pressure band. */
+/** Keeps ordinary ambient monsters below the Overworld surface pressure band and off grass-covered ground. */
 public final class AmbientSurfaceSpawnControl {
     private AmbientSurfaceSpawnControl() {
     }
@@ -35,6 +41,9 @@ public final class AmbientSurfaceSpawnControl {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 spawnX,
                 spawnZ);
+        final boolean deniedSurface = event.getLevel()
+                .getBlockState(new BlockPos(spawnX, spawnY - 1, spawnZ))
+                .is(Tags.AMBIENT_SPAWN_DENIED_SURFACES);
 
         if (shouldDeny(
                 overworld,
@@ -42,7 +51,8 @@ public final class AmbientSurfaceSpawnControl {
                 spawnType,
                 spawnY,
                 surfaceY,
-                BcFixesConfig.mobsNaturalSurfaceDepth())) {
+                BcFixesConfig.mobsNaturalSurfaceDepth(),
+                deniedSurface)) {
             event.setResult(Event.Result.DENY);
         }
     }
@@ -53,9 +63,10 @@ public final class AmbientSurfaceSpawnControl {
             final MobSpawnType spawnType,
             final int spawnY,
             final int surfaceY,
-            final int surfaceDepth) {
+            final int surfaceDepth,
+            final boolean deniedSurface) {
         return isAmbientSurfaceCandidate(overworld, category, spawnType)
-                && spawnY >= surfaceY - surfaceDepth;
+                && (deniedSurface || spawnY >= surfaceY - surfaceDepth);
     }
 
     private static boolean isAmbientSurfaceCandidate(
@@ -65,5 +76,13 @@ public final class AmbientSurfaceSpawnControl {
         return overworld
                 && category == MobCategory.MONSTER
                 && (spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION);
+    }
+
+    private static final class Tags {
+        private static final TagKey<Block> AMBIENT_SPAWN_DENIED_SURFACES = BlockTags.create(
+                new ResourceLocation(BetterContentFixes.MOD_ID, "ambient_spawn_denied_surfaces"));
+
+        private Tags() {
+        }
     }
 }

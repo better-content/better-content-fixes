@@ -11,24 +11,34 @@ final class AmbientSurfaceSpawnControlTest {
     @Test
     void deniesNaturalAndChunkGenerationMonstersThroughInclusiveSurfaceBand() {
         assertTrue(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.NATURAL, 80, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.NATURAL, 80, 80, 6, false));
         assertTrue(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.CHUNK_GENERATION, 74, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.CHUNK_GENERATION, 74, 80, 6, false));
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.NATURAL, 73, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.NATURAL, 73, 80, 6, false));
+    }
+
+    @Test
+    void deniesAmbientMonstersOnTaggedGroundRegardlessOfDepth() {
+        assertTrue(AmbientSurfaceSpawnControl.shouldDeny(
+                true, MobCategory.MONSTER, MobSpawnType.NATURAL, 20, 80, 6, true));
+        assertTrue(AmbientSurfaceSpawnControl.shouldDeny(
+                true, MobCategory.MONSTER, MobSpawnType.CHUNK_GENERATION, 20, 80, 6, true));
+        assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
+                true, MobCategory.MONSTER, MobSpawnType.EVENT, 20, 80, 6, true));
     }
 
     @Test
     void leavesOtherDimensionsCategoriesAndSpawnSourcesUntouched() {
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                false, MobCategory.MONSTER, MobSpawnType.NATURAL, 80, 80, 6));
+                false, MobCategory.MONSTER, MobSpawnType.NATURAL, 80, 80, 6, true));
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.CREATURE, MobSpawnType.NATURAL, 80, 80, 6));
+                true, MobCategory.CREATURE, MobSpawnType.NATURAL, 80, 80, 6, true));
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.SPAWNER, 80, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.SPAWNER, 80, 80, 6, true));
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.STRUCTURE, 80, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.STRUCTURE, 80, 80, 6, true));
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
-                true, MobCategory.MONSTER, MobSpawnType.EVENT, 80, 80, 6));
+                true, MobCategory.MONSTER, MobSpawnType.EVENT, 80, 80, 6, true));
     }
 }

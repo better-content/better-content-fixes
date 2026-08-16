@@ -72,6 +72,37 @@ public final class AmbientSurfaceSpawnGameTests {
         helper.succeed();
     }
 
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
+    public static void taggedGrassDeniesAmbientMonstersAtAnyDepth(final GameTestHelper helper) {
+        final BlockPos testColumn = helper.absolutePos(new BlockPos(2, 1, 2));
+        final int surfaceY = helper.getLevel().getHeight(
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                testColumn.getX(),
+                testColumn.getZ());
+        final BlockPos deepPosition = new BlockPos(testColumn.getX(), surfaceY - 12, testColumn.getZ());
+        helper.getLevel().setBlockAndUpdate(deepPosition.below(), Blocks.GRASS_BLOCK.defaultBlockState());
+
+        final MobSpawnEvent.PositionCheck natural = positionCheck(helper, deepPosition, MobSpawnType.NATURAL);
+        if (natural.getResult() != Event.Result.DENY) {
+            helper.fail("Expected tagged grass to deny natural monsters below the heightmap surface band");
+            return;
+        }
+
+        final MobSpawnEvent.PositionCheck chunkGeneration =
+                positionCheck(helper, deepPosition, MobSpawnType.CHUNK_GENERATION);
+        if (chunkGeneration.getResult() != Event.Result.DENY) {
+            helper.fail("Expected tagged grass to deny chunk-generation monsters below the heightmap surface band");
+            return;
+        }
+
+        final MobSpawnEvent.PositionCheck eventSpawn = positionCheck(helper, deepPosition, MobSpawnType.EVENT);
+        if (eventSpawn.getResult() == Event.Result.DENY) {
+            helper.fail("Expected authored event spawning on tagged grass to remain available");
+            return;
+        }
+        helper.succeed();
+    }
+
     private static MobSpawnEvent.PositionCheck positionCheck(
             final GameTestHelper helper,
             final BlockPos position,
