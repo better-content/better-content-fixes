@@ -17,6 +17,7 @@ import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTe
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
+import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
@@ -64,6 +65,7 @@ public final class BetterContentFixes {
         event.register(DaylightProtectionGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
+        event.register(VanillaBoatGameTests.class);
         event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
     }

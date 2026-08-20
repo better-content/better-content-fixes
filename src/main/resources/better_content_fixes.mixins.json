@@ -19,6 +19,7 @@
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.MobMixin",
+    "minecraft.BoatMixin",
     "minecraft.ItemEntityMixin",
     "pollution.PlayerEventsMixin",
     "sgi.ChunkGeneratorMixin",

@@ -24,6 +24,8 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_NATURAL_SURFACE_HOSTILES;
     public static final ForgeConfigSpec.IntValue MOBS_NATURAL_SURFACE_DEPTH;
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
+    public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -55,6 +57,19 @@ public final class BcFixesConfig {
                         "Cancels Pollution of the Realms emissions from its player block-break event only.",
                         "World-level block-break emissions remain available to Create drills, contraptions, explosions, and other automation.")
                 .define("disablePlayerBlockBreakEmissions", true);
+        builder.pop();
+
+        builder.push("vanillaBoats");
+        VANILLA_BOAT_DURABILITY_MULTIPLIER = builder
+                .comment(
+                        "Multiplier applied to the accumulated-damage destruction threshold of vanilla boats and chest boats.",
+                        "Movement, collisions, passengers, damage accumulation, and modded vessel entity types are unchanged.")
+                .defineInRange("durabilityMultiplier", 10.0D, 1.0D, 100.0D);
+        VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP = builder
+                .comment(
+                        "Suppresses the boat or chest-boat item when a vanilla vessel is destroyed.",
+                        "Chest-boat inventory contents still drop normally; unrelated entity drops are unchanged.")
+                .define("suppressDestructionDrop", true);
         builder.pop();
 
         builder.push("hyle");
@@ -232,6 +247,14 @@ public final class BcFixesConfig {
 
     public static boolean pollutionDisablePlayerBlockBreakEmissions() {
         return isLoaded("adpother") && POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS.get();
+    }
+
+    public static double vanillaBoatDurabilityMultiplier() {
+        return VANILLA_BOAT_DURABILITY_MULTIPLIER.get();
+    }
+
+    public static boolean vanillaBoatSuppressDestructionDrop() {
+        return VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {
