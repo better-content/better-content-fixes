@@ -2,11 +2,12 @@ package com.bettercontent.bettercontentfixes.water;
 
 import dev.ghen.thirst.api.ThirstHelper;
 import dev.ghen.thirst.content.purity.WaterPurity;
-import dev.ghen.thirst.content.thirst.PlayerThirst;
 import dev.ghen.thirst.foundation.common.capability.ModCapabilities;
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
@@ -19,6 +20,7 @@ import com.bettercontent.bettercontentfixes.quest.QuestCriteria;
 public final class WaterBottleCurio {
     public static final String SLOT = "water";
     public static final ResourceLocation PREDICATE = new ResourceLocation(BetterContentFixes.MOD_ID, "water_bottle");
+    private static final String FRACTION_KEY = "waterBottleFraction";
 
     private WaterBottleCurio() {}
 
@@ -34,18 +36,69 @@ public final class WaterBottleCurio {
             ItemStack stack = slot.getStacks().getStackInSlot(0);
             if (!isWaterBottle(stack) || !ThirstHelper.itemRestoresThirst(stack)) return;
             player.getCapability(ModCapabilities.PLAYER_THIRST).ifPresent(thirst -> {
-                int restored = Math.max(0, ThirstHelper.getThirst(stack));
-                if (restored == 0 || thirst.getThirst() > 20 - restored) return;
-                ItemStack drink = stack.copy();
-                drink.setCount(1);
-                PlayerThirst.drink(drink, player);
-                stack.shrink(1);
-                ItemStack empty = new ItemStack(Items.GLASS_BOTTLE);
-                if (!player.getInventory().add(empty)) player.drop(empty, false);
-                slot.getStacks().setStackInSlot(0, stack);
-                QuestCriteria.trigger(player, "water_curio_drink");
+                final int bottleThirst = Math.max(0, ThirstHelper.getThirst(stack));
+                final int bottleQuenched = Math.max(0, ThirstHelper.getQuenched(stack));
+                int missingThirst = Math.max(0, 20 - thirst.getThirst());
+                if (bottleThirst == 0 || missingThirst == 0) return;
+
+                final ItemStack remainingBottles = stack.copy();
+                double fraction = getBottleFraction(player);
+                int thirstRestored = 0;
+                int quenchedRestored = 0;
+                int bottlesConsumed = 0;
+
+                while (missingThirst > 0 && !remainingBottles.isEmpty()) {
+                    if (fraction == 0.0D && !WaterPurity.givePurityEffects(player, remainingBottles)) {
+                        remainingBottles.shrink(1);
+                        bottlesConsumed++;
+                        break;
+                    }
+
+                    final WaterBottleConsumption.Result result = WaterBottleConsumption.calculate(
+                            missingThirst, bottleThirst, bottleQuenched, fraction);
+                    if (result.thirstRestored() == 0) break;
+                    thirstRestored += result.thirstRestored();
+                    quenchedRestored += result.quenchedRestored();
+                    missingThirst -= result.thirstRestored();
+                    fraction = result.remainingFraction();
+                    if (!result.bottleCompleted()) break;
+                    remainingBottles.shrink(1);
+                    bottlesConsumed++;
+                }
+
+                if (thirstRestored > 0) {
+                    thirst.drink(player, thirstRestored, quenchedRestored);
+                    thirst.updateThirstData(player);
+                }
+                setBottleFraction(player, fraction);
+                if (bottlesConsumed > 0) {
+                    slot.getStacks().setStackInSlot(0, remainingBottles);
+                    returnEmptyBottles(player, bottlesConsumed);
+                    QuestCriteria.trigger(player, "water_curio_drink");
+                }
             });
         }));
+    }
+
+    static double getBottleFraction(final ServerPlayer player) {
+        final CompoundTag persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        final CompoundTag modData = persisted.getCompound(BetterContentFixes.MOD_ID);
+        return WaterBottleConsumption.normalizeFraction(modData.getDouble(FRACTION_KEY));
+    }
+
+    private static void setBottleFraction(final ServerPlayer player, final double fraction) {
+        final CompoundTag root = player.getPersistentData();
+        final CompoundTag persisted = root.getCompound(Player.PERSISTED_NBT_TAG);
+        final CompoundTag modData = persisted.getCompound(BetterContentFixes.MOD_ID);
+        modData.putDouble(FRACTION_KEY, WaterBottleConsumption.normalizeFraction(fraction));
+        persisted.put(BetterContentFixes.MOD_ID, modData);
+        root.put(Player.PERSISTED_NBT_TAG, persisted);
+    }
+
+    private static void returnEmptyBottles(final ServerPlayer player, final int count) {
+        final ItemStack emptyBottles = new ItemStack(Items.GLASS_BOTTLE, count);
+        player.getInventory().add(emptyBottles);
+        if (!emptyBottles.isEmpty()) player.drop(emptyBottles, false);
     }
 
     public static boolean isWaterBottle(ItemStack stack) {

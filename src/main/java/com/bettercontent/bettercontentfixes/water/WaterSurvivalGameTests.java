@@ -1,15 +1,27 @@
 package com.bettercontent.bettercontentfixes.water;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
+import com.mojang.authlib.GameProfile;
+import dev.ghen.thirst.content.purity.WaterPurity;
+import dev.ghen.thirst.foundation.common.capability.ModCapabilities;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import top.theillusivec4.curios.api.CuriosApi;
 
 @PrefixGameTestTemplate(false)
 public final class WaterSurvivalGameTests {
@@ -67,5 +79,85 @@ public final class WaterSurvivalGameTests {
             helper.assertBlockProperty(campfirePos, CampfireBlock.LIT, true);
             helper.succeed();
         });
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)
+    public static void waterCurioTopsOffAndPersistsFractionWithoutBottle(final GameTestHelper helper) {
+        final ServerPlayer player = fakePlayer(helper, "fractional-top-off");
+        final var thirst = player.getCapability(ModCapabilities.PLAYER_THIRST).resolve()
+                .orElseThrow(() -> new IllegalStateException("Mock player is missing the Thirst capability"));
+        final var waterSlot = CuriosApi.getCuriosInventory(player).resolve()
+                .flatMap(handler -> handler.getStacksHandler(WaterBottleCurio.SLOT))
+                .orElseThrow(() -> new IllegalStateException("Mock player is missing the water Curios slot"));
+        waterSlot.getStacks().setStackInSlot(0, purifiedWaterBottles(2));
+        thirst.setThirst(19);
+        thirst.setQuenched(0);
+
+        tickWaterCurio(player);
+        helper.assertTrue(thirst.getThirst() == 20, "One missing thirst point should be restored immediately");
+        helper.assertTrue(waterSlot.getStacks().getStackInSlot(0).getCount() == 2,
+                "A one-point top-off should not consume a full bottle");
+        helper.assertTrue(closeTo(WaterBottleCurio.getBottleFraction(player), 1.0D / 6.0D),
+                "The first top-off should persist one sixth of a bottle");
+
+        final ItemStack equippedBottles = waterSlot.getStacks().extractItem(0, 2, false);
+        thirst.setThirst(19);
+        tickWaterCurio(player);
+        helper.assertTrue(thirst.getThirst() == 19, "An empty water slot must not provide hydration");
+        helper.assertTrue(closeTo(WaterBottleCurio.getBottleFraction(player), 1.0D / 6.0D),
+                "Removing the bottle must not clear fractional progress");
+        waterSlot.getStacks().setStackInSlot(0, equippedBottles);
+
+        for (int use = 0; use < 5; use++) {
+            thirst.setThirst(19);
+            tickWaterCurio(player);
+        }
+        helper.assertTrue(thirst.getThirst() == 20, "The sixth partial use should still top off thirst");
+        helper.assertTrue(thirst.getQuenched() == 8, "A complete fractional bottle should restore eight quenched points");
+        helper.assertTrue(waterSlot.getStacks().getStackInSlot(0).getCount() == 1,
+                "Exactly one bottle should be consumed after six one-point top-offs");
+        helper.assertTrue(player.getInventory().countItem(Items.GLASS_BOTTLE) == 1,
+                "Completing a fractional bottle should return one empty bottle");
+        helper.assertTrue(WaterBottleCurio.getBottleFraction(player) == 0.0D,
+                "A completed bottle should reset fractional progress");
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)
+    public static void waterCurioDoesNotBorrowPastAvailableBottle(final GameTestHelper helper) {
+        final ServerPlayer player = fakePlayer(helper, "single-bottle-limit");
+        final var thirst = player.getCapability(ModCapabilities.PLAYER_THIRST).resolve()
+                .orElseThrow(() -> new IllegalStateException("Mock player is missing the Thirst capability"));
+        final var waterSlot = CuriosApi.getCuriosInventory(player).resolve()
+                .flatMap(handler -> handler.getStacksHandler(WaterBottleCurio.SLOT))
+                .orElseThrow(() -> new IllegalStateException("Mock player is missing the water Curios slot"));
+        waterSlot.getStacks().setStackInSlot(0, purifiedWaterBottles(1));
+        thirst.setThirst(0);
+        thirst.setQuenched(0);
+
+        tickWaterCurio(player);
+        helper.assertTrue(thirst.getThirst() == 6, "One equipped bottle should restore only its six thirst points");
+        helper.assertTrue(waterSlot.getStacks().getStackInSlot(0).isEmpty(), "The only equipped bottle should be consumed");
+        helper.assertTrue(WaterBottleCurio.getBottleFraction(player) == 0.0D,
+                "No fraction of an unavailable second bottle should be borrowed");
+        helper.succeed();
+    }
+
+    private static ServerPlayer fakePlayer(final GameTestHelper helper, final String name) {
+        return FakePlayerFactory.get(helper.getLevel(), new GameProfile(UUID.randomUUID(), "bcf-" + name));
+    }
+
+    private static ItemStack purifiedWaterBottles(final int count) {
+        final ItemStack bottles = PotionUtils.setPotion(new ItemStack(Items.POTION, count), Potions.WATER);
+        return WaterPurity.addPurity(bottles, 3);
+    }
+
+    private static void tickWaterCurio(final ServerPlayer player) {
+        player.tickCount += 10 - player.tickCount % 10;
+        WaterBottleCurio.onPlayerTick(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
+    }
+
+    private static boolean closeTo(final double left, final double right) {
+        return Math.abs(left - right) < 1.0E-9D;
     }
 }
