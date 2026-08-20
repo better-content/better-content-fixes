@@ -5,6 +5,7 @@ import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import net.combatroll.client.Keybindings;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +30,7 @@ public final class CombatRollDoubleTapClient {
 
         restoreRollKey();
         Minecraft minecraft = Minecraft.getInstance();
+        handleToggle(minecraft);
         if (!canTrack(minecraft)) {
             TRACKER.reset();
             return;
@@ -53,6 +55,20 @@ public final class CombatRollDoubleTapClient {
             rollKey.setDown(true);
             syntheticRollDown = true;
         }
+    }
+
+    private static void handleToggle(Minecraft minecraft) {
+        if (minecraft.player == null || !BcFixesKeyMappings.TOGGLE_DOUBLE_TAP_DASH.consumeClick()) {
+            return;
+        }
+
+        boolean enabled = !BcFixesClientConfig.combatRollDirectionalDoubleTapEnabled();
+        BcFixesClientConfig.COMBAT_ROLL_DIRECTIONAL_DOUBLE_TAP_ENABLED.set(enabled);
+        BcFixesClientConfig.COMBAT_ROLL_DIRECTIONAL_DOUBLE_TAP_ENABLED.save();
+        TRACKER.reset();
+        minecraft.player.displayClientMessage(Component.translatable(enabled
+                ? "message.better_content_fixes.double_tap_dash.enabled"
+                : "message.better_content_fixes.double_tap_dash.disabled"), true);
     }
 
     private static boolean canTrack(Minecraft minecraft) {
