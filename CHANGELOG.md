@@ -4,7 +4,7 @@
 
 - Rebuilt and fully resynchronized materialized TConstruct tools after login datapack sync so durability and other dynamic stats are authoritative on the first client inventory update.
 - Restored Polymorph recipe selection and persistent choices in TConstruct Crafting Stations.
-- Added configurable same-direction double-tap rolling through Combat Roll, a rebindable in-game toggle key, and replacement of vanilla forward double-tap sprint while preserving the sprint key.
+- Added configurable same-direction double-tap rolling through Combat Roll, suppression while sneaking, a rebindable in-game toggle key, and replacement of vanilla forward double-tap sprint while preserving the sprint key.
 - Capped Explosion Overhaul concussion hold and accumulated durations at 45 seconds for large and repeated blasts.
 - Restored vanilla daylight burning for phantoms while keeping other daylight-sensitive mobs protected.
 - Replaced random wandering-trader arrivals with one recurring themed world visitor on a two-day initial and five-day repeat schedule.

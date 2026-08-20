@@ -36,4 +36,13 @@ final class CombatRollResourceTest {
         assertTrue(language.has("message.better_content_fixes.double_tap_dash.enabled"));
         assertTrue(language.has("message.better_content_fixes.double_tap_dash.disabled"));
     }
+
+    @Test
+    void sneakingSuppressesDoubleTapDashTracking() throws IOException {
+        String client = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/client/CombatRollDoubleTapClient.java"));
+
+        assertTrue(client.contains("!minecraft.options.keyShift.isDown()"));
+        assertTrue(client.contains("!minecraft.player.isShiftKeyDown()"));
+    }
 }

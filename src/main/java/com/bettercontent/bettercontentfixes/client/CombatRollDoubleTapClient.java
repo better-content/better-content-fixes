@@ -76,6 +76,8 @@ public final class CombatRollDoubleTapClient {
                 && BcFixesClientConfig.combatRollDirectionalDoubleTapEnabled()
                 && minecraft.player != null
                 && minecraft.level != null
+                && !minecraft.options.keyShift.isDown()
+                && !minecraft.player.isShiftKeyDown()
                 && minecraft.screen == null
                 && !minecraft.isPaused()
                 && minecraft.isWindowActive();
