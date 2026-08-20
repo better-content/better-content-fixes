@@ -17,5 +17,10 @@
   "block.better_content_fixes.slate_regolith_farmland": "Slate Regolith Farmland",
   "block.better_content_fixes.stone_regolith_farmland": "Stone Regolith Farmland",
   "block.better_content_fixes.white_granite_regolith_farmland": "White Granite Regolith Farmland",
-  "block.better_content_fixes.rain_collector": "Rain Collector"
+  "block.better_content_fixes.rain_collector": "Rain Collector",
+  "entity.better_content_fixes.wandering_trader.naturalist": "Wandering Naturalist",
+  "entity.better_content_fixes.wandering_trader.surveyor": "Wandering Surveyor",
+  "entity.better_content_fixes.wandering_trader.quartermaster": "Wandering Quartermaster",
+  "entity.better_content_fixes.wandering_trader.antiquarian": "Wandering Antiquarian",
+  "message.better_content_fixes.wandering_trader.arrival": "%1$s has arrived in %2$s at %3$s, %4$s, %5$s."
 }

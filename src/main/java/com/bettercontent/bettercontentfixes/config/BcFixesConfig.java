@@ -14,6 +14,14 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue HYLE_RUN_AFTER_UNDERGROUND_DECORATION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
+    public static final ForgeConfigSpec.BooleanValue AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS;
+    public static final ForgeConfigSpec.BooleanValue EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION;
+    public static final ForgeConfigSpec.IntValue EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS;
+    public static final ForgeConfigSpec.BooleanValue WANDERING_TRADER_RECURRING_VISITS;
+    public static final ForgeConfigSpec.IntValue WANDERING_TRADER_INITIAL_DELAY;
+    public static final ForgeConfigSpec.IntValue WANDERING_TRADER_VISIT_INTERVAL;
+    public static final ForgeConfigSpec.IntValue WANDERING_TRADER_RETRY_DELAY;
+    public static final ForgeConfigSpec.BooleanValue WANDERING_TRADER_ANNOUNCE_ARRIVAL;
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
@@ -114,6 +122,46 @@ public final class BcFixesConfig {
                 .define("skipOffThreadEmiRegistration", true);
         builder.pop();
 
+        builder.push("ambientSounds");
+        AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS = builder
+                .comment(
+                        "Retires AmbientSounds streams that Minecraft rejected before playback so their parent sounds can retry later.",
+                        "Minecraft has a finite sound-channel pool; without this recovery, a rejected stream can remain tracked forever and permanently silence that ambient sound.",
+                        "Active streams and streams that have played at least once retain AmbientSounds' normal lifecycle.")
+                .define("retryRejectedStreams", true);
+        builder.pop();
+
+        builder.push("explosionOverhaul");
+        EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION = builder
+                .comment(
+                        "Caps Explosion Overhaul concussion effects so large clustered blasts cannot cause excessively long shell shock.",
+                        "The cap applies to blur, camera sway, low-pass audio, and deafness, including duration accumulated by repeated blasts.")
+                .define("clampConcussionDuration", true);
+        EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS = builder
+                .comment("Maximum concussion hold duration in seconds. Default: 45 seconds.")
+                .defineInRange("maxConcussionDurationSeconds", 45, 1, 100);
+        builder.pop();
+
+        builder.push("wanderingTrader");
+        WANDERING_TRADER_RECURRING_VISITS = builder
+                .comment(
+                        "Replaces the vanilla random wandering-trader chance with one shared recurring world visitor.",
+                        "Vanilla meeting-point placement, biome exclusions, llamas, gamerules, and despawning remain in use.")
+                .define("recurringVisits", true);
+        WANDERING_TRADER_INITIAL_DELAY = builder
+                .comment("Ticks from first enabled world load to the first visit. Default: two Minecraft days.")
+                .defineInRange("initialDelay", 48_000, 0, Integer.MAX_VALUE);
+        WANDERING_TRADER_VISIT_INTERVAL = builder
+                .comment("Ticks between successful visits. Default: five Minecraft days.")
+                .defineInRange("visitInterval", 120_000, 1_200, Integer.MAX_VALUE);
+        WANDERING_TRADER_RETRY_DELAY = builder
+                .comment("Ticks before retrying a due visit when vanilla cannot find a valid spawn position.")
+                .defineInRange("retryDelay", 1_200, 20, 24_000);
+        WANDERING_TRADER_ANNOUNCE_ARRIVAL = builder
+                .comment("Broadcasts the themed trader's dimension and exact block coordinates after a scheduled arrival.")
+                .define("announceArrival", true);
+        builder.pop();
+
         builder.push("burnt");
         BURNT_MODDED_GRASS_REPLACEMENTS = builder
                 .comment(
@@ -144,9 +192,9 @@ public final class BcFixesConfig {
         builder.push("mobs");
         MOBS_DISABLE_SUN_BURN_TICK = builder
                 .comment(
-                        "Forces Mob.isSunBurnTick() to return false.",
-                        "This preserves the current pack policy from Protect Mobs From Daylight while moving ownership intobetter_content_fixes.",
-                        "Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.")
+                        "Forces Mob.isSunBurnTick() to return false for protected mobs.",
+                        "Phantoms and Phantom subclasses retain vanilla daylight burning so exposed phantoms are cleared after sunrise.",
+                        "Other daylight-sensitive mobs remain protected; ordinary fire and non-solar fire damage are unchanged.")
                 .define("disableSunBurnTick", true);
         MOBS_BLOCK_NATURAL_SURFACE_HOSTILES = builder
                 .comment(
@@ -249,6 +297,38 @@ public final class BcFixesConfig {
 
     public static boolean advancedLootInfoSkipOffThreadEmiRegistration() {
         return isLoaded("ali") && isLoaded("emi") && ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION.get();
+    }
+
+    public static boolean ambientSoundsRetryRejectedStreams() {
+        return isLoaded("ambientsounds") && AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS.get();
+    }
+
+    public static boolean explosionOverhaulClampConcussionDuration() {
+        return isLoaded("explosionoverhaul") && EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION.get();
+    }
+
+    public static int explosionOverhaulMaxConcussionDurationSeconds() {
+        return EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS.get();
+    }
+
+    public static boolean wanderingTraderRecurringVisits() {
+        return WANDERING_TRADER_RECURRING_VISITS.get();
+    }
+
+    public static int wanderingTraderInitialDelay() {
+        return WANDERING_TRADER_INITIAL_DELAY.get();
+    }
+
+    public static int wanderingTraderVisitInterval() {
+        return WANDERING_TRADER_VISIT_INTERVAL.get();
+    }
+
+    public static int wanderingTraderRetryDelay() {
+        return WANDERING_TRADER_RETRY_DELAY.get();
+    }
+
+    public static boolean wanderingTraderAnnounceArrival() {
+        return WANDERING_TRADER_ANNOUNCE_ARRIVAL.get();
     }
 
     public static boolean burntModdedGrassReplacements() {

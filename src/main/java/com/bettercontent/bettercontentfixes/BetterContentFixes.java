@@ -11,6 +11,7 @@ import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnearthedSoils;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesSupportSweepCommand;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
+import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
@@ -18,6 +19,7 @@ import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
+import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
@@ -25,6 +27,8 @@ import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
 import com.bettercontent.bettercontentfixes.water.WaterBottleCurio;
 import com.bettercontent.bettercontentfixes.quest.QuestIntegration;
 import com.bettercontent.bettercontentfixes.quest.QuestPredicateGameTests;
+import com.bettercontent.bettercontentfixes.trader.WanderingTraderGameTests;
+import com.bettercontent.bettercontentfixes.trader.WanderingTraderVisits;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
@@ -40,6 +44,7 @@ public final class BetterContentFixes {
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
         BurntGrassPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -57,6 +62,7 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(SnowMeltHandler.class);
         MinecraftForge.EVENT_BUS.register(WaterBottleCurio.class);
+        MinecraftForge.EVENT_BUS.register(WanderingTraderVisits.class);
         WaterBottleCurio.registerPredicate();
         QuestIntegration.initialize();
     }
@@ -67,9 +73,11 @@ public final class BetterContentFixes {
         event.register(DaylightProtectionGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
+        event.register(SourceberryFarmlandGameTests.class);
         event.register(VanillaBoatGameTests.class);
         event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
+        event.register(WanderingTraderGameTests.class);
         if (ModList.get().isLoaded("sophisticatedstorage")) {
             event.register(SophisticatedBarrelHopperGameTests.class);
         }

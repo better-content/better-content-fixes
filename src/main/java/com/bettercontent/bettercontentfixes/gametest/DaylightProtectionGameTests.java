@@ -6,6 +6,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -25,6 +26,20 @@ public final class DaylightProtectionGameTests {
     public static void skeletonsDoNotIgniteUnderOpenSky(final GameTestHelper helper) {
         final Skeleton skeleton = helper.spawn(EntityType.SKELETON, new BlockPos(2, 2, 2));
         validateMobStaysOutOfSunBurn(helper, skeleton, "skeleton");
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 400)
+    public static void phantomsRetainVanillaDaylightBurning(final GameTestHelper helper) {
+        final Phantom phantom = helper.spawn(EntityType.PHANTOM, new BlockPos(2, 2, 2));
+        helper.getLevel().setDayTime(6000L);
+        helper.getLevel().setWeatherParameters(0, 0, false, false);
+        helper.runAfterDelay(200, () -> {
+            if (!phantom.isOnFire()) {
+                helper.fail("Expected phantom to retain vanilla burning under open daylight");
+                return;
+            }
+            helper.succeed();
+        });
     }
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)

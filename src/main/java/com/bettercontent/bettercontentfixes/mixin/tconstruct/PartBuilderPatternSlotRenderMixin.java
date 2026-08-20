@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Hides the obsolete physical pattern slot while retaining its container behavior. */
+/** Hides the obsolete physical pattern slot unless legacy saved content still needs retrieval. */
 @Mixin(AbstractContainerScreen.class)
 public abstract class PartBuilderPatternSlotRenderMixin {
     private static final String PATTERN_SLOT =
@@ -25,7 +25,7 @@ public abstract class PartBuilderPatternSlotRenderMixin {
         remap = false
     )
     private void better_content_fixes$hidePatternSlot(GuiGraphics graphics, Slot slot, CallbackInfo callback) {
-        if (slot.getClass().getName().equals(PATTERN_SLOT)) {
+        if (slot.getClass().getName().equals(PATTERN_SLOT) && !slot.hasItem()) {
             callback.cancel();
         }
     }
