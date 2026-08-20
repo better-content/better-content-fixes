@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,5 +49,13 @@ final class DirectionalDoubleTapTrackerTest {
         assertFalse(tracker.update(false, false, false, false, 7));
         assertTrue(tracker.update(true, false, true, false, 7));
         assertFalse(tracker.update(true, false, true, false, 7));
+    }
+
+    @Test
+    void directionalKeysProduceSignedCombatRollImpulses() {
+        assertEquals(1.0F, DirectionalDoubleTapTracker.axisImpulse(true, false));
+        assertEquals(-1.0F, DirectionalDoubleTapTracker.axisImpulse(false, true));
+        assertEquals(0.0F, DirectionalDoubleTapTracker.axisImpulse(false, false));
+        assertEquals(0.0F, DirectionalDoubleTapTracker.axisImpulse(true, true));
     }
 }

@@ -34,13 +34,20 @@ public final class CombatRollDoubleTapClient {
             return;
         }
 
+        boolean forward = minecraft.options.keyUp.isDown();
+        boolean backward = minecraft.options.keyDown.isDown();
+        boolean left = minecraft.options.keyLeft.isDown();
+        boolean right = minecraft.options.keyRight.isDown();
         boolean roll = TRACKER.update(
-                minecraft.options.keyUp.isDown(),
-                minecraft.options.keyDown.isDown(),
-                minecraft.options.keyLeft.isDown(),
-                minecraft.options.keyRight.isDown(),
+                forward,
+                backward,
+                left,
+                right,
                 BcFixesClientConfig.combatRollDoubleTapWindowTicks());
         if (roll) {
+            // Combat Roll samples LocalPlayer.input later in this client tick, before vanilla refreshes it from the keys.
+            minecraft.player.input.forwardImpulse = DirectionalDoubleTapTracker.axisImpulse(forward, backward);
+            minecraft.player.input.leftImpulse = DirectionalDoubleTapTracker.axisImpulse(left, right);
             KeyMapping rollKey = Keybindings.roll;
             previousRollDown = rollKey.isDown();
             rollKey.setDown(true);

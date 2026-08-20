@@ -48,6 +48,10 @@ public final class DirectionalDoubleTapTracker {
         return triggered;
     }
 
+    static float axisImpulse(boolean positive, boolean negative) {
+        return (positive ? 1.0F : 0.0F) - (negative ? 1.0F : 0.0F);
+    }
+
     public void reset() {
         Arrays.fill(previousDown, false);
         clearArmedTaps();
