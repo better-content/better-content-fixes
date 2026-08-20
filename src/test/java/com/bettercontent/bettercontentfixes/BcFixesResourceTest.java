@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +25,14 @@ final class BcFixesResourceTest {
         assertTrue(clientMixins != null && clientMixins.size() > 0, "expected packaged client mixin targets");
         assertMixinClassesExist(packageName, mixins);
         assertMixinClassesExist(packageName, clientMixins);
+        assertTrue(clientMixins.contains(new JsonPrimitive("thefleshthathates.BiomeMusicMixin")),
+                "TFTH proximity music suppression must remain client-only and packaged");
+        assertTrue(clientMixins.contains(new JsonPrimitive("weather2.FogAdjusterMixin")),
+                "Weather2 shader-fog compatibility must remain client-only and packaged");
+        assertTrue(mixins.contains(new JsonPrimitive("forge.VanillaInventoryCodeHooksMixin")),
+                "Forge hopper extraction bridge must remain a common mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("sophisticatedstorage.StorageBlockEntityMixin")),
+                "Sophisticated Storage barrel bridge must remain a common mixin");
     }
 
     @Test

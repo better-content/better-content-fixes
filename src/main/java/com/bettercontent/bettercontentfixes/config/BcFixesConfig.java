@@ -17,6 +17,9 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
+    public static final ForgeConfigSpec.BooleanValue THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC;
+    public static final ForgeConfigSpec.BooleanValue WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS;
+    public static final ForgeConfigSpec.BooleanValue SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION;
     public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
@@ -183,6 +186,33 @@ public final class BcFixesConfig {
                 .define("cancelStaleDhClientRequests", true);
         builder.pop();
 
+        builder.push("theFleshThatHates");
+        THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC = builder
+                .comment(
+                        "Disables The Flesh That Hates' automatic proximity music near clusters of flesh blocks.",
+                        "The upstream handler pauses vanilla music and routes its horror score through the Jukebox/Note Blocks channel.",
+                        "Entity, combat, evolution, jukebox, note-block, and other Records-channel sounds remain unchanged.")
+                .define("disableProximityMusic", true);
+        builder.pop();
+
+        builder.push("weather2");
+        WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS = builder
+                .comment(
+                        "Disables Weather2's custom fog color and distance override while an Oculus shader pack is active.",
+                        "Weather2 still tracks storm state and renders weather particles; the active shader pack owns sky and fog rendering.",
+                        "Shaders-off Weather2 fog behavior is unchanged.")
+                .define("disableFogOverrideWithShaders", true);
+        builder.pop();
+
+        builder.push("sophisticatedStorage");
+        SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION = builder
+                .comment(
+                        "Allows vanilla hoppers below Sophisticated Storage barrels and limited barrels to extract items.",
+                        "Extraction uses the barrel's input/output inventory handler, preserving storage filters and slot rules.",
+                        "Other Sophisticated Storage blocks and hopper insertion behavior are unchanged.")
+                .define("barrelHopperExtraction", true);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -276,6 +306,22 @@ public final class BcFixesConfig {
                 && isLoaded("lostcities")
                 && isLoaded("distanthorizons")
                 && isLoaded("c2me");
+    }
+
+    public static boolean theFleshThatHatesDisableProximityMusic() {
+        return THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC.get()
+                && isLoaded("the_flesh_that_hates");
+    }
+
+    public static boolean weather2DisableFogOverrideWithShaders() {
+        return WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS.get()
+                && isLoaded("weather2")
+                && isLoaded("oculus");
+    }
+
+    public static boolean sophisticatedStorageBarrelHopperExtraction() {
+        return SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION.get()
+                && isLoaded("sophisticatedstorage");
     }
 
     private static boolean isLoaded(final String modId) {

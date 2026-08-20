@@ -17,6 +17,7 @@ import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTe
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
+import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
@@ -26,10 +27,11 @@ import com.bettercontent.bettercontentfixes.quest.QuestIntegration;
 import com.bettercontent.bettercontentfixes.quest.QuestPredicateGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(BetterContentFixes.MOD_ID)
 public final class BetterContentFixes {
@@ -68,5 +70,8 @@ public final class BetterContentFixes {
         event.register(VanillaBoatGameTests.class);
         event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
+        if (ModList.get().isLoaded("sophisticatedstorage")) {
+            event.register(SophisticatedBarrelHopperGameTests.class);
+        }
     }
 }

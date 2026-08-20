@@ -13,6 +13,7 @@
     "ftbquests.QuestVisibilityMixin",
     "ftbquests.QuestLinkVisibilityMixin",
     "ftbquests.TeamDataTaskGateMixin",
+    "forge.VanillaInventoryCodeHooksMixin",
     "hyle.BiomeInjectorMixin",
     "hyle.RoughNoiseSamplerMixin",
     "hyle.StoneReplacerMixin",
@@ -23,13 +24,16 @@
     "minecraft.ItemEntityMixin",
     "pollution.PlayerEventsMixin",
     "sgi.ChunkGeneratorMixin",
-    "sgi.TerrainConformUtilMixin"
+    "sgi.TerrainConformUtilMixin",
+    "sophisticatedstorage.StorageBlockEntityMixin"
   ],
   "client": [
     "ali.EmiCompatibilityMixin",
     "apotheosis.EnchModuleClientMixin",
+    "thefleshthathates.BiomeMusicMixin",
     "tconstruct.PartBuilderPatternSlotBackgroundMixin",
-    "tconstruct.PartBuilderPatternSlotRenderMixin"
+    "tconstruct.PartBuilderPatternSlotRenderMixin",
+    "weather2.FogAdjusterMixin"
   ],
   "injectors": {
     "defaultRequire": 0
