@@ -55,13 +55,13 @@ final class QuestInfrastructureTest {
                 "planted_harvest", "transplanted_food_harvest", "offseason_growing", "balanced_diet",
                 "ventilation_network", "book_burned"),
                 GameplayCriterionNames.SUPPORTED);
-        Set<String> basePredicates = Set.of("fiahi_temperature_changed", "water_purity_3", "food_pouch_loaded",
+        Set<String> basePredicates = Set.of("food_temperature_changed", "water_purity_3",
                 "armor_with_inserted_insulation", "tempered_waterskin", "any_tcon_sand_cast",
                 "any_tcon_permanent_cast", "tcon_functional_metal_part", "tcon_tool_with_metal_functional_part");
         assertTrue(NamedStackPredicates.SUPPORTED.containsAll(basePredicates));
         assertTrue(NamedStackPredicates.SUPPORTED.contains("enchantment_ars_nouveau_reactive"));
         assertTrue(NamedStackPredicates.SUPPORTED.contains("enchantment_minecraft_silk_touch"));
-        assertEquals(39, NamedStackPredicates.SUPPORTED.size());
+        assertEquals(38, NamedStackPredicates.SUPPORTED.size());
     }
 
     @Test

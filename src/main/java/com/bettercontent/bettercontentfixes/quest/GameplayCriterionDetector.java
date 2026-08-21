@@ -153,14 +153,9 @@ public final class GameplayCriterionDetector {
     }
 
     private static boolean freshTemperature(ItemStack stack) {
-        if (stack.getTag() == null) return true;
-        for (String key : stack.getTag().getAllKeys()) {
-            String lower = key.toLowerCase();
-            if ((lower.contains("temperature") || lower.equals("fiahi")) && stack.getTag().contains(key, 99)) {
-                double value = stack.getTag().getDouble(key); return value >= -25 && value <= 25;
-            }
-        }
-        return true;
+        if (stack.getTag() == null || !stack.getTag().contains("heat_sync_food", 10)) return true;
+        var food = stack.getTag().getCompound("heat_sync_food");
+        return food.getDouble("decay") < 1.0 / 7.0 && food.getDouble("temperature_k") > 273.15;
     }
 
     private static void remember(Map<UUID, Set<Long>> map, ServerPlayer player, BlockPos pos) {

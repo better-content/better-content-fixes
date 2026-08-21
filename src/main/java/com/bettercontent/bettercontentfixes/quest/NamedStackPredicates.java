@@ -17,7 +17,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 /** Named, version-tolerant stack checks used by authored quest data. */
 public final class NamedStackPredicates {
     private static final Set<String> BASE_SUPPORTED = Set.of(
-            "fiahi_temperature_changed", "water_purity_3", "food_pouch_loaded", "armor_with_inserted_insulation",
+            "food_temperature_changed", "water_purity_3", "armor_with_inserted_insulation",
             "tempered_waterskin", "any_tcon_sand_cast", "any_tcon_permanent_cast", "tcon_functional_metal_part",
             "tcon_tool_with_metal_functional_part");
     private static final Map<String, ResourceLocation> ENCHANTMENTS = Map.ofEntries(
@@ -50,9 +50,9 @@ public final class NamedStackPredicates {
                 .anyMatch(value -> enchantment.equals(BuiltInRegistries.ENCHANTMENT.getKey(value)));
         return switch (name) {
             case "water_purity_3" -> integerValue(stack.getTag(), "purity", "water_purity") == 3;
-            case "fiahi_temperature_changed" -> stack.isEdible()
-                    && hasNonZeroNumber(stack.getTag(), "temperature", "food_temperature", "fiahi");
-            case "food_pouch_loaded" -> id(stack).contains("food_pouch") && distinctStoredFoods(stack.getTag()) >= 2;
+            case "food_temperature_changed" -> stack.isEdible() && stack.getTag() != null
+                    && stack.getTag().contains("heat_sync_food", Tag.TAG_COMPOUND)
+                    && stack.getTag().getCompound("heat_sync_food").getBoolean("thermally_changed");
             case "tempered_waterskin" -> id(stack).contains("waterskin")
                     && hasNonZeroNumber(stack.getTag(), "temperature", "temperature_value", "waterskin_temperature");
             case "armor_with_inserted_insulation" -> hasKeyLike(stack.getTag(), "insulat");
@@ -171,21 +171,4 @@ public final class NamedStackPredicates {
         return null;
     }
 
-    private static int distinctStoredFoods(Tag tag) {
-        Set<String> items = new HashSet<>();
-        collectStoredItemIds(tag, items);
-        return items.size();
-    }
-
-    private static void collectStoredItemIds(Tag tag, Set<String> result) {
-        if (tag instanceof CompoundTag compound) {
-            if (compound.contains("id", Tag.TAG_STRING) && compound.contains("Count", Tag.TAG_ANY_NUMERIC)) {
-                String item = compound.getString("id");
-                if (!item.isBlank() && compound.getInt("Count") > 0) result.add(item);
-            }
-            for (String key : compound.getAllKeys()) collectStoredItemIds(compound.get(key), result);
-        } else if (tag instanceof ListTag list) {
-            for (Tag child : list) collectStoredItemIds(child, result);
-        }
-    }
 }
