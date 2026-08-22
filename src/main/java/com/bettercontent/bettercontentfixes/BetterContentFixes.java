@@ -11,7 +11,6 @@ import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnearthedSoils;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesSupportSweepCommand;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
-import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
@@ -44,7 +43,6 @@ public final class BetterContentFixes {
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
         BurntGrassPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         RegolithFarmlandPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());

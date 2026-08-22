@@ -1,7 +1,5 @@
 {
   "better_content_fixes.book.binding_info": "Some bindings yield only when their pages meet a true flame.",
-  "key.better_content_fixes.toggle_double_tap_dash": "Toggle Double-Tap Dash",
-  "key.categories.better_content_fixes": "Better Content Fixes",
   "block.better_content_fixes.beige_limestone_regolith_farmland": "Beige Limestone Regolith Farmland",
   "block.better_content_fixes.conglomerate_regolith_farmland": "Conglomerate Regolith Farmland",
   "block.better_content_fixes.dolomite_regolith_farmland": "Dolomite Regolith Farmland",
@@ -24,7 +22,5 @@
   "entity.better_content_fixes.wandering_trader.surveyor": "Wandering Surveyor",
   "entity.better_content_fixes.wandering_trader.quartermaster": "Wandering Quartermaster",
   "entity.better_content_fixes.wandering_trader.antiquarian": "Wandering Antiquarian",
-  "message.better_content_fixes.wandering_trader.arrival": "%1$s has arrived in %2$s at %3$s, %4$s, %5$s.",
-  "message.better_content_fixes.double_tap_dash.enabled": "Double-tap dash enabled",
-  "message.better_content_fixes.double_tap_dash.disabled": "Double-tap dash disabled"
+  "message.better_content_fixes.wandering_trader.arrival": "%1$s has arrived in %2$s at %3$s, %4$s, %5$s."
 }
