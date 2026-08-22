@@ -26,6 +26,8 @@
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
     "minecraft.ItemEntityMixin",
+    "minecraft.NaturalSpawnerMixin",
+    "minecraft.NaturalSpawnerSpawnStateAccessor",
     "minecraft.WanderingTraderSpawnerMixin",
     "pollution.PlayerEventsMixin",
     "sgi.ChunkGeneratorMixin",

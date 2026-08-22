@@ -41,4 +41,20 @@ final class AmbientSurfaceSpawnControlTest {
         assertFalse(AmbientSurfaceSpawnControl.shouldDeny(
                 true, MobCategory.MONSTER, MobSpawnType.EVENT, 80, 80, 6, true));
     }
+
+    @Test
+    void blocksOnlyAmbientBaseZombiesAndSkeletons() {
+        assertTrue(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                true, true, "minecraft:zombie", MobSpawnType.NATURAL));
+        assertTrue(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                true, true, "minecraft:skeleton", MobSpawnType.CHUNK_GENERATION));
+        assertFalse(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                true, true, "minecraft:zombie", MobSpawnType.SPAWNER));
+        assertFalse(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                true, true, "minecraft:husk", MobSpawnType.NATURAL));
+        assertFalse(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                true, false, "minecraft:skeleton", MobSpawnType.NATURAL));
+        assertFalse(AmbientSurfaceSpawnControl.shouldDenyVanillaAmbient(
+                false, true, "minecraft:zombie", MobSpawnType.NATURAL));
+    }
 }

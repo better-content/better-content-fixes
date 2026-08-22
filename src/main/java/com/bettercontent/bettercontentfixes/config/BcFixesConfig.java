@@ -34,6 +34,10 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
     public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_NATURAL_SURFACE_HOSTILES;
     public static final ForgeConfigSpec.IntValue MOBS_NATURAL_SURFACE_DEPTH;
+    public static final ForgeConfigSpec.BooleanValue MOBS_VERTICAL_NATURAL_SPAWN_SCALING;
+    public static final ForgeConfigSpec.IntValue MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE;
+    public static final ForgeConfigSpec.IntValue MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS;
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
     public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
@@ -208,6 +212,26 @@ public final class BcFixesConfig {
                         "Number of blocks below the local leaf-ignoring terrain surface that remain reserved from ambient monster spawning.",
                         "A value of 6 denies the surface block and the six-block band beneath it while leaving deeper caves active.")
                 .defineInRange("naturalSurfaceDepth", 6, 0, 64);
+        MOBS_VERTICAL_NATURAL_SPAWN_SCALING = builder
+                .comment(
+                        "Scales Overworld natural monster spawning from the candidate spawn block's Y coordinate.",
+                        "The controller runs extra vanilla natural-spawn passes and never uses player Y, spawners, structures, events, summons, commands, or chunk-generation spawning.")
+                .define("verticalNaturalSpawnScaling", true);
+        MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE = builder
+                .comment(
+                        "Blocks above sea level that retain the minimum natural-monster spawn multiplier.",
+                        "With the default 128, the minimum band extends from the Overworld sea level through Y 191.")
+                .defineInRange("verticalSpawnUpperMinimumRange", 128, 0, 512);
+        MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER = builder
+                .comment(
+                        "Maximum Overworld natural-monster spawn multiplier at the lower and upper build limits.",
+                        "The minimum multiplier is always 1; the default 8 runs eight natural-spawn passes with a Y-derived acceptance chance.")
+                .defineInRange("verticalSpawnMaxMultiplier", 8, 1, 16);
+        MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS = builder
+                .comment(
+                        "Denies only natural and chunk-generation spawning of minecraft:zombie and minecraft:skeleton in the Overworld.",
+                        "Spawner, structure, event, summon, command, scripted insertion, and variant entity types remain available.")
+                .define("blockVanillaZombiesAndSkeletons", true);
         builder.pop();
 
         builder.push("structureGenerationImprover");
@@ -353,6 +377,22 @@ public final class BcFixesConfig {
 
     public static int mobsNaturalSurfaceDepth() {
         return MOBS_NATURAL_SURFACE_DEPTH.get();
+    }
+
+    public static boolean mobsVerticalNaturalSpawnScaling() {
+        return MOBS_VERTICAL_NATURAL_SPAWN_SCALING.get();
+    }
+
+    public static int mobsVerticalSpawnUpperMinimumRange() {
+        return MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE.get();
+    }
+
+    public static int mobsVerticalSpawnMaxMultiplier() {
+        return MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER.get();
+    }
+
+    public static boolean mobsBlockVanillaZombiesAndSkeletons() {
+        return MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS.get();
     }
 
     public static boolean pollutionDisablePlayerBlockBreakEmissions() {
