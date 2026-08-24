@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Allowed ReHooked grapples to attach to mobs and tug both endpoints according to entity size and knockback resistance.
 - Rebuilt and fully resynchronized materialized TConstruct tools after login datapack sync so durability and other dynamic stats are authoritative on the first client inventory update.
 - Restored Polymorph recipe selection and persistent choices in TConstruct Crafting Stations.
 - Added configurable same-direction double-tap rolling through Combat Roll, suppression while sneaking, a rebindable in-game toggle key, and replacement of vanilla forward double-tap sprint while preserving the sprint key.

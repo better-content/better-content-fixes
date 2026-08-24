@@ -30,6 +30,8 @@
     "minecraft.BushBlockMixin",
     "minecraft.ItemEntityMixin",
     "pollution.PlayerEventsMixin",
+    "rehooked.HookEntityMixin",
+    "rehooked.SPlayerHookHandlerMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sophisticatedstorage.StorageBlockEntityMixin"

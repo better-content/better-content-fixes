@@ -41,6 +41,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
     public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
+    public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -285,6 +286,15 @@ public final class BcFixesConfig {
                 .define("barrelHopperExtraction", true);
         builder.pop();
 
+        builder.push("rehooked");
+        REHOOKED_MOB_GRAPPLING = builder
+                .comment(
+                        "Allows ReHooked projectiles to attach to mobs, including bosses and modded Mob subclasses.",
+                        "A mob hit creates a weight-based tug that moves both the player and mob without dealing impact damage.",
+                        "Players, vehicles, and non-Mob living entities remain invalid grapple targets.")
+                .define("mobGrappling", true);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -405,6 +415,10 @@ public final class BcFixesConfig {
 
     public static boolean vanillaBoatSuppressDestructionDrop() {
         return VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP.get();
+    }
+
+    public static boolean rehookedMobGrappling() {
+        return isLoaded("rehooked") && REHOOKED_MOB_GRAPPLING.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {

@@ -33,6 +33,10 @@ final class BcFixesResourceTest {
                 "Forge hopper extraction bridge must remain a common mixin");
         assertTrue(mixins.contains(new JsonPrimitive("sophisticatedstorage.StorageBlockEntityMixin")),
                 "Sophisticated Storage barrel bridge must remain a common mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("rehooked.HookEntityMixin")),
+                "ReHooked hook entities must carry synchronized mob targets");
+        assertTrue(mixins.contains(new JsonPrimitive("rehooked.SPlayerHookHandlerMixin")),
+                "ReHooked server handlers must apply weight-based mob tugging");
         assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.ColliderMixin")),
                 "Epic Fight single colliders must be transformed on mounted ships");
         assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.MultiColliderMixin")),

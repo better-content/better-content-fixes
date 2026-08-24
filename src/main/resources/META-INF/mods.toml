@@ -85,3 +85,10 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     versionRange="[2.4.11,2.5)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="rehooked"
+    mandatory=false
+    versionRange="[1.8.3-1.20.1,1.9)"
+    ordering="AFTER"
+    side="BOTH"

@@ -2,7 +2,7 @@
 
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
-Runtime behavior keeps only the no-tree-punching log gate.
+Runtime behavior includes pack-owned compatibility fixes, including weight-based ReHooked mob grappling.
 
 ## Common commands
 

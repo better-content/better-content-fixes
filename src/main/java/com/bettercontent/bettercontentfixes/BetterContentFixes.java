@@ -19,6 +19,7 @@ import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests
 import com.bettercontent.bettercontentfixes.gametest.DecorativeVegetationTrampleGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
+import com.bettercontent.bettercontentfixes.gametest.RehookedMobGrapplingGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
@@ -86,6 +87,9 @@ public final class BetterContentFixes {
         event.register(WanderingTraderGameTests.class);
         if (ModList.get().isLoaded("sophisticatedstorage")) {
             event.register(SophisticatedBarrelHopperGameTests.class);
+        }
+        if (ModList.get().isLoaded("rehooked")) {
+            event.register(RehookedMobGrapplingGameTests.class);
         }
     }
 }
