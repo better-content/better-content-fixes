@@ -27,6 +27,7 @@ import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
 import com.bettercontent.bettercontentfixes.water.WaterBottleCurio;
+import com.bettercontent.bettercontentfixes.curios.CoinPurseCurio;
 import com.bettercontent.bettercontentfixes.quest.QuestIntegration;
 import com.bettercontent.bettercontentfixes.quest.QuestPredicateGameTests;
 import com.bettercontent.bettercontentfixes.trader.WanderingTraderGameTests;
@@ -66,6 +67,7 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(WaterBottleCurio.class);
         MinecraftForge.EVENT_BUS.register(WanderingTraderVisits.class);
         WaterBottleCurio.registerPredicate();
+        CoinPurseCurio.registerPredicate();
         QuestIntegration.initialize();
     }
 

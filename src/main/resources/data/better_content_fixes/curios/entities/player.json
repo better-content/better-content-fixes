@@ -4,6 +4,7 @@
   ],
   "slots": [
     "water",
-    "empty_bottle"
+    "empty_bottle",
+    "coin_purse"
   ]
 }
