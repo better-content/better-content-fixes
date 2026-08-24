@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -144,10 +143,4 @@ public final class QuestIntegration {
         }
     }
 
-    @SubscribeEvent
-    public static void onTooltip(ItemTooltipEvent event) {
-        if (event.getItemStack().is(Items.BOOK)) {
-            event.getToolTip().add(Component.translatable("better_content_fixes.book.binding_info"));
-        }
-    }
 }
