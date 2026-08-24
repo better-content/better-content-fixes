@@ -7,6 +7,7 @@
   "mixins": [
     "burnt.GrassCatchProcedureMixin",
     "create.HandCrankBlockMixin",
+    "create.WaterWheelBlockEntityMixin",
     "tconstruct.CraftingStationPolymorphMixin",
     "tconstruct.PartBuilderBlockEntityMixin",
     "tconstruct.PartBuilderContainerWrapperMixin",

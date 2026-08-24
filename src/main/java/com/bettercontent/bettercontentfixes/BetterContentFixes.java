@@ -22,6 +22,7 @@ import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
+import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
@@ -77,6 +78,7 @@ public final class BetterContentFixes {
         event.register(FluidMixBlockerGameTests.class);
         event.register(SourceberryFarmlandGameTests.class);
         event.register(VanillaBoatGameTests.class);
+        event.register(WaterWheelBiomePolicyGameTests.class);
         event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
         event.register(WanderingTraderGameTests.class);
