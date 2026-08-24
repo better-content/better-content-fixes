@@ -71,3 +71,17 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     versionRange="[0.49.10,0.50)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="epicfight"
+    mandatory=false
+    versionRange="[20.14.17,20.15)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="valkyrienskies"
+    mandatory=false
+    versionRange="[2.4.11,2.5)"
+    ordering="AFTER"
+    side="BOTH"

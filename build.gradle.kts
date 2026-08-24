@@ -52,6 +52,7 @@ repositories {
     maven("https://harleyoconnor.com/maven")
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.llamalad7.mixinextras.org/releases/")
+    maven("https://maven.valkyrienskies.org") { content { includeGroup("org.valkyrienskies.core") } }
     maven("https://www.cursemaven.com") { content { includeGroup("curse.maven") } }
     mavenCentral()
 }
@@ -75,6 +76,9 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:ftb-library-forge-404465:7296748"))
     compileOnly(fg.deobf("curse.maven:ftb-teams-forge-404468:7499810"))
     compileOnly(fg.deobf("curse.maven:ftb-quests-forge-289412:7909594"))
+    compileOnly(fg.deobf("curse.maven:epic-fight-mod-405076:8049910"))
+    compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
+    compileOnly("org.valkyrienskies.core:api:1.1.0+cf208d8b56")
     runtimeOnly(fg.deobf("curse.maven:thirst-was-taken-679270:6660408"))
     runtimeOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
     runtimeOnly(fg.deobf("curse.maven:architectury-api-419699:5137938"))

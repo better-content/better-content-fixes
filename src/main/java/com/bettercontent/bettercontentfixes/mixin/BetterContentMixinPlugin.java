@@ -12,6 +12,8 @@ import java.util.Set;
 public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
     private static final String CRAFTING_STATION_POLYMORPH_MIXIN =
             "com.bettercontent.bettercontentfixes.mixin.tconstruct.CraftingStationPolymorphMixin";
+    private static final String EPIC_FIGHT_VS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.epicfightvs.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -24,12 +26,18 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
-        if (!CRAFTING_STATION_POLYMORPH_MIXIN.equals(mixinClassName)) return true;
-
         final LoadingModList mods = FMLLoader.getLoadingModList();
-        return mods != null
-                && mods.getModFileById("tconstruct") != null
-                && mods.getModFileById("polymorph") != null;
+        if (CRAFTING_STATION_POLYMORPH_MIXIN.equals(mixinClassName)) {
+            return mods != null
+                    && mods.getModFileById("tconstruct") != null
+                    && mods.getModFileById("polymorph") != null;
+        }
+        if (mixinClassName.startsWith(EPIC_FIGHT_VS_MIXIN_PREFIX)) {
+            return mods != null
+                    && mods.getModFileById("epicfight") != null
+                    && mods.getModFileById("valkyrienskies") != null;
+        }
+        return true;
     }
 
     @Override
