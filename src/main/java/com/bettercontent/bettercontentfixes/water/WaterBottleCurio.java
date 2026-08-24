@@ -19,13 +19,16 @@ import com.bettercontent.bettercontentfixes.quest.QuestCriteria;
 
 public final class WaterBottleCurio {
     public static final String SLOT = "water";
+    public static final String EMPTY_BOTTLE_SLOT = "empty_bottle";
     public static final ResourceLocation PREDICATE = new ResourceLocation(BetterContentFixes.MOD_ID, "water_bottle");
+    public static final ResourceLocation EMPTY_BOTTLE_PREDICATE = new ResourceLocation(BetterContentFixes.MOD_ID, "empty_bottle");
     private static final String FRACTION_KEY = "waterBottleFraction";
 
     private WaterBottleCurio() {}
 
     public static void registerPredicate() {
         CuriosApi.registerCurioPredicate(PREDICATE, result -> isWaterBottle(result.stack()));
+        CuriosApi.registerCurioPredicate(EMPTY_BOTTLE_PREDICATE, result -> result.stack().is(Items.GLASS_BOTTLE));
     }
 
     @SubscribeEvent
@@ -95,9 +98,13 @@ public final class WaterBottleCurio {
         root.put(Player.PERSISTED_NBT_TAG, persisted);
     }
 
-    private static void returnEmptyBottles(final ServerPlayer player, final int count) {
+    static void returnEmptyBottles(final ServerPlayer player, final int count) {
         final ItemStack emptyBottles = new ItemStack(Items.GLASS_BOTTLE, count);
-        player.getInventory().add(emptyBottles);
+        CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getStacksHandler(EMPTY_BOTTLE_SLOT).ifPresent(slot -> {
+            final ItemStack remainder = slot.getStacks().insertItem(0, emptyBottles, false);
+            emptyBottles.setCount(remainder.getCount());
+        }));
+        if (!emptyBottles.isEmpty()) player.getInventory().add(emptyBottles);
         if (!emptyBottles.isEmpty()) player.drop(emptyBottles, false);
     }
 

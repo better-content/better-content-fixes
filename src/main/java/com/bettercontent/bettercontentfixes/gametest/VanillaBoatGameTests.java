@@ -48,6 +48,11 @@ public final class VanillaBoatGameTests {
                 .map(ItemStack::getItem)
                 .anyMatch(item -> item == Items.OAK_BOAT);
         helper.assertTrue(!vesselDropped, "Destroyed vanilla boat must not drop its boat item");
+        helper.assertTrue(
+                helper.getLevel().getEntitiesOfClass(ItemEntity.class, bounds).stream()
+                        .map(ItemEntity::getItem)
+                        .anyMatch(stack -> stack.is(Items.OAK_PLANKS) && stack.getCount() == 3),
+                "Destroyed vanilla boat must return partial wood components");
         helper.succeed();
     }
 
@@ -68,6 +73,10 @@ public final class VanillaBoatGameTests {
         helper.assertTrue(
                 drops.stream().noneMatch(stack -> stack.is(Items.OAK_CHEST_BOAT)),
                 "Destroyed chest boat must not drop its vessel item");
+        helper.assertTrue(
+                drops.stream().anyMatch(stack -> stack.is(Items.OAK_PLANKS) && stack.getCount() == 3)
+                        && drops.stream().anyMatch(stack -> stack.is(Items.CHEST)),
+                "Destroyed chest boat must return partial wood and chest components");
         helper.succeed();
     }
 

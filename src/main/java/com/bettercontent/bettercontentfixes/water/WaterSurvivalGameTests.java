@@ -116,8 +116,14 @@ public final class WaterSurvivalGameTests {
         helper.assertTrue(thirst.getQuenched() == 8, "A complete fractional bottle should restore eight quenched points");
         helper.assertTrue(waterSlot.getStacks().getStackInSlot(0).getCount() == 1,
                 "Exactly one bottle should be consumed after six one-point top-offs");
-        helper.assertTrue(player.getInventory().countItem(Items.GLASS_BOTTLE) == 1,
-                "Completing a fractional bottle should return one empty bottle");
+        final var emptyBottleSlot = CuriosApi.getCuriosInventory(player).resolve()
+                .flatMap(handler -> handler.getStacksHandler(WaterBottleCurio.EMPTY_BOTTLE_SLOT))
+                .orElseThrow(() -> new IllegalStateException("Mock player is missing the empty-bottle Curios slot"));
+        helper.assertTrue(emptyBottleSlot.getStacks().getStackInSlot(0).is(Items.GLASS_BOTTLE)
+                        && emptyBottleSlot.getStacks().getStackInSlot(0).getCount() == 1,
+                "Completing a fractional bottle should return one empty bottle to its dedicated slot");
+        helper.assertTrue(player.getInventory().countItem(Items.GLASS_BOTTLE) == 0,
+                "Returned empty bottles must not spill into normal inventory while the dedicated slot has room");
         helper.assertTrue(WaterBottleCurio.getBottleFraction(player) == 0.0D,
                 "A completed bottle should reset fractional progress");
         helper.succeed();

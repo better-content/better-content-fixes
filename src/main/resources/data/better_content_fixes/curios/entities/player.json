@@ -3,6 +3,7 @@
     "minecraft:player"
   ],
   "slots": [
-    "water"
+    "water",
+    "empty_bottle"
   ]
 }
