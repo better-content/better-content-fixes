@@ -8,6 +8,7 @@
     "burnt.GrassCatchProcedureMixin",
     "create.HandCrankBlockMixin",
     "create.WaterWheelBlockEntityMixin",
+    "complicatedbees.ForgeConfigSpecMixin",
     "tconstruct.CraftingStationPolymorphMixin",
     "tconstruct.PartBuilderBlockEntityMixin",
     "tconstruct.PartBuilderContainerWrapperMixin",

@@ -24,6 +24,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.patchouli.";
     private static final String PNEUMATICCRAFT_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.pneumaticcraft.";
+    private static final String COMPLICATED_BEES_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.complicatedbees.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -61,6 +63,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(PNEUMATICCRAFT_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("pneumaticcraft") != null;
+        }
+        if (mixinClassName.startsWith(COMPLICATED_BEES_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("complicated_bees") != null;
         }
         return true;
     }
