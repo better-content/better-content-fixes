@@ -33,6 +33,7 @@
     "pollution.PlayerEventsMixin",
     "rehooked.HookEntityMixin",
     "rehooked.SPlayerHookHandlerMixin",
+    "rbp.BlockDefinitionCatalogFactoryMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sophisticatedstorage.StorageBlockEntityMixin",

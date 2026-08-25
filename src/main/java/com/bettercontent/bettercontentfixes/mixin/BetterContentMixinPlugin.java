@@ -38,6 +38,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.valkyrienskies.";
     private static final String JSON_THINGS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
+    private static final String RBP_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.rbp.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -98,6 +100,10 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(JSON_THINGS_MIXIN_PREFIX)) {
             return hasVersion(mods, "jsonthings", "0.9.13");
+        }
+        if (mixinClassName.startsWith(RBP_MIXIN_PREFIX)) {
+            return hasVersion(mods, "rbp", "1.0.0")
+                    && hasVersion(mods, "realisticphysics", "1.0.1");
         }
         return true;
     }

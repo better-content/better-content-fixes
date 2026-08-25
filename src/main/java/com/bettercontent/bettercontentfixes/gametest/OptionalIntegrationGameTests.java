@@ -1,12 +1,14 @@
 package com.bettercontent.bettercontentfixes.gametest;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
+import com.bettercontent.bettercontentfixes.compat.RealisticBlockPhysicsDefinitions;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.fml.ModList;
@@ -40,6 +42,18 @@ public final class OptionalIntegrationGameTests {
         if (ModList.get().isLoaded("thirst") && !ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().containsKey(
                 new ResourceLocation("thirst", "add_loot_table"))) {
             helper.fail("Thirst add_loot_table codec was not registered");
+            return;
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
+    public static void realisticBlockPhysicsTargetsOnlyUsableStates(final GameTestHelper helper) {
+        if (ModList.get().isLoaded("rbp") && (
+                !RealisticBlockPhysicsDefinitions.isSupportedState(Blocks.STONE.defaultBlockState())
+                        || RealisticBlockPhysicsDefinitions.isSupportedState(Blocks.WATER.defaultBlockState())
+                        || RealisticBlockPhysicsDefinitions.isSupportedState(Blocks.DANDELION.defaultBlockState()))) {
+            helper.fail("Realistic Block Physics compatibility accepted an unsupported block state");
             return;
         }
         helper.succeed();

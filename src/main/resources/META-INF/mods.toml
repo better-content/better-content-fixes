@@ -134,3 +134,17 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     versionRange="[2.4,2.5)"
     ordering="AFTER"
     side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="rbp"
+    mandatory=false
+    versionRange="[1.0.0,1.0.1)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="realisticphysics"
+    mandatory=false
+    versionRange="[1.0.1,1.0.2)"
+    ordering="AFTER"
+    side="BOTH"

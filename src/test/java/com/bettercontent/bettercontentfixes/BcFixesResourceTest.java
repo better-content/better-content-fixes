@@ -59,6 +59,8 @@ final class BcFixesResourceTest {
                 "Valkyrien Skies sculk destinations must be transformed to world space");
         assertTrue(mixins.contains(new JsonPrimitive("jsonthings.VanillaPackResourcesBuilderMixin")),
                 "vanilla pack root discovery must stay limited to built-in pack types");
+        assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
+                "Realistic Block Physics definitions must be filtered to usable registered states");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
                 "acid-rain texture selection must follow vanilla precipitation bindings");
         assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
