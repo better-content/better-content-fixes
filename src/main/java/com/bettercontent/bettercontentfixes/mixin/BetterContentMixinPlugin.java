@@ -20,6 +20,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.ali.";
     private static final String APOTHEOSIS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.apotheosis.";
+    private static final String PATCHOULI_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.patchouli.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -51,6 +53,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(APOTHEOSIS_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("apotheosis") != null;
+        }
+        if (mixinClassName.startsWith(PATCHOULI_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("patchouli") != null;
         }
         return true;
     }

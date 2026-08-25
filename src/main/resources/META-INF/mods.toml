@@ -113,3 +113,10 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     versionRange="[1.2.0,)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="patchouli"
+    mandatory=false
+    versionRange="[1.20.1-85,)"
+    ordering="AFTER"
+    side="BOTH"

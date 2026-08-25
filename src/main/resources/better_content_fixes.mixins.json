@@ -28,6 +28,7 @@
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
     "minecraft.ItemEntityMixin",
+    "patchouli.BookRegistryMixin",
     "pollution.PlayerEventsMixin",
     "rehooked.HookEntityMixin",
     "rehooked.SPlayerHookHandlerMixin",

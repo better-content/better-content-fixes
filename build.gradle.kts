@@ -79,6 +79,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:epic-fight-mod-405076:8049910"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
+    compileOnly(fg.deobf("curse.maven:patchouli-306770:7731017"))
     compileOnly("org.valkyrienskies.core:api:1.1.0+cf208d8b56")
     runtimeOnly(fg.deobf("curse.maven:thirst-was-taken-679270:6660408"))
     runtimeOnly(fg.deobf("curse.maven:curios-api-309927:6418456"))
