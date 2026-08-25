@@ -39,11 +39,18 @@ public final class TconLoginToolSync {
     public static boolean rebuildStack(final ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof IModifiable)) return false;
 
+        final int damage = stack.getOrCreateTag().getInt("Damage");
         final ToolStack tool = ToolStack.from(stack);
         if (tool.getMaterials().isEmpty()) return false;
 
+        final boolean broken = tool.isBroken();
         tool.rebuildStats();
+        tool.setDamage(damage);
         tool.updateStack(stack, false);
+        // updateStack may normalize the vanilla root damage against the stale stack copy.
+        // Restore the exact player-owned value after the rebuilt tool data is committed.
+        stack.getOrCreateTag().putInt("Damage", damage);
+        stack.getOrCreateTag().putBoolean(ToolStack.TAG_BROKEN, broken);
         return true;
     }
 }

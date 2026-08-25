@@ -302,7 +302,7 @@ public final class BcFixesConfig {
     }
 
     public static boolean dynamicTreesSeasonContextConcurrentMap() {
-        return isLoaded("dynamictrees") && DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP.get();
+        return isLoaded("dynamictrees") && (!SPEC.isLoaded() || DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP.get());
     }
 
     public static boolean dynamicTreesUnearthedRegolithSoils() {

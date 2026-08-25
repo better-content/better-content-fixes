@@ -64,18 +64,21 @@ public final class TconCompatGameTests {
         materials.add(StringTag.valueOf("tconstruct:wood"));
         materials.add(StringTag.valueOf("tconstruct:wood"));
         tag.put(ToolStack.TAG_MATERIALS, materials.copy());
-        tag.putInt("Damage", 7);
         tag.putBoolean(ToolStack.TAG_BROKEN, false);
         tag.putInt("better_content_fixes:test_marker", 42);
         final CompoundTag staleStats = new CompoundTag();
         staleStats.putFloat("tconstruct:durability", 1.0F);
         tag.put("tic_stats", staleStats);
         stack.setTag(tag);
+        // Simulate the persisted player-owned damage after normal item-tag validation.
+        stack.getOrCreateTag().putInt("Damage", 7);
 
         helper.assertTrue(TconLoginToolSync.rebuildStack(stack), "Materialized TCon tool must rebuild");
         final CompoundTag rebuilt = stack.getTag();
         helper.assertTrue(rebuilt != null, "Rebuilt tool must retain NBT");
-        helper.assertTrue(rebuilt.getInt("Damage") == 7, "Rebuild must preserve current damage");
+        helper.assertTrue(
+                rebuilt.getInt("Damage") == 7,
+                "Rebuild must preserve current damage (observed " + rebuilt.getInt("Damage") + ")");
         helper.assertTrue(!rebuilt.getBoolean(ToolStack.TAG_BROKEN), "Rebuild must preserve usable state");
         helper.assertTrue(
                 rebuilt.getInt("better_content_fixes:test_marker") == 42,

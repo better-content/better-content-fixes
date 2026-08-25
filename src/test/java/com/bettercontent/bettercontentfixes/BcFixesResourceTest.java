@@ -29,6 +29,8 @@ final class BcFixesResourceTest {
                 "TFTH proximity music suppression must remain client-only and packaged");
         assertTrue(clientMixins.contains(new JsonPrimitive("weather2.FogAdjusterMixin")),
                 "Weather2 shader-fog compatibility must remain client-only and packaged");
+        assertTrue(clientMixins.contains(new JsonPrimitive("pneumaticcraft.PneumaticCraftRecipeTypeMixin")),
+                "PneumaticCraft recipe-level recovery must remain client-only and packaged");
         assertTrue(mixins.contains(new JsonPrimitive("forge.VanillaInventoryCodeHooksMixin")),
                 "Forge hopper extraction bridge must remain a common mixin");
         assertTrue(mixins.contains(new JsonPrimitive("sophisticatedstorage.StorageBlockEntityMixin")),
@@ -45,6 +47,15 @@ final class BcFixesResourceTest {
                 "the ship-aware Epic Fight camera bridge must remain client-only");
         assertTrue(clientMixins.contains(new JsonPrimitive("epicfightvs.EpicFightCameraApiMixin")),
                 "the ship-aware Epic Fight camera ray bridge must remain client-only");
+    }
+
+    @Test
+    void voidWormRemovalShipsAsAnAlexsMobsConditionalBiomeModifier() throws IOException {
+        JsonObject modifier = JsonParser.parseReader(Files.newBufferedReader(Path.of(
+                "src/main/resources/data/better_content_fixes/forge/biome_modifier/remove_void_worm_spawns.json"
+        ))).getAsJsonObject();
+
+        assertEquals("better_content_fixes:void_worm_spawn_removal", modifier.get("type").getAsString());
     }
 
     @Test

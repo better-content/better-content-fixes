@@ -12,6 +12,8 @@ import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnearthedSoils;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesSupportSweepCommand;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
+import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
+import com.bettercontent.bettercontentfixes.compat.ThirstLootModifierCompat;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
@@ -24,6 +26,7 @@ import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGa
 import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
+import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
 import com.bettercontent.bettercontentfixes.water.RainCollectorRegistry;
 import com.bettercontent.bettercontentfixes.water.SnowMeltHandler;
 import com.bettercontent.bettercontentfixes.water.WaterSurvivalGameTests;
@@ -48,14 +51,19 @@ public final class BetterContentFixes {
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
-        BurntGrassPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        BurntGrassPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RegolithFarmlandPalette.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RegolithFarmlandPalette.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RainCollectorRegistry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        RainCollectorRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(DynamicTreesUnearthedSoils::onCommonSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterGameTests);
+        final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        if (ModList.get().isLoaded("thirst")) {
+            ThirstLootModifierCompat.register(modEventBus);
+        }
+        VoidWormSpawnRemoval.SERIALIZERS.register(modEventBus);
+        BurntGrassPalette.BLOCKS.register(modEventBus);
+        BurntGrassPalette.ITEMS.register(modEventBus);
+        RegolithFarmlandPalette.BLOCKS.register(modEventBus);
+        RegolithFarmlandPalette.ITEMS.register(modEventBus);
+        RainCollectorRegistry.BLOCKS.register(modEventBus);
+        RainCollectorRegistry.ITEMS.register(modEventBus);
+        modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
+        modEventBus.addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
         MinecraftForge.EVENT_BUS.register(AmbientSurfaceSpawnControl.class);
         MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
@@ -85,6 +93,7 @@ public final class BetterContentFixes {
         event.register(QuestPredicateGameTests.class);
         event.register(WaterSurvivalGameTests.class);
         event.register(WanderingTraderGameTests.class);
+        event.register(OptionalIntegrationGameTests.class);
         if (ModList.get().isLoaded("sophisticatedstorage")) {
             event.register(SophisticatedBarrelHopperGameTests.class);
         }

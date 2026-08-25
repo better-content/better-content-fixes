@@ -3,8 +3,8 @@ package com.bettercontent.bettercontentfixes.mixin.minecraft;
 import com.bettercontent.bettercontentfixes.compat.VanillaBoatPolicy;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -33,9 +33,10 @@ public abstract class BoatMixin {
 
     @ModifyArg(
             method = "destroy",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/vehicle/Boat;spawnAtLocation(Lnet/minecraft/world/item/Item;)Lnet/minecraft/world/entity/item/ItemEntity;"),
-            index = 0)
-    private Item betterContentFixes$suppressVanillaVesselDrop(final Item vanillaDrop) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/vehicle/Boat;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"),
+            index = 0,
+            require = 1)
+    private ItemLike betterContentFixes$suppressVanillaVesselDrop(final ItemLike vanillaDrop) {
         return VanillaBoatPolicy.suppressVesselDrop((Boat) (Object) this) ? Items.AIR : vanillaDrop;
     }
 }

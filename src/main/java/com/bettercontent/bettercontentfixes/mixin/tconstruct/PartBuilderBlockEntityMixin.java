@@ -13,7 +13,7 @@ import com.bettercontent.bettercontentfixes.tconstruct.FreehandPattern;
 public abstract class PartBuilderBlockEntityMixin {
     @ModifyExpressionValue(
         method = "getCurrentRecipes",
-        require = 1,
+        require = 0,
         at = @At(
             value = "INVOKE",
             target = "Lslimeknights/tconstruct/tables/block/entity/table/PartBuilderBlockEntity;m_8020_(I)Lnet/minecraft/world/item/ItemStack;",
@@ -21,6 +21,23 @@ public abstract class PartBuilderBlockEntityMixin {
         )
     )
     private ItemStack better_content_fixes$allowFreehandRecipeDiscovery(ItemStack patternStack) {
+        return better_content_fixes$resolveFreehandPattern(patternStack);
+    }
+
+    @ModifyExpressionValue(
+        method = "getCurrentRecipes",
+        require = 0,
+        at = @At(
+            value = "INVOKE",
+            target = "Lslimeknights/tconstruct/tables/block/entity/table/PartBuilderBlockEntity;getItem(I)Lnet/minecraft/world/item/ItemStack;",
+            remap = false
+        )
+    )
+    private ItemStack better_content_fixes$allowFreehandRecipeDiscoveryInDevelopment(ItemStack patternStack) {
+        return better_content_fixes$resolveFreehandPattern(patternStack);
+    }
+
+    private ItemStack better_content_fixes$resolveFreehandPattern(ItemStack patternStack) {
         PartBuilderBlockEntity builder = (PartBuilderBlockEntity) (Object) this;
         return FreehandPattern.resolvePattern(patternStack, builder.getItem(0));
     }

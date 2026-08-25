@@ -101,8 +101,16 @@ public final class WaterBottleCurio {
     static void returnEmptyBottles(final ServerPlayer player, final int count) {
         final ItemStack emptyBottles = new ItemStack(Items.GLASS_BOTTLE, count);
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getStacksHandler(EMPTY_BOTTLE_SLOT).ifPresent(slot -> {
-            final ItemStack remainder = slot.getStacks().insertItem(0, emptyBottles, false);
-            emptyBottles.setCount(remainder.getCount());
+            final ItemStack current = slot.getStacks().getStackInSlot(0);
+            if (current.isEmpty()) {
+                slot.getStacks().setStackInSlot(0, emptyBottles.copy());
+                emptyBottles.setCount(0);
+            } else if (ItemStack.isSameItemSameTags(current, emptyBottles)) {
+                final int inserted = Math.min(emptyBottles.getCount(), current.getMaxStackSize() - current.getCount());
+                current.grow(inserted);
+                emptyBottles.shrink(inserted);
+                slot.getStacks().setStackInSlot(0, current);
+            }
         }));
         if (!emptyBottles.isEmpty()) player.getInventory().add(emptyBottles);
         if (!emptyBottles.isEmpty()) player.drop(emptyBottles, false);

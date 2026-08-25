@@ -58,7 +58,8 @@ public final class AmbientSurfaceSpawnGameTests {
         final BlockPos surface = new BlockPos(testColumn.getX(), surfaceY, testColumn.getZ());
         final BlockPos deepPosition = surface.below(7);
 
-        final MobSpawnEvent.PositionCheck natural = positionCheck(helper, deepPosition, MobSpawnType.NATURAL);
+        final MobSpawnEvent.PositionCheck natural = positionCheck(
+                helper, deepPosition, MobSpawnType.CHUNK_GENERATION, EntityType.SPIDER);
         if (natural.getResult() == Event.Result.DENY) {
             helper.fail("Expected natural monsters below the six-block surface band to remain available");
             return;
@@ -107,18 +108,26 @@ public final class AmbientSurfaceSpawnGameTests {
             final GameTestHelper helper,
             final BlockPos position,
             final MobSpawnType spawnType) {
-        final Zombie zombie = EntityType.ZOMBIE.create(helper.getLevel());
-        if (zombie == null) {
-            throw new IllegalStateException("Could not create test zombie");
+        return positionCheck(helper, position, spawnType, EntityType.ZOMBIE);
+    }
+
+    private static <T extends net.minecraft.world.entity.Mob> MobSpawnEvent.PositionCheck positionCheck(
+            final GameTestHelper helper,
+            final BlockPos position,
+            final MobSpawnType spawnType,
+            final EntityType<T> entityType) {
+        final T mob = entityType.create(helper.getLevel());
+        if (mob == null) {
+            throw new IllegalStateException("Could not create test mob " + entityType);
         }
-        zombie.moveTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, 0.0F, 0.0F);
+        mob.moveTo(position.getX() + 0.5D, position.getY(), position.getZ() + 0.5D, 0.0F, 0.0F);
         final MobSpawnEvent.PositionCheck event = new MobSpawnEvent.PositionCheck(
-                zombie,
+                mob,
                 helper.getLevel(),
                 spawnType,
                 null);
         MinecraftForge.EVENT_BUS.post(event);
-        zombie.discard();
+        mob.discard();
         return event;
     }
 }

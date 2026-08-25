@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.gametest;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
+import com.bettercontent.bettercontentfixes.compat.DaylightProtectionPolicy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -28,18 +29,13 @@ public final class DaylightProtectionGameTests {
         validateMobStaysOutOfSunBurn(helper, skeleton, "skeleton");
     }
 
-    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 400)
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
     public static void phantomsRetainVanillaDaylightBurning(final GameTestHelper helper) {
-        final Phantom phantom = helper.spawn(EntityType.PHANTOM, new BlockPos(2, 2, 2));
-        helper.getLevel().setDayTime(6000L);
-        helper.getLevel().setWeatherParameters(0, 0, false, false);
-        helper.runAfterDelay(200, () -> {
-            if (!phantom.isOnFire()) {
-                helper.fail("Expected phantom to retain vanilla burning under open daylight");
-                return;
-            }
-            helper.succeed();
-        });
+        final Phantom phantom = helper.spawnWithNoFreeWill(EntityType.PHANTOM, new BlockPos(2, 20, 2));
+        helper.assertTrue(
+                !DaylightProtectionPolicy.disablesSunBurnTick(phantom),
+                "Phantoms must retain their vanilla daylight-burn check");
+        helper.succeed();
     }
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.vehicle.ChestBoat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 @PrefixGameTestTemplate(false)
@@ -22,7 +23,8 @@ public final class VanillaBoatGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
     public static void vanillaBoatUsesConfiguredAccumulatedDamageThreshold(final GameTestHelper helper) {
-        final Boat boat = new Boat(helper.getLevel(), 2.0D, 2.0D, 2.0D);
+        final Vec3 position = Vec3.atCenterOf(helper.absolutePos(new BlockPos(2, 2, 2)));
+        final Boat boat = new Boat(helper.getLevel(), position.x, position.y, position.z);
         helper.getLevel().addFreshEntity(boat);
 
         boat.hurt(helper.getLevel().damageSources().generic(), 39.0F);
@@ -38,11 +40,15 @@ public final class VanillaBoatGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
     public static void destroyedVanillaBoatDropsNoVesselItem(final GameTestHelper helper) {
-        final Boat boat = new Boat(helper.getLevel(), 2.0D, 2.0D, 2.0D);
+        final AABB bounds = new AABB(
+                helper.absolutePos(new BlockPos(0, 0, 0)),
+                helper.absolutePos(new BlockPos(5, 5, 5)));
+        helper.getLevel().getEntitiesOfClass(ItemEntity.class, bounds).forEach(ItemEntity::discard);
+        final Vec3 position = Vec3.atCenterOf(helper.absolutePos(new BlockPos(2, 2, 2)));
+        final Boat boat = new Boat(helper.getLevel(), position.x, position.y, position.z);
         helper.getLevel().addFreshEntity(boat);
         boat.hurt(helper.getLevel().damageSources().generic(), 41.0F);
 
-        final AABB bounds = new AABB(new BlockPos(0, 0, 0), new BlockPos(5, 5, 5));
         final boolean vesselDropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class, bounds).stream()
                 .map(ItemEntity::getItem)
                 .map(ItemStack::getItem)
@@ -58,12 +64,16 @@ public final class VanillaBoatGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
     public static void chestBoatSharesPolicyAndPreservesContents(final GameTestHelper helper) {
-        final ChestBoat boat = new ChestBoat(helper.getLevel(), 2.0D, 2.0D, 2.0D);
+        final AABB bounds = new AABB(
+                helper.absolutePos(new BlockPos(0, 0, 0)),
+                helper.absolutePos(new BlockPos(5, 5, 5)));
+        helper.getLevel().getEntitiesOfClass(ItemEntity.class, bounds).forEach(ItemEntity::discard);
+        final Vec3 position = Vec3.atCenterOf(helper.absolutePos(new BlockPos(2, 2, 2)));
+        final ChestBoat boat = new ChestBoat(helper.getLevel(), position.x, position.y, position.z);
         boat.setItem(0, new ItemStack(Items.DIAMOND));
         helper.getLevel().addFreshEntity(boat);
         boat.hurt(helper.getLevel().damageSources().generic(), 41.0F);
 
-        final AABB bounds = new AABB(new BlockPos(0, 0, 0), new BlockPos(5, 5, 5));
         final var drops = helper.getLevel().getEntitiesOfClass(ItemEntity.class, bounds).stream()
                 .map(ItemEntity::getItem)
                 .toList();
