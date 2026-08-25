@@ -57,8 +57,8 @@ final class BcFixesResourceTest {
                 "steam tug fuel consumption must retain its AdPother callback");
         assertTrue(mixins.contains(new JsonPrimitive("valkyrienskies.VibrationSystemTickerMixin")),
                 "Valkyrien Skies sculk destinations must be transformed to world space");
-        assertTrue(mixins.contains(new JsonPrimitive("jsonthings.PackTypeMixin")),
-                "vanilla pack roots must initialize before JsonThings extends PackType");
+        assertTrue(mixins.contains(new JsonPrimitive("jsonthings.VanillaPackResourcesBuilderMixin")),
+                "vanilla pack root discovery must stay limited to built-in pack types");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
                 "acid-rain texture selection must follow vanilla precipitation bindings");
         assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
