@@ -9,6 +9,9 @@
     "create.HandCrankBlockMixin",
     "create.WaterWheelBlockEntityMixin",
     "complicatedbees.ForgeConfigSpecMixin",
+    "adpother.coldsweat.HearthBlockEntityMixin",
+    "adpother.littlelogistics.SteamLocomotiveEntityMixin",
+    "adpother.littlelogistics.SteamTugEntityMixin",
     "tconstruct.CraftingStationPolymorphMixin",
     "tconstruct.PartBuilderBlockEntityMixin",
     "tconstruct.PartBuilderContainerWrapperMixin",
@@ -31,11 +34,13 @@
     "rehooked.SPlayerHookHandlerMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
-    "sophisticatedstorage.StorageBlockEntityMixin"
+    "sophisticatedstorage.StorageBlockEntityMixin",
+    "valkyrienskies.VibrationSystemTickerMixin"
   ],
   "client": [
     "ali.EmiCompatibilityMixin",
     "ambientsounds.AmbientSoundEngineMixin",
+    "adpother.LevelRendererMixin",
     "apotheosis.EnchModuleClientMixin",
     "pneumaticcraft.PneumaticCraftRecipeTypeMixin",
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
@@ -46,6 +51,7 @@
     "explosionoverhaul.DeafnessConcussionEffectMixin",
     "explosionoverhaul.LowPassConcussionEffectMixin",
     "minecraft.RenderSystemMixin",
+    "sodiumdynamiclights.SodiumDynamicLightsMixin",
     "thefleshthathates.BiomeMusicMixin",
     "tconstruct.PartBuilderPatternSlotBackgroundMixin",
     "tconstruct.PartBuilderPatternSlotRenderMixin",

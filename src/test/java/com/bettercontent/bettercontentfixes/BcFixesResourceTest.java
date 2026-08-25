@@ -49,6 +49,18 @@ final class BcFixesResourceTest {
                 "the ship-aware Epic Fight camera ray bridge must remain client-only");
         assertTrue(clientMixins.contains(new JsonPrimitive("minecraft.RenderSystemMixin")),
                 "dynamic HUD alpha must remain a client-only render-system mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.coldsweat.HearthBlockEntityMixin")),
+                "Cold Sweat fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.littlelogistics.SteamLocomotiveEntityMixin")),
+                "steam locomotive fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.littlelogistics.SteamTugEntityMixin")),
+                "steam tug fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("valkyrienskies.VibrationSystemTickerMixin")),
+                "Valkyrien Skies sculk destinations must be transformed to world space");
+        assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
+                "acid-rain texture selection must follow vanilla precipitation bindings");
+        assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
+                "dynamic-light resource registration must be scheduled on the client thread");
     }
 
     @Test
@@ -79,6 +91,12 @@ final class BcFixesResourceTest {
         assertEquals(1, values.size(), "fluid-generated allowlist should stay narrow by default");
         assertEquals("minecraft:obsidian", values.get(0).getAsString(),
                 "obsidian should remain the only default allowed fluid-generated block");
+    }
+
+    @Test
+    void jsonThingsPackRootMarkerIsPackaged() {
+        assertTrue(Files.isRegularFile(Path.of("src/main/resources/things/.mcassetsroot")),
+                "JsonThings requires its things pack root marker on the classpath");
     }
 
     @Test

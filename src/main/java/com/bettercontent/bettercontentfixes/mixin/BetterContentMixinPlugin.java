@@ -26,6 +26,16 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.pneumaticcraft.";
     private static final String COMPLICATED_BEES_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.complicatedbees.";
+    private static final String ADPOTHER_COLD_SWEAT_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.adpother.coldsweat.";
+    private static final String ADPOTHER_LITTLE_LOGISTICS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.adpother.littlelogistics.";
+    private static final String ADPOTHER_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.adpother.";
+    private static final String SODIUM_DYNAMIC_LIGHTS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.sodiumdynamiclights.";
+    private static final String VALKYRIEN_SKIES_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.valkyrienskies.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -67,7 +77,37 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(COMPLICATED_BEES_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("complicated_bees") != null;
         }
+        if (mixinClassName.startsWith(ADPOTHER_COLD_SWEAT_MIXIN_PREFIX)) {
+            return hasVersion(mods, "adpother", "8.1.49.0")
+                    && hasVersion(mods, "cold_sweat", "2.4");
+        }
+        if (mixinClassName.startsWith(ADPOTHER_LITTLE_LOGISTICS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "adpother", "8.1.49.0")
+                    && hasVersion(mods, "littlelogistics", "1.20.1.2");
+        }
+        if (mixinClassName.startsWith(ADPOTHER_MIXIN_PREFIX)) {
+            return hasVersion(mods, "adpother", "8.1.49.0");
+        }
+        if (mixinClassName.startsWith(SODIUM_DYNAMIC_LIGHTS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "sodiumdynamiclights", "1.0.9");
+        }
+        if (mixinClassName.startsWith(VALKYRIEN_SKIES_MIXIN_PREFIX)) {
+            return hasVersion(mods, "valkyrienskies", "2.4.11");
+        }
         return true;
+    }
+
+    private static boolean hasVersion(
+            final LoadingModList mods,
+            final String modId,
+            final String expectedVersion
+    ) {
+        if (mods == null || mods.getModFileById(modId) == null) {
+            return false;
+        }
+        return mods.getModFileById(modId).getMods().stream()
+                .anyMatch(mod -> modId.equals(mod.getModId())
+                        && expectedVersion.equals(mod.getVersion().toString()));
     }
 
     @Override
