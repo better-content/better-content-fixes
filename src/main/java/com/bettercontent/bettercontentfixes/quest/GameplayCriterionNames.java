@@ -11,7 +11,7 @@ final class GameplayCriterionNames {
             "frame_custom_surface", "functional_frame_used", "formed_tcon_smeltery", "manual_workcell_run",
             "shelter_completed", "fresh_food_stored", "provisions_packed", "animal_husbandry",
             "planted_harvest", "transplanted_food_harvest", "offseason_growing", "balanced_diet",
-            "ventilation_network", "book_burned");
+            "ventilation_network");
     private GameplayCriterionNames() {}
 
     static String forEventSimpleName(String eventName) {
