@@ -36,6 +36,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.sodiumdynamiclights.";
     private static final String VALKYRIEN_SKIES_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.valkyrienskies.";
+    private static final String JSON_THINGS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -93,6 +95,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(VALKYRIEN_SKIES_MIXIN_PREFIX)) {
             return hasVersion(mods, "valkyrienskies", "2.4.11");
+        }
+        if (mixinClassName.startsWith(JSON_THINGS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "jsonthings", "0.9.13");
         }
         return true;
     }

@@ -57,6 +57,8 @@ final class BcFixesResourceTest {
                 "steam tug fuel consumption must retain its AdPother callback");
         assertTrue(mixins.contains(new JsonPrimitive("valkyrienskies.VibrationSystemTickerMixin")),
                 "Valkyrien Skies sculk destinations must be transformed to world space");
+        assertTrue(mixins.contains(new JsonPrimitive("jsonthings.PackTypeMixin")),
+                "vanilla pack roots must initialize before JsonThings extends PackType");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
                 "acid-rain texture selection must follow vanilla precipitation bindings");
         assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
@@ -91,12 +93,6 @@ final class BcFixesResourceTest {
         assertEquals(1, values.size(), "fluid-generated allowlist should stay narrow by default");
         assertEquals("minecraft:obsidian", values.get(0).getAsString(),
                 "obsidian should remain the only default allowed fluid-generated block");
-    }
-
-    @Test
-    void jsonThingsPackRootMarkerIsPackaged() {
-        assertTrue(Files.isRegularFile(Path.of("src/main/resources/things/.mcassetsroot")),
-                "JsonThings requires its things pack root marker on the classpath");
     }
 
     @Test

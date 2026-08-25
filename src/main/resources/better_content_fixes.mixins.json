@@ -23,6 +23,7 @@
     "hyle.BiomeInjectorMixin",
     "hyle.RoughNoiseSamplerMixin",
     "hyle.StoneReplacerMixin",
+    "jsonthings.PackTypeMixin",
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.MobMixin",
