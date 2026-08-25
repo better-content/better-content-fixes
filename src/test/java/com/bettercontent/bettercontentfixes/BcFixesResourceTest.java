@@ -47,6 +47,8 @@ final class BcFixesResourceTest {
                 "the ship-aware Epic Fight camera bridge must remain client-only");
         assertTrue(clientMixins.contains(new JsonPrimitive("epicfightvs.EpicFightCameraApiMixin")),
                 "the ship-aware Epic Fight camera ray bridge must remain client-only");
+        assertTrue(clientMixins.contains(new JsonPrimitive("minecraft.RenderSystemMixin")),
+                "dynamic HUD alpha must remain a client-only render-system mixin");
     }
 
     @Test

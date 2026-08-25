@@ -45,6 +45,7 @@
     "explosionoverhaul.CameraShakeConcussionEffectMixin",
     "explosionoverhaul.DeafnessConcussionEffectMixin",
     "explosionoverhaul.LowPassConcussionEffectMixin",
+    "minecraft.RenderSystemMixin",
     "thefleshthathates.BiomeMusicMixin",
     "tconstruct.PartBuilderPatternSlotBackgroundMixin",
     "tconstruct.PartBuilderPatternSlotRenderMixin",

@@ -120,3 +120,17 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     versionRange="[1.20.1-85,)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="thirst"
+    mandatory=false
+    versionRange="[1.4.0,1.5)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="cold_sweat"
+    mandatory=false
+    versionRange="[2.4,2.5)"
+    ordering="AFTER"
+    side="CLIENT"

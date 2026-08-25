@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.bettercontent.bettercontentfixes.client.hud.DynamicHudController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,12 +26,15 @@ public final class ToggleSneakHandler {
         if (event.phase != TickEvent.Phase.END) return;
 
         final Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.screen != null) return;
+        if (minecraft.player == null || minecraft.screen != null) {
+            physicalKeyWasDown = false;
+            DynamicHudController.cancelPhysicalSneak();
+            return;
+        }
         final KeyMapping sneak = minecraft.options.keyShift;
         final InputConstants.Key key = sneak.getKey();
-        if (key.getType() != InputConstants.Type.KEYSYM) return;
-
-        final boolean physicalKeyDown = GLFW.glfwGetKey(minecraft.getWindow().getWindow(), key.getValue()) == GLFW.GLFW_PRESS;
+        final boolean physicalKeyDown = physicalKeyDown(minecraft, key);
+        DynamicHudController.onPhysicalSneak(physicalKeyDown);
         if (physicalKeyDown && !physicalKeyWasDown) {
             toggled = !toggled;
         }
@@ -41,5 +45,15 @@ public final class ToggleSneakHandler {
             toggled = false;
         }
         sneak.setDown(toggled);
+    }
+
+    private static boolean physicalKeyDown(final Minecraft minecraft, final InputConstants.Key key) {
+        if (key.getType() == InputConstants.Type.KEYSYM) {
+            return GLFW.glfwGetKey(minecraft.getWindow().getWindow(), key.getValue()) == GLFW.GLFW_PRESS;
+        }
+        if (key.getType() == InputConstants.Type.MOUSE) {
+            return GLFW.glfwGetMouseButton(minecraft.getWindow().getWindow(), key.getValue()) == GLFW.GLFW_PRESS;
+        }
+        return false;
     }
 }
