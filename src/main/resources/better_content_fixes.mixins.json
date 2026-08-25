@@ -17,6 +17,7 @@
     "tconstruct.PartBuilderContainerWrapperMixin",
     "tconstruct.PartBuilderPatternSlotPlacementMixin",
     "dynamictrees.NormalSeasonManagerMixin",
+    "dynamictrees.LevelPoissonDiscProviderMixin",
     "epicfightvs.ColliderMixin",
     "epicfightvs.MultiColliderMixin",
     "forge.VanillaInventoryCodeHooksMixin",

@@ -38,6 +38,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.valkyrienskies.";
     private static final String JSON_THINGS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
+    private static final String DYNAMIC_TREES_POISSON_MIXIN =
+            "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -98,6 +100,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(JSON_THINGS_MIXIN_PREFIX)) {
             return hasVersion(mods, "jsonthings", "0.9.13");
+        }
+        if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {
+            return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");
         }
         return true;
     }

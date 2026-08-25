@@ -99,7 +99,7 @@ dependencies {
     runtimeOnly(fg.deobf("curse.maven:geckolib-388172:7553267"))
     runtimeOnly(fg.deobf("curse.maven:sophisticated-core-618298:7916595"))
     runtimeOnly(fg.deobf("curse.maven:sophisticated-storage-619320:7973265"))
-    runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.9"))
+    runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.10"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")

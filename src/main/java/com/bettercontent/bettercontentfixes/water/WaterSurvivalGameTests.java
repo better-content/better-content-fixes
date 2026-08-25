@@ -25,27 +25,46 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 @PrefixGameTestTemplate(false)
 public final class WaterSurvivalGameTests {
+    private static final int RAIN_TEST_HEIGHT = 200;
+
     private WaterSurvivalGameTests() {
     }
 
-    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)
+    @GameTest(
+            batch = "rain_collector",
+            templateNamespace = BetterContentFixes.MOD_ID,
+            template = "empty",
+            timeoutTicks = 200
+    )
     public static void exposedCollectorFillsOneChargePerPulse(final GameTestHelper helper) {
         final ServerLevel level = helper.getLevel();
-        final BlockPos relativePos = new BlockPos(2, 200, 2);
+        final BlockPos relativePos = new BlockPos(2, RAIN_TEST_HEIGHT, 2);
         final BlockPos worldPos = helper.absolutePos(relativePos);
         level.setWeatherParameters(0, 1200, true, false);
         level.setRainLevel(1.0F);
         final BlockState state = RainCollectorRegistry.RAIN_COLLECTOR.get().defaultBlockState();
         helper.setBlock(relativePos, state);
+        final BlockPos collectionPos = worldPos.above();
+        helper.assertTrue(level.isRaining(), "Test weather must be raining");
+        helper.assertTrue(level.canSeeSky(collectionPos), "Collector must have open sky");
+        helper.assertTrue(
+                level.isRainingAt(collectionPos),
+                "Collector needs rain precipitation; biome=" + level.getBiome(collectionPos).unwrapKey().orElse(null)
+        );
         RainCollectorRegistry.RAIN_COLLECTOR.get().tick(state, level, worldPos, RandomSource.create(1L));
         helper.assertBlockProperty(relativePos, RainCollectorBlock.LEVEL, 1);
         helper.succeed();
     }
 
-    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 200)
+    @GameTest(
+            batch = "rain_collector",
+            templateNamespace = BetterContentFixes.MOD_ID,
+            template = "empty",
+            timeoutTicks = 200
+    )
     public static void coveredCollectorDoesNotFill(final GameTestHelper helper) {
         final ServerLevel level = helper.getLevel();
-        final BlockPos relativePos = new BlockPos(2, 200, 2);
+        final BlockPos relativePos = new BlockPos(2, RAIN_TEST_HEIGHT, 2);
         final BlockPos worldPos = helper.absolutePos(relativePos);
         level.setWeatherParameters(0, 1200, true, false);
         level.setRainLevel(1.0F);
