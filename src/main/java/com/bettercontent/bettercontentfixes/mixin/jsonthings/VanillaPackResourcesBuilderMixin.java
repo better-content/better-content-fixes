@@ -9,12 +9,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(VanillaPackResourcesBuilder.class)
 public abstract class VanillaPackResourcesBuilderMixin {
     @Redirect(
-            method = "lambda$static$1",
+            method = "m_246520_",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/packs/PackType;values()[Lnet/minecraft/server/packs/PackType;"
+                    target = "Lnet/minecraft/server/packs/PackType;values()[Lnet/minecraft/server/packs/PackType;",
+                    remap = false
             ),
-            require = 1
+            require = 1,
+            remap = false
     )
     private static PackType[] betterContentFixes$builtInPackTypes() {
         return new PackType[]{PackType.CLIENT_RESOURCES, PackType.SERVER_DATA};
