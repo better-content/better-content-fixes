@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
-public record ThreadDefinition(String id, String title, ResourceLocation symbol, ResourceLocation art,
+public record ThreadDefinition(String id, String title, ResourceLocation symbol, ThreadAspect aspect, ResourceLocation art,
                                String reveal, List<String> phases, List<Predicate> discover,
                                List<Predicate> contact, List<Predicate> lived, Doorway doorway) {
     public static final int MAX_TEXT = 256;
@@ -23,11 +23,13 @@ public record ThreadDefinition(String id, String title, ResourceLocation symbol,
     public record Doorway(String type, String target) {
         private static final java.util.Set<String> TYPES = java.util.Set.of("trace_sight", "rpg", "diet", "tconstruct", "ftb", "emi", "font", "campaign", "guideme", "powers", "lifecycle");
         public Doorway { if (!TYPES.contains(type)) throw new IllegalArgumentException("unknown doorway action " + type); }
+        static boolean validType(String type) { return TYPES.contains(type); }
     }
     public static ThreadDefinition parse(JsonObject json) {
         var phases = strings(json.getAsJsonArray("phases"));
         var doorway = json.getAsJsonObject("doorway");
         return new ThreadDefinition(json.get("id").getAsString(), json.get("title").getAsString(), new ResourceLocation(json.get("symbol").getAsString()),
+            ThreadAspect.parse(json.get("aspect").getAsString()),
             new ResourceLocation(json.get("art").getAsString()), json.get("reveal").getAsString(), phases,
             predicates(json.getAsJsonArray("discover")),
             predicates(json.getAsJsonArray("contact")), predicates(json.getAsJsonArray("lived")),

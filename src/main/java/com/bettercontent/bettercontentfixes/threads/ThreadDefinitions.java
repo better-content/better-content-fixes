@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 
 public final class ThreadDefinitions extends SimpleJsonResourceReloadListener {
@@ -26,6 +27,12 @@ public final class ThreadDefinitions extends SimpleJsonResourceReloadListener {
     }
     private static void add(Map<String, ThreadDefinition> loaded, JsonObject json) {
         var definition = ThreadDefinition.parse(json);
+        if (ThreadArt.EXPECTED_ASPECTS.get(definition.id()) != definition.aspect())
+            throw new IllegalStateException("unapproved aspect assignment for thread " + definition.id());
+        if (!definition.symbol().toString().equals(ThreadArt.EXPECTED_SYMBOLS.get(definition.id())))
+            throw new IllegalStateException("unapproved native symbol for thread " + definition.id());
+        if (!ForgeRegistries.ITEMS.containsKey(definition.symbol()))
+            throw new IllegalStateException("unresolved native symbol for thread " + definition.id() + ": " + definition.symbol());
         if (loaded.putIfAbsent(definition.id(), definition) != null) throw new IllegalStateException("duplicate thread " + definition.id());
     }
     public Collection<ThreadDefinition> all() { return definitions.values(); }
