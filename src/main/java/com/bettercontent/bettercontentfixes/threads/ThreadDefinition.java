@@ -5,12 +5,14 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import java.util.List;
 
-public record ThreadDefinition(String id, String title, ResourceLocation symbol, List<String> phases,
+public record ThreadDefinition(String id, String title, ResourceLocation symbol, ResourceLocation art,
+                               String reveal, List<String> phases, List<Predicate> discover,
                                List<Predicate> contact, List<Predicate> lived, Doorway doorway) {
     public static final int MAX_TEXT = 256;
     public ThreadDefinition {
         if (!id.matches("[a-z0-9_]{1,48}")) throw new IllegalArgumentException("invalid thread id");
         if (title.isBlank() || title.length() > 64) throw new IllegalArgumentException("invalid thread title");
+        if (reveal.isBlank() || reveal.length() > 96) throw new IllegalArgumentException("invalid thread reveal");
         if (phases.size() != 3 || phases.stream().anyMatch(s -> s.isBlank() || s.length() > MAX_TEXT))
             throw new IllegalArgumentException("thread must have exactly three bounded phases");
         if (doorway.target().length() > 128) throw new IllegalArgumentException("doorway target too long");
@@ -25,7 +27,9 @@ public record ThreadDefinition(String id, String title, ResourceLocation symbol,
     public static ThreadDefinition parse(JsonObject json) {
         var phases = strings(json.getAsJsonArray("phases"));
         var doorway = json.getAsJsonObject("doorway");
-        return new ThreadDefinition(json.get("id").getAsString(), json.get("title").getAsString(), new ResourceLocation(json.get("symbol").getAsString()), phases,
+        return new ThreadDefinition(json.get("id").getAsString(), json.get("title").getAsString(), new ResourceLocation(json.get("symbol").getAsString()),
+            new ResourceLocation(json.get("art").getAsString()), json.get("reveal").getAsString(), phases,
+            predicates(json.getAsJsonArray("discover")),
             predicates(json.getAsJsonArray("contact")), predicates(json.getAsJsonArray("lived")),
             new Doorway(doorway.get("type").getAsString(), doorway.get("target").getAsString()));
     }

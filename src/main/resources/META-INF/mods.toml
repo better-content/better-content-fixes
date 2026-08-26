@@ -24,6 +24,13 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="world_lifecycle_manager"
+    mandatory=false
+versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="weather2"
     mandatory=false
     versionRange="[1.20.1-2.8.3,)"

@@ -46,6 +46,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import com.bettercontent.bettercontentfixes.threads.ThreadEvents;
 import com.bettercontent.bettercontentfixes.threads.ThreadNetwork;
+import com.bettercontent.bettercontentfixes.threads.ThreadRegistry;
 
 @Mod(BetterContentFixes.MOD_ID)
 public final class BetterContentFixes {
@@ -56,6 +57,7 @@ public final class BetterContentFixes {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ThreadRegistry.ITEMS.register(modEventBus);
         if (ModList.get().isLoaded("thirst")) {
             ThirstLootModifierCompat.register(modEventBus);
         }

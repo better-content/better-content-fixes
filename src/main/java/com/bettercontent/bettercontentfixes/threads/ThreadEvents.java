@@ -1,6 +1,5 @@
 package com.bettercontent.bettercontentfixes.threads;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
@@ -9,51 +8,33 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import java.util.*;
 
 public final class ThreadEvents {
-    private static final long RETURN_MS=4L*60*60*1000, EDGE_MS=60_000;
-    private static final Map<UUID,Integer> due=new HashMap<>();
+    private static final Map<UUID,Integer> baselineDue=new HashMap<>(),contextDue=new HashMap<>();
+    private static final Set<UUID> ready=new HashSet<>();
     @SubscribeEvent public static void reload(AddReloadListenerEvent event){event.addListener(ThreadDefinitions.INSTANCE);}
-    @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event){if(event.getEntity() instanceof ServerPlayer p)due.put(p.getUUID(),p.server.getTickCount()+120);}
-    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p){var s=ThreadPlayerState.load(p);s.lastLogoutReal=System.currentTimeMillis();s.save(p);due.remove(p.getUUID());}}
+    @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event){if(event.getEntity() instanceof ServerPlayer p)baselineDue.put(p.getUUID(),p.server.getTickCount()+20);}
+    @SubscribeEvent public static void logout(PlayerEvent.PlayerLoggedOutEvent event){if(event.getEntity() instanceof ServerPlayer p){ThreadPlayerState.get(p).save(p);ThreadPlayerState.forget(p);ready.remove(p.getUUID());baselineDue.remove(p.getUUID());contextDue.remove(p.getUUID());}}
+    @SubscribeEvent public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent event){schedule(event.getEntity());}
+    @SubscribeEvent public static void crafted(PlayerEvent.ItemCraftedEvent event){schedule(event.getEntity());}
+    @SubscribeEvent public static void smelted(PlayerEvent.ItemSmeltedEvent event){schedule(event.getEntity());}
+    @SubscribeEvent public static void pickedUp(PlayerEvent.ItemPickupEvent event){schedule(event.getEntity());}
+    private static void schedule(net.minecraft.world.entity.player.Player player){if(player instanceof ServerPlayer p&&ready.contains(p.getUUID()))contextDue.put(p.getUUID(),p.server.getTickCount()+1);}
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event){
         if(event.phase!=TickEvent.Phase.END)return;int tick=event.getServer().getTickCount();
-        for(var p:event.getServer().getPlayerList().getPlayers()){
-            if(tick%100==0)evaluate(p);
-            Integer target=due.get(p.getUUID());if(target!=null&&tick>=target){due.remove(p.getUUID());overture(p);}
+        for(var player:event.getServer().getPlayerList().getPlayers()){
+            UUID id=player.getUUID();Integer baseline=baselineDue.get(id);
+            if(baseline!=null&&tick>=baseline){baselineDue.remove(id);evaluate(player,false);ready.add(id);ThreadNetwork.sync(player,false,List.of());continue;}
+            Integer context=contextDue.get(id);if(context!=null&&tick>=context){contextDue.remove(id);evaluate(player,true);continue;}
+            if(ready.contains(id)&&tick%100==0)evaluate(player,true);
         }
     }
-    private static void evaluate(ServerPlayer player){
-        var state=ThreadPlayerState.load(player);ThreadNetwork.Card edge=null;
-        state.everSeen.add("dimension:"+player.serverLevel().dimension().location());
-        for(var d:ThreadDefinitions.INSTANCE.all()){
-            int before=state.phases.getOrDefault(d.id(),0), after=state.advance(d.id(),ThreadPredicateEvaluator.phase(player,d,state));
-            if(after>before&&state.held.contains(d.id())&&!state.edgeQueue.contains(d.id()))state.edgeQueue.addLast(d.id());
+    static void evaluate(ServerPlayer player,boolean notify){
+        var state=ThreadPlayerState.get(player);boolean dirty=false;ThreadNetwork.Notice notice=null;
+        String dimension="dimension:"+player.serverLevel().dimension().location();if(state.everSeen.add(dimension))dirty=true;
+        for(var definition:ThreadDefinitions.INSTANCE.all()){
+            var result=ThreadPredicateEvaluator.result(player,definition,state);if(!result.encountered())continue;
+            boolean newlyCollected=state.collect(definition.id());int before=state.phases.getOrDefault(definition.id(),0),after=state.advance(definition.id(),result.phase());
+            if(newlyCollected||after>before){state.unread.add(definition.id());dirty=true;if(notify&&notice==null)notice=ThreadNetwork.notice(definition);}
         }
-        if(!state.edgeQueue.isEmpty()&&System.currentTimeMillis()-state.lastEdgeReal>=EDGE_MS){var d=ThreadDefinitions.INSTANCE.get(state.edgeQueue.removeFirst());if(d!=null){edge=card(d,state,"near");state.lastEdgeReal=System.currentTimeMillis();}}
-        state.save(player);if(edge!=null)ThreadNetwork.sync(player,false,List.of(),List.of(edge));
+        if(dirty)state.save(player);if(dirty||notice!=null)ThreadNetwork.sync(player,false,notice==null?List.of():List.of(notice));
     }
-    private static void overture(ServerPlayer player){
-        var state=ThreadPlayerState.load(player);long now=System.currentTimeMillis();boolean first=state.lastLoginReal==0;long away=state.lastLogoutReal==0?0:now-state.lastLogoutReal;
-        state.lastLoginReal=now;if(!first&&away<RETURN_MS){state.save(player);return;}evaluate(player);state=ThreadPlayerState.load(player);
-        var cards=new ArrayList<ThreadNetwork.Card>();
-        if(first){var world=ThreadDefinitions.INSTANCE.get("world_remembers");if(world!=null)cards.add(card(world,state,"changed"));}
-        else changed(player).ifPresent(cards::add);
-        var choices=ThreadDefinitions.INSTANCE.all().stream().filter(d->!first||!d.id().equals("world_remembers")).toList();
-        for(String id:ThreadSelection.possibilities(choices,state,player.getUUID().getLeastSignificantBits()^now)){
-            if(cards.stream().anyMatch(c->c.id().equals(id)))continue;var d=ThreadDefinitions.INSTANCE.get(id);if(d!=null){String motif=state.everSeen.contains(id)||state.phases.getOrDefault(id,0)>0?"near":"wild";cards.add(card(d,state,motif));if(motif.equals("wild"))state.rememberWild(id);}
-            if(cards.size()>=3)break;
-        }
-        state.lastOvertureReal=now;state.save(player);ThreadNetwork.sync(player,false,cards,List.of());
-    }
-    private static Optional<ThreadNetwork.Card> changed(ServerPlayer player){
-        try{var api=Class.forName("com.bettercontent.playertraces.api.ReturnSummaryApi");var summary=api.getMethod("summarize",ServerPlayer.class).invoke(null,player);if(!(boolean)summary.getClass().getMethod("hasChanges").invoke(summary))return Optional.empty();
-            int paths=(int)summary.getClass().getMethod("getDistinctNewPathSequences").invoke(summary),notes=(int)summary.getClass().getMethod("getChangedNotes").invoke(summary),pools=(int)summary.getClass().getMethod("getBloodPools").invoke(summary),echoes=(int)summary.getClass().getMethod("getDeathEchoes").invoke(summary);
-            String prose="Nearby since you left: "+parts(paths,"path",notes,"note",pools,"blood pool",echoes,"death echo")+".";
-            return Optional.of(new ThreadNetwork.Card("changed","The World Changed","minecraft:compass",prose,"trace_sight","Trace Sight",false,"changed"));
-        }catch(ReflectiveOperationException ignored){return Optional.empty();}
-    }
-    private static String parts(int a,String an,int b,String bn,int c,String cn,int d,String dn){
-        var out=new ArrayList<String>();add(out,a,an);add(out,b,bn);add(out,c,cn);add(out,d,dn);return String.join(", ",out);
-    }
-    private static void add(List<String> out,int count,String name){if(count>0)out.add(count+" "+name+(count==1?"":"s"));}
-    private static ThreadNetwork.Card card(ThreadDefinition d,ThreadPlayerState s,String motif){return new ThreadNetwork.Card(d.id(),d.title(),d.symbol().toString(),d.phases().get(s.phases.getOrDefault(d.id(),0)),d.doorway().type(),d.doorway().target(),s.held.contains(d.id()),motif);}
 }

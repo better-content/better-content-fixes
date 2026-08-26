@@ -7,11 +7,13 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 final class ThreadPredicateEvaluator {
+    record Result(boolean encountered,int phase) {}
     private ThreadPredicateEvaluator() {}
-    static int phase(ServerPlayer player, ThreadDefinition definition, ThreadPlayerState state){
+    static Result result(ServerPlayer player, ThreadDefinition definition, ThreadPlayerState state){
         boolean lived=definition.lived().stream().anyMatch(p->matches(player,p,state));
         boolean contact=lived||definition.contact().stream().anyMatch(p->matches(player,p,state));
-        return lived?2:contact?1:0;
+        boolean discovered=contact||definition.discover().stream().anyMatch(p->matches(player,p,state));
+        return new Result(discovered,lived?2:contact?1:0);
     }
     private static boolean matches(ServerPlayer player,ThreadDefinition.Predicate predicate,ThreadPlayerState state){
         return switch(predicate.type()){
