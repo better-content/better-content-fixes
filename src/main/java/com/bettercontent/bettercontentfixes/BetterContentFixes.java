@@ -44,6 +44,8 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import com.bettercontent.bettercontentfixes.threads.ThreadEvents;
+import com.bettercontent.bettercontentfixes.threads.ThreadNetwork;
 
 @Mod(BetterContentFixes.MOD_ID)
 public final class BetterContentFixes {
@@ -80,6 +82,8 @@ public final class BetterContentFixes {
         WaterBottleCurio.registerPredicate();
         CoinPurseCurio.registerPredicate();
         QuestIntegration.initialize();
+        ThreadNetwork.register();
+        MinecraftForge.EVENT_BUS.register(ThreadEvents.class);
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {

@@ -21,5 +21,7 @@
   "entity.better_content_fixes.wandering_trader.surveyor": "Wandering Surveyor",
   "entity.better_content_fixes.wandering_trader.quartermaster": "Wandering Quartermaster",
   "entity.better_content_fixes.wandering_trader.antiquarian": "Wandering Antiquarian",
-  "message.better_content_fixes.wandering_trader.arrival": "%1$s has arrived in %2$s at %3$s, %4$s, %5$s."
+  "message.better_content_fixes.wandering_trader.arrival": "%1$s has arrived in %2$s at %3$s, %4$s, %5$s.",
+  "key.better_content_fixes.threads": "Open Threads",
+  "key.categories.better_content_fixes": "Better Content"
 }
