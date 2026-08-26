@@ -10,8 +10,10 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import org.lwjgl.glfw.GLFW;
 import java.util.*;
 import net.minecraftforge.fml.common.Mod;
@@ -33,7 +35,11 @@ public final class ThreadClient {
     }
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event){
         if(event.phase!=TickEvent.Phase.END)return;
-        while(OPEN.consumeClick()) if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),GLFW.GLFW_KEY_LEFT_CONTROL)||InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(),GLFW.GLFW_KEY_RIGHT_CONTROL)) ThreadNetwork.request("open","");
+        while(OPEN.consumeClick()) { /* InputEvent.Key preserves the chord's modifier state. */ }
+    }
+    @SubscribeEvent(priority=EventPriority.LOWEST)
+    public static void key(InputEvent.Key event){
+        if(event.getAction()==GLFW.GLFW_PRESS&&event.getKey()==GLFW.GLFW_KEY_J&&(event.getModifiers()&GLFW.GLFW_MOD_CONTROL)!=0)ThreadNetwork.request("open","");
     }
     @SubscribeEvent public static void screen(ScreenEvent.Init.Post event){
         if(!(event.getScreen() instanceof PauseScreen))return;
