@@ -17,7 +17,6 @@ Runtime behavior includes pack-owned compatibility fixes, including a dynamic su
 Deploy the reobfuscated jar from:
 
 - `build/libs/better-content-fixes-<version>.jar`
-- `build/libs/better-content-fixes-<version>-all.jar`
 
 The pack currently tracks the canonical release jar in `mods/`, not source outputs or IDE runtime state.
 

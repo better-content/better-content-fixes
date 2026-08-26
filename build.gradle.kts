@@ -65,7 +65,6 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:pollution-of-the-realms-269973:8554528"))
     compileOnly(fg.deobf("curse.maven:little-logistics-570050:4799459"))
     compileOnly(fg.deobf("curse.maven:weather-storms-tornadoes-237746:5244118"))
-    compileOnly(fg.deobf("curse.maven:combat-roll-678036:5625925"))
     compileOnly(fg.deobf("curse.maven:creativecore-257814:7649757"))
     compileOnly(fg.deobf("curse.maven:ambientsounds-254284:7550220"))
     compileOnly(fg.deobf("curse.maven:oculus-581495:6020952"))
