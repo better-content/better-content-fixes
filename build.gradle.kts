@@ -79,6 +79,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:ftb-teams-forge-404468:7499810"))
     compileOnly(fg.deobf("curse.maven:ftb-quests-forge-289412:7909594"))
     compileOnly(fg.deobf("curse.maven:epic-fight-mod-405076:8049910"))
+    compileOnly(fg.deobf("curse.maven:explosion-overhaul-a-new-level-of-destruction-1296203:7659431"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
     compileOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))

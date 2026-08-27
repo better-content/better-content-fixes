@@ -4,6 +4,7 @@
 
 - Serialized Dynamic Trees 1.4.10 Poisson-disc chunk-data access on its existing provider monitor, preventing C2ME asynchronous chunk loads from corrupting the shared cache without disabling asynchronous I/O pack-wide.
 - Locked every player into Epic Fight Battle mode and removed the obsolete Battle/Mining mode switch from keyboard and controller configuration.
+- Automatically accepted Explosion Overhaul's affirmative load-or-scan policy without displaying its scan-choice HUD.
 - Extracted Dynamic Survival HUD, Threads, quest task types, water survival, and economy ownership into standalone mods.
 - Allowed ReHooked grapples to attach to mobs and tug both endpoints according to entity size and knockback resistance.
 - Rebuilt and fully resynchronized materialized TConstruct tools after login datapack sync so durability and other dynamic stats are authoritative on the first client inventory update.

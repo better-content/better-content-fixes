@@ -15,6 +15,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
     public static final ForgeConfigSpec.BooleanValue AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS;
+    public static final ForgeConfigSpec.BooleanValue EXPLOSION_OVERHAUL_AUTO_ACCEPT_SCAN_PROMPTS;
     public static final ForgeConfigSpec.BooleanValue EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION;
     public static final ForgeConfigSpec.IntValue EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS;
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
@@ -132,6 +133,11 @@ public final class BcFixesConfig {
         builder.pop();
 
         builder.push("explosionOverhaul");
+        EXPLOSION_OVERHAUL_AUTO_ACCEPT_SCAN_PROMPTS = builder
+                .comment(
+                        "Automatically accepts Explosion Overhaul's chunk-index prompts without displaying their HUD.",
+                        "Existing scan data is loaded when available; otherwise a new scan starts, matching the prompt's affirmative choice.")
+                .define("autoAcceptScanPrompts", true);
         EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION = builder
                 .comment(
                         "Caps Explosion Overhaul concussion effects so large clustered blasts cannot cause excessively long shell shock.",
@@ -314,6 +320,10 @@ public final class BcFixesConfig {
 
     public static boolean explosionOverhaulClampConcussionDuration() {
         return isLoaded("explosionoverhaul") && EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION.get();
+    }
+
+    public static boolean explosionOverhaulAutoAcceptScanPrompts() {
+        return isLoaded("explosionoverhaul") && EXPLOSION_OVERHAUL_AUTO_ACCEPT_SCAN_PROMPTS.get();
     }
 
     public static int explosionOverhaulMaxConcussionDurationSeconds() {

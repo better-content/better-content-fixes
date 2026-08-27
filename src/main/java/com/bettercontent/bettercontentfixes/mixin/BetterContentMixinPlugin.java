@@ -24,6 +24,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.ali.";
     private static final String APOTHEOSIS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.apotheosis.";
+    private static final String EXPLOSION_OVERHAUL_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.explosionoverhaul.";
     private static final String PATCHOULI_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.patchouli.";
     private static final String PNEUMATICCRAFT_MIXIN_PREFIX =
@@ -87,6 +89,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(APOTHEOSIS_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("apotheosis") != null;
+        }
+        if (mixinClassName.startsWith(EXPLOSION_OVERHAUL_MIXIN_PREFIX)) {
+            return hasVersion(mods, "explosionoverhaul", "0.2.3.0-forge");
         }
         if (mixinClassName.startsWith(PATCHOULI_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("patchouli") != null;

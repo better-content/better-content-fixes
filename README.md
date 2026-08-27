@@ -2,7 +2,7 @@
 
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
-Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode and weight-based ReHooked mob grappling.
+Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode, automatic affirmative Explosion Overhaul scan decisions, and weight-based ReHooked mob grappling.
 
 ## Common commands
 
