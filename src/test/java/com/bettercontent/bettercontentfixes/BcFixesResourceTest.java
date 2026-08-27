@@ -89,6 +89,15 @@ final class BcFixesResourceTest {
     }
 
     @Test
+    void featureSorterMixinTargetsTheProductionSrgMethodWithoutARefmap() throws IOException {
+        String source = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/FeatureSorterMixin.java"));
+
+        assertTrue(source.contains("@WrapMethod(method = \"m_220603_\", remap = false)"),
+                "the production JAR has no refmap, so the feature sorter hook must use its 1.20.1 SRG name");
+    }
+
+    @Test
     void fluidGeneratedBlocksAllowlistDefaultsToObsidianOnly() throws IOException {
         Path tagPath = Path.of("src/main/resources/data/better_content_fixes/tags/blocks/allowed_fluid_generated_blocks.json");
         JsonObject tag = JsonParser.parseReader(Files.newBufferedReader(tagPath)).getAsJsonObject();

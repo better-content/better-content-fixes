@@ -16,7 +16,8 @@ import java.util.function.Function;
 
 @Mixin(FeatureSorter.class)
 public abstract class FeatureSorterMixin {
-    @WrapMethod(method = "buildFeaturesPerStep")
+    // This project does not emit a production refmap, so target the 1.20.1 SRG name explicitly.
+    @WrapMethod(method = "m_220603_", remap = false)
     private static <T> List<FeatureSorter.StepFeatureData> betterContentFixes$removeRepeatedPlacedFeatures(
             final List<T> sources,
             final Function<T, List<HolderSet<PlacedFeature>>> features,
