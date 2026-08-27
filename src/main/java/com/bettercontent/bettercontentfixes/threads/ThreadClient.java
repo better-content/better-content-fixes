@@ -33,6 +33,8 @@ public final class ThreadClient {
     static final float NOTICE_MIN_TEXT_SCALE = 0.55f;
     static final int NOTICE_GLYPH_OFFSET_Y = -8;
     static final int NOTICE_TEXT_OFFSET_Y = 2;
+    static final int NOTICE_HINT_OFFSET_Y = 10;
+    static final float NOTICE_HINT_SCALE = 0.58f;
     static final int ARCHIVE_GOLD = 0xC6A15B;
     public static final KeyMapping OPEN = new KeyMapping("key.better_content_fixes.threads", InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_J, "key.categories.better_content_fixes");
@@ -57,7 +59,7 @@ public final class ThreadClient {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void key(InputEvent.Key event) {
-        if (event.getAction() == GLFW.GLFW_PRESS && event.getKey() == GLFW.GLFW_KEY_J
+        if (event.getAction() == GLFW.GLFW_PRESS && OPEN.matches(event.getKey(), event.getScanCode())
             && (event.getModifiers() & GLFW.GLFW_MOD_CONTROL) != 0) ThreadNetwork.request("open", "");
     }
 
@@ -98,6 +100,11 @@ public final class ThreadClient {
         int textWidth = Minecraft.getInstance().font.width(message);
         float scale = Math.max(NOTICE_MIN_TEXT_SCALE,Math.min(NOTICE_TEXT_SCALE, (screenWidth - 24.0f) / Math.max(1, textWidth)));
         drawOutlinedCentered(graphics, message, centerX, centerY + NOTICE_TEXT_OFFSET_Y, scale, alpha);
+        Component hint = Component.translatable("message.better_content_fixes.thread_reader_hint",
+                Component.translatable("key.keyboard.left.control"), OPEN.getTranslatedKeyMessage());
+        int hintWidth = Minecraft.getInstance().font.width(hint);
+        float hintScale = Math.min(NOTICE_HINT_SCALE, (screenWidth - 24.0f) / Math.max(1, hintWidth));
+        drawOutlinedCentered(graphics, hint, centerX, centerY + NOTICE_HINT_OFFSET_Y, hintScale, alpha * 0.82f);
     }
 
     private static void drawArchiveGlyph(GuiGraphics graphics,int x,int y,int rgb,float alpha){int color=(Math.round(alpha*255)<<24)|rgb;int[][]rows={{3,4},{2,5},{1,3,4,6},{0,2,5,7},{0,2,5,7},{1,3,4,6},{2,5},{3,4}};for(int py=0;py<rows.length;py++)for(int px:rows[py])graphics.fill(x+px,y+py,x+px+1,y+py+1,color);}
