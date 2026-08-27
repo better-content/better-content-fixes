@@ -5,13 +5,12 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-/** Removes repeated placed-feature instances that make vanilla's feature graph self-cyclic. */
+/** Removes equal placed features that vanilla assigns the same graph index across generation steps. */
 public final class FeatureOrderSanitizer {
     private FeatureOrderSanitizer() {
     }
@@ -35,7 +34,7 @@ public final class FeatureOrderSanitizer {
             final List<List<T>> steps,
             final Function<T, ?> identity
     ) {
-        final Set<Object> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        final Set<Object> seen = new HashSet<>();
         final List<List<T>> sanitized = new ArrayList<>(steps.size());
         boolean changed = false;
 

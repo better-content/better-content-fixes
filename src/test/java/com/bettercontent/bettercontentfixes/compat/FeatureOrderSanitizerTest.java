@@ -26,4 +26,16 @@ final class FeatureOrderSanitizerTest {
 
         assertSame(steps, FeatureOrderSanitizer.deduplicateByIdentity(steps, value -> value));
     }
+
+    @Test
+    void removesDistinctObjectsThatShareVanillasFeatureEquality() {
+        final String first = new String("equal feature");
+        final String equalButDistinct = new String("equal feature");
+        final List<List<String>> steps = List.of(List.of(first), List.of(equalButDistinct));
+
+        final List<List<String>> sanitized = FeatureOrderSanitizer.deduplicateByIdentity(steps, value -> value);
+
+        assertSame(first, sanitized.get(0).get(0));
+        assertEquals(0, sanitized.get(1).size());
+    }
 }
