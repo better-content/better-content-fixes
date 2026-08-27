@@ -14,14 +14,29 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue HYLE_RUN_AFTER_UNDERGROUND_DECORATION;
     public static final ForgeConfigSpec.BooleanValue APOTHEOSIS_SKIP_OFF_THREAD_TOOLTIPS;
     public static final ForgeConfigSpec.BooleanValue ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION;
+    public static final ForgeConfigSpec.BooleanValue AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS;
+    public static final ForgeConfigSpec.BooleanValue EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION;
+    public static final ForgeConfigSpec.IntValue EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS;
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
+    public static final ForgeConfigSpec.BooleanValue THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC;
+    public static final ForgeConfigSpec.BooleanValue WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS;
+    public static final ForgeConfigSpec.BooleanValue SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION;
     public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
+    public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_NATURAL_SURFACE_HOSTILES;
+    public static final ForgeConfigSpec.IntValue MOBS_NATURAL_SURFACE_DEPTH;
+    public static final ForgeConfigSpec.BooleanValue MOBS_VERTICAL_NATURAL_SPAWN_SCALING;
+    public static final ForgeConfigSpec.IntValue MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE;
+    public static final ForgeConfigSpec.IntValue MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS;
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
+    public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
+    public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
+    public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -53,6 +68,19 @@ public final class BcFixesConfig {
                         "Cancels Pollution of the Realms emissions from its player block-break event only.",
                         "World-level block-break emissions remain available to Create drills, contraptions, explosions, and other automation.")
                 .define("disablePlayerBlockBreakEmissions", true);
+        builder.pop();
+
+        builder.push("vanillaBoats");
+        VANILLA_BOAT_DURABILITY_MULTIPLIER = builder
+                .comment(
+                        "Multiplier applied to the accumulated-damage destruction threshold of vanilla boats and chest boats.",
+                        "Movement, collisions, passengers, damage accumulation, and modded vessel entity types are unchanged.")
+                .defineInRange("durabilityMultiplier", 10.0D, 1.0D, 100.0D);
+        VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP = builder
+                .comment(
+                        "Suppresses the boat or chest-boat item when a vanilla vessel is destroyed.",
+                        "Chest-boat inventory contents still drop normally; unrelated entity drops are unchanged.")
+                .define("suppressDestructionDrop", true);
         builder.pop();
 
         builder.push("hyle");
@@ -94,6 +122,26 @@ public final class BcFixesConfig {
                 .define("skipOffThreadEmiRegistration", true);
         builder.pop();
 
+        builder.push("ambientSounds");
+        AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS = builder
+                .comment(
+                        "Retires AmbientSounds streams that Minecraft rejected before playback so their parent sounds can retry later.",
+                        "Minecraft has a finite sound-channel pool; without this recovery, a rejected stream can remain tracked forever and permanently silence that ambient sound.",
+                        "Active streams and streams that have played at least once retain AmbientSounds' normal lifecycle.")
+                .define("retryRejectedStreams", true);
+        builder.pop();
+
+        builder.push("explosionOverhaul");
+        EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION = builder
+                .comment(
+                        "Caps Explosion Overhaul concussion effects so large clustered blasts cannot cause excessively long shell shock.",
+                        "The cap applies to blur, camera sway, low-pass audio, and deafness, including duration accumulated by repeated blasts.")
+                .define("clampConcussionDuration", true);
+        EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS = builder
+                .comment("Maximum concussion hold duration in seconds. Default: 45 seconds.")
+                .defineInRange("maxConcussionDurationSeconds", 45, 1, 100);
+        builder.pop();
+
         builder.push("burnt");
         BURNT_MODDED_GRASS_REPLACEMENTS = builder
                 .comment(
@@ -124,10 +172,42 @@ public final class BcFixesConfig {
         builder.push("mobs");
         MOBS_DISABLE_SUN_BURN_TICK = builder
                 .comment(
-                        "Forces Mob.isSunBurnTick() to return false.",
-                        "This preserves the current pack policy from Protect Mobs From Daylight while moving ownership intobetter_content_fixes.",
-                        "Applies anywhere vanilla or another mod uses Mob.isSunBurnTick for daylight burning checks.")
+                        "Forces Mob.isSunBurnTick() to return false for protected mobs.",
+                        "Phantoms and Phantom subclasses retain vanilla daylight burning so exposed phantoms are cleared after sunrise.",
+                        "Other daylight-sensitive mobs remain protected; ordinary fire and non-solar fire damage are unchanged.")
                 .define("disableSunBurnTick", true);
+        MOBS_BLOCK_NATURAL_SURFACE_HOSTILES = builder
+                .comment(
+                        "Denies natural and chunk-generation monsters near the Overworld terrain surface and on tagged grass-covered ground at any depth.",
+                        "The surface is measured with the leaf-ignoring motion-blocking heightmap, so tree canopies do not create ambient spawn pockets.",
+                        "The depth-independent ground list is data-driven through the better_content_fixes:ambient_spawn_denied_surfaces block tag.",
+                        "Spawner, structure, event, summon, command, and scripted entity insertion remain unaffected.")
+                .define("blockNaturalSurfaceHostiles", true);
+        MOBS_NATURAL_SURFACE_DEPTH = builder
+                .comment(
+                        "Number of blocks below the local leaf-ignoring terrain surface that remain reserved from ambient monster spawning.",
+                        "A value of 6 denies the surface block and the six-block band beneath it while leaving deeper caves active.")
+                .defineInRange("naturalSurfaceDepth", 6, 0, 64);
+        MOBS_VERTICAL_NATURAL_SPAWN_SCALING = builder
+                .comment(
+                        "Scales Overworld natural monster spawning from the candidate spawn block's Y coordinate.",
+                        "The controller runs extra vanilla natural-spawn passes and never uses player Y, spawners, structures, events, summons, commands, or chunk-generation spawning.")
+                .define("verticalNaturalSpawnScaling", true);
+        MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE = builder
+                .comment(
+                        "Blocks above sea level that retain the minimum natural-monster spawn multiplier.",
+                        "With the default 128, the minimum band extends from the Overworld sea level through Y 191.")
+                .defineInRange("verticalSpawnUpperMinimumRange", 128, 0, 512);
+        MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER = builder
+                .comment(
+                        "Maximum Overworld natural-monster spawn multiplier at the lower and upper build limits.",
+                        "The minimum multiplier is always 1; the default 8 runs eight natural-spawn passes with a Y-derived acceptance chance.")
+                .defineInRange("verticalSpawnMaxMultiplier", 8, 1, 16);
+        MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS = builder
+                .comment(
+                        "Denies only natural and chunk-generation spawning of minecraft:zombie and minecraft:skeleton in the Overworld.",
+                        "Spawner, structure, event, summon, command, scripted insertion, and variant entity types remain available.")
+                .define("blockVanillaZombiesAndSkeletons", true);
         builder.pop();
 
         builder.push("structureGenerationImprover");
@@ -154,6 +234,42 @@ public final class BcFixesConfig {
                 .define("cancelStaleDhClientRequests", true);
         builder.pop();
 
+        builder.push("theFleshThatHates");
+        THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC = builder
+                .comment(
+                        "Disables The Flesh That Hates' automatic proximity music near clusters of flesh blocks.",
+                        "The upstream handler pauses vanilla music and routes its horror score through the Jukebox/Note Blocks channel.",
+                        "Entity, combat, evolution, jukebox, note-block, and other Records-channel sounds remain unchanged.")
+                .define("disableProximityMusic", true);
+        builder.pop();
+
+        builder.push("weather2");
+        WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS = builder
+                .comment(
+                        "Disables Weather2's custom fog color and distance override while an Oculus shader pack is active.",
+                        "Weather2 still tracks storm state and renders weather particles; the active shader pack owns sky and fog rendering.",
+                        "Shaders-off Weather2 fog behavior is unchanged.")
+                .define("disableFogOverrideWithShaders", true);
+        builder.pop();
+
+        builder.push("sophisticatedStorage");
+        SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION = builder
+                .comment(
+                        "Allows vanilla hoppers below Sophisticated Storage barrels and limited barrels to extract items.",
+                        "Extraction uses the barrel's input/output inventory handler, preserving storage filters and slot rules.",
+                        "Other Sophisticated Storage blocks and hopper insertion behavior are unchanged.")
+                .define("barrelHopperExtraction", true);
+        builder.pop();
+
+        builder.push("rehooked");
+        REHOOKED_MOB_GRAPPLING = builder
+                .comment(
+                        "Allows ReHooked projectiles to attach to mobs, including bosses and modded Mob subclasses.",
+                        "A mob hit creates a weight-based tug that moves both the player and mob without dealing impact damage.",
+                        "Players, vehicles, and non-Mob living entities remain invalid grapple targets.")
+                .define("mobGrappling", true);
+        builder.pop();
+
         SPEC = builder.build();
     }
 
@@ -161,7 +277,7 @@ public final class BcFixesConfig {
     }
 
     public static boolean dynamicTreesSeasonContextConcurrentMap() {
-        return isLoaded("dynamictrees") && DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP.get();
+        return isLoaded("dynamictrees") && (!SPEC.isLoaded() || DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP.get());
     }
 
     public static boolean dynamicTreesUnearthedRegolithSoils() {
@@ -192,6 +308,18 @@ public final class BcFixesConfig {
         return isLoaded("ali") && isLoaded("emi") && ADVANCED_LOOT_INFO_SKIP_OFF_THREAD_EMI_REGISTRATION.get();
     }
 
+    public static boolean ambientSoundsRetryRejectedStreams() {
+        return isLoaded("ambientsounds") && AMBIENT_SOUNDS_RETRY_REJECTED_STREAMS.get();
+    }
+
+    public static boolean explosionOverhaulClampConcussionDuration() {
+        return isLoaded("explosionoverhaul") && EXPLOSION_OVERHAUL_CLAMP_CONCUSSION_DURATION.get();
+    }
+
+    public static int explosionOverhaulMaxConcussionDurationSeconds() {
+        return EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS.get();
+    }
+
     public static boolean burntModdedGrassReplacements() {
         return isLoaded("burnt") && BURNT_MODDED_GRASS_REPLACEMENTS.get();
     }
@@ -208,8 +336,44 @@ public final class BcFixesConfig {
         return MOBS_DISABLE_SUN_BURN_TICK.get();
     }
 
+    public static boolean mobsBlockNaturalSurfaceHostiles() {
+        return MOBS_BLOCK_NATURAL_SURFACE_HOSTILES.get();
+    }
+
+    public static int mobsNaturalSurfaceDepth() {
+        return MOBS_NATURAL_SURFACE_DEPTH.get();
+    }
+
+    public static boolean mobsVerticalNaturalSpawnScaling() {
+        return MOBS_VERTICAL_NATURAL_SPAWN_SCALING.get();
+    }
+
+    public static int mobsVerticalSpawnUpperMinimumRange() {
+        return MOBS_VERTICAL_SPAWN_UPPER_MINIMUM_RANGE.get();
+    }
+
+    public static int mobsVerticalSpawnMaxMultiplier() {
+        return MOBS_VERTICAL_SPAWN_MAX_MULTIPLIER.get();
+    }
+
+    public static boolean mobsBlockVanillaZombiesAndSkeletons() {
+        return MOBS_BLOCK_VANILLA_ZOMBIES_AND_SKELETONS.get();
+    }
+
     public static boolean pollutionDisablePlayerBlockBreakEmissions() {
         return isLoaded("adpother") && POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS.get();
+    }
+
+    public static double vanillaBoatDurabilityMultiplier() {
+        return VANILLA_BOAT_DURABILITY_MULTIPLIER.get();
+    }
+
+    public static boolean vanillaBoatSuppressDestructionDrop() {
+        return VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP.get();
+    }
+
+    public static boolean rehookedMobGrappling() {
+        return isLoaded("rehooked") && REHOOKED_MOB_GRAPPLING.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {
@@ -231,6 +395,22 @@ public final class BcFixesConfig {
                 && isLoaded("lostcities")
                 && isLoaded("distanthorizons")
                 && isLoaded("c2me");
+    }
+
+    public static boolean theFleshThatHatesDisableProximityMusic() {
+        return THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC.get()
+                && isLoaded("the_flesh_that_hates");
+    }
+
+    public static boolean weather2DisableFogOverrideWithShaders() {
+        return WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS.get()
+                && isLoaded("weather2")
+                && isLoaded("oculus");
+    }
+
+    public static boolean sophisticatedStorageBarrelHopperExtraction() {
+        return SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION.get()
+                && isLoaded("sophisticatedstorage");
     }
 
     private static boolean isLoaded(final String modId) {

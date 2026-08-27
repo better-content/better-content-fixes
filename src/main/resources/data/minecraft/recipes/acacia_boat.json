@@ -1,0 +1,37 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "tconstruct"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "transportation",
+        "group": "boat",
+        "key": {
+          "H": {
+            "type": "tconstruct:material",
+            "item": "tconstruct:tool_handle",
+            "material": "tconstruct:wood"
+          },
+          "P": {
+            "item": "minecraft:acacia_planks"
+          }
+        },
+        "pattern": [
+          "H H",
+          "PHP",
+          "PPP"
+        ],
+        "result": {
+          "item": "minecraft:acacia_boat"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

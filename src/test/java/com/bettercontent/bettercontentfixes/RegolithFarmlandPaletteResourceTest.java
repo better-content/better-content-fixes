@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandDefinitions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -46,6 +50,24 @@ final class RegolithFarmlandPaletteResourceTest {
             assertExists(BCFIXES_ROOT.resolve("src/main/resources/assets/better_content_fixes/textures/block/" + path + ".png"));
             assertExists(BCFIXES_ROOT.resolve("src/main/resources/assets/better_content_fixes/textures/block/" + path + "_moist.png"));
             assertExists(BCFIXES_ROOT.resolve("src/main/resources/data/better_content_fixes/loot_tables/blocks/" + path + ".json"));
+        }
+    }
+
+    @Test
+    void definingModContributesEveryRegolithFarmlandToCommonTag() throws IOException {
+        final Path tagPath = BCFIXES_ROOT.resolve("src/main/resources/data/c/tags/blocks/farmland.json");
+        final JsonObject tag = JsonParser.parseReader(Files.newBufferedReader(tagPath)).getAsJsonObject();
+        final JsonArray values = tag.getAsJsonArray("values");
+        final List<String> taggedIds = values.asList().stream()
+                .map(element -> element.getAsString())
+                .toList();
+
+        assertFalse(tag.get("replace").getAsBoolean(), "common farmland contributions must merge");
+        assertEquals(RegolithFarmlandDefinitions.entries().size(), taggedIds.size(),
+                "common farmland tag must contain only the complete owned palette");
+        for (RegolithFarmlandDefinitions.Entry entry : RegolithFarmlandDefinitions.entries()) {
+            assertEquals(1, taggedIds.stream().filter(entry.farmlandId().toString()::equals).count(),
+                    "common farmland tag must contain exactly one " + entry.farmlandId());
         }
     }
 

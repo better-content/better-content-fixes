@@ -1,0 +1,37 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "tconstruct"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "transportation",
+        "group": "boat",
+        "key": {
+          "H": {
+            "type": "tconstruct:material",
+            "item": "tconstruct:tool_handle",
+            "material": "tconstruct:wood"
+          },
+          "P": {
+            "item": "minecraft:spruce_planks"
+          }
+        },
+        "pattern": [
+          "H H",
+          "PHP",
+          "PPP"
+        ],
+        "result": {
+          "item": "minecraft:spruce_boat"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

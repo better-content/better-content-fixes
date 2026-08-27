@@ -1,5 +1,4 @@
 {
-  "better_content_fixes.book.binding_info": "Some bindings yield only when their pages meet a true flame.",
   "block.better_content_fixes.beige_limestone_regolith_farmland": "Beige Limestone Regolith Farmland",
   "block.better_content_fixes.conglomerate_regolith_farmland": "Conglomerate Regolith Farmland",
   "block.better_content_fixes.dolomite_regolith_farmland": "Dolomite Regolith Farmland",
@@ -17,5 +16,5 @@
   "block.better_content_fixes.slate_regolith_farmland": "Slate Regolith Farmland",
   "block.better_content_fixes.stone_regolith_farmland": "Stone Regolith Farmland",
   "block.better_content_fixes.white_granite_regolith_farmland": "White Granite Regolith Farmland",
-  "block.better_content_fixes.rain_collector": "Rain Collector"
+  "key.categories.better_content_fixes": "Better Content"
 }

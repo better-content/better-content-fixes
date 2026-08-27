@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:grass_block",
+    { "id": "unearthed:beige_limestone_grassy_regolith", "required": false },
+    { "id": "unearthed:conglomerate_grassy_regolith", "required": false },
+    { "id": "unearthed:dolomite_grassy_regolith", "required": false },
+    { "id": "unearthed:gabbro_grassy_regolith", "required": false },
+    { "id": "unearthed:granodiorite_grassy_regolith", "required": false },
+    { "id": "unearthed:grey_limestone_grassy_regolith", "required": false },
+    { "id": "unearthed:kimberlite_grassy_regolith", "required": false },
+    { "id": "unearthed:limestone_grassy_regolith", "required": false },
+    { "id": "unearthed:mudstone_grassy_regolith", "required": false },
+    { "id": "unearthed:overgrown_andesite", "required": false },
+    { "id": "unearthed:overgrown_diorite", "required": false },
+    { "id": "unearthed:overgrown_granite", "required": false },
+    { "id": "unearthed:phyllite_grassy_regolith", "required": false },
+    { "id": "unearthed:quartzite_grassy_regolith", "required": false },
+    { "id": "unearthed:rhyolite_grassy_regolith", "required": false },
+    { "id": "unearthed:sandstone_grassy_regolith", "required": false },
+    { "id": "unearthed:siltstone_grassy_regolith", "required": false },
+    { "id": "unearthed:slate_grassy_regolith", "required": false },
+    { "id": "unearthed:stone_grassy_regolith", "required": false },
+    { "id": "unearthed:white_granite_grassy_regolith", "required": false }
+  ]
+}

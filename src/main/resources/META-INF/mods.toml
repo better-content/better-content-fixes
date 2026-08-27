@@ -24,6 +24,13 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="world_lifecycle_manager"
+    mandatory=false
+versionRange="[0.1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="weather2"
     mandatory=false
     versionRange="[1.20.1-2.8.3,)"
@@ -31,8 +38,113 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="ftbquests"
+    modId="oculus"
     mandatory=false
-    versionRange="[2001.4.21,)"
+    versionRange="[1.8.0,)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="sophisticatedcore"
+    mandatory=false
+    versionRange="[1.3.21.1676,1.4)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="sophisticatedstorage"
+    mandatory=false
+    versionRange="[1.4.39.1666,1.5)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="tconstruct"
+    mandatory=false
+    versionRange="[3.11.2.166,3.12)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="polymorph"
+    mandatory=false
+    versionRange="[0.49.10,0.50)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="epicfight"
+    mandatory=false
+    versionRange="[20.14.17,20.15)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="valkyrienskies"
+    mandatory=false
+    versionRange="[2.4.11,2.5)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="rehooked"
+    mandatory=false
+    versionRange="[1.8.3-1.20.1,1.9)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="dtaether"
+    mandatory=false
+    versionRange="[1.3.3,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="dtnatures_spirit"
+    mandatory=false
+    versionRange="[1.3,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="dtarsnouveau"
+    mandatory=false
+    versionRange="[1.2.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="patchouli"
+    mandatory=false
+    versionRange="[1.20.1-85,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="thirst"
+    mandatory=false
+    versionRange="[1.20.1-1.4.0,1.20.1-1.5.0)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="cold_sweat"
+    mandatory=false
+    versionRange="[2.4,2.5)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="rbp"
+    mandatory=false
+    versionRange="[1.0.0,1.0.1)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="realisticphysics"
+    mandatory=false
+    versionRange="[1.0.1,1.0.2)"
     ordering="AFTER"
     side="BOTH"

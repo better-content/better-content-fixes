@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +25,59 @@ final class BcFixesResourceTest {
         assertTrue(clientMixins != null && clientMixins.size() > 0, "expected packaged client mixin targets");
         assertMixinClassesExist(packageName, mixins);
         assertMixinClassesExist(packageName, clientMixins);
+        assertTrue(clientMixins.contains(new JsonPrimitive("thefleshthathates.BiomeMusicMixin")),
+                "TFTH proximity music suppression must remain client-only and packaged");
+        assertTrue(clientMixins.contains(new JsonPrimitive("weather2.FogAdjusterMixin")),
+                "Weather2 shader-fog compatibility must remain client-only and packaged");
+        assertTrue(clientMixins.contains(new JsonPrimitive("pneumaticcraft.PneumaticCraftRecipeTypeMixin")),
+                "PneumaticCraft recipe-level recovery must remain client-only and packaged");
+        assertTrue(mixins.contains(new JsonPrimitive("forge.VanillaInventoryCodeHooksMixin")),
+                "Forge hopper extraction bridge must remain a common mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("sophisticatedstorage.StorageBlockEntityMixin")),
+                "Sophisticated Storage barrel bridge must remain a common mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("minecraft.FeatureSorterMixin")),
+                "repeated worldgen features must be removed before feature-order sorting");
+        assertTrue(mixins.contains(new JsonPrimitive("thirst.AddLootTableModifierMixin")),
+                "Thirst nested chest loot must bypass recursive global modifiers");
+        assertTrue(mixins.contains(new JsonPrimitive("rehooked.HookEntityMixin")),
+                "ReHooked hook entities must carry synchronized mob targets");
+        assertTrue(mixins.contains(new JsonPrimitive("rehooked.SPlayerHookHandlerMixin")),
+                "ReHooked server handlers must apply weight-based mob tugging");
+        assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.ColliderMixin")),
+                "Epic Fight single colliders must be transformed on mounted ships");
+        assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.MultiColliderMixin")),
+                "Epic Fight multi-colliders must be transformed on mounted ships");
+        assertTrue(clientMixins.contains(new JsonPrimitive("epicfightvs.CameraMixin")),
+                "the ship-aware Epic Fight camera bridge must remain client-only");
+        assertTrue(clientMixins.contains(new JsonPrimitive("epicfightvs.EpicFightCameraApiMixin")),
+                "the ship-aware Epic Fight camera ray bridge must remain client-only");
+        assertTrue(clientMixins.contains(new JsonPrimitive("minecraft.RenderSystemMixin")),
+                "dynamic HUD alpha must remain a client-only render-system mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.coldsweat.HearthBlockEntityMixin")),
+                "Cold Sweat fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.littlelogistics.SteamLocomotiveEntityMixin")),
+                "steam locomotive fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("adpother.littlelogistics.SteamTugEntityMixin")),
+                "steam tug fuel consumption must retain its AdPother callback");
+        assertTrue(mixins.contains(new JsonPrimitive("valkyrienskies.VibrationSystemTickerMixin")),
+                "Valkyrien Skies sculk destinations must be transformed to world space");
+        assertTrue(mixins.contains(new JsonPrimitive("jsonthings.VanillaPackResourcesBuilderMixin")),
+                "vanilla pack root discovery must stay limited to built-in pack types");
+        assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
+                "Realistic Block Physics definitions must be filtered to usable registered states");
+        assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
+                "acid-rain texture selection must follow vanilla precipitation bindings");
+        assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
+                "dynamic-light resource registration must be scheduled on the client thread");
+    }
+
+    @Test
+    void voidWormRemovalShipsAsAnAlexsMobsConditionalBiomeModifier() throws IOException {
+        JsonObject modifier = JsonParser.parseReader(Files.newBufferedReader(Path.of(
+                "src/main/resources/data/better_content_fixes/forge/biome_modifier/remove_void_worm_spawns.json"
+        ))).getAsJsonObject();
+
+        assertEquals("better_content_fixes:void_worm_spawn_removal", modifier.get("type").getAsString());
     }
 
     @Test

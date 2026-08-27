@@ -2,7 +2,7 @@
 
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
-Runtime behavior keeps only the no-tree-punching log gate.
+Runtime behavior includes pack-owned compatibility fixes, including a dynamic survival HUD compatible with Cold Sweat and Thirst Was Taken, and weight-based ReHooked mob grappling.
 
 ## Common commands
 
@@ -17,7 +17,6 @@ Runtime behavior keeps only the no-tree-punching log gate.
 Deploy the reobfuscated jar from:
 
 - `build/libs/better-content-fixes-<version>.jar`
-- `build/libs/better-content-fixes-<version>-all.jar`
 
 The pack currently tracks the canonical release jar in `mods/`, not source outputs or IDE runtime state.
 
