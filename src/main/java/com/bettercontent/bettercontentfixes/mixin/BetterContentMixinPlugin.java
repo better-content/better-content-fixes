@@ -14,6 +14,10 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.tconstruct.CraftingStationPolymorphMixin";
     private static final String EPIC_FIGHT_VS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.epicfightvs.";
+    private static final String EPIC_FIGHT_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.epicfight.";
+    private static final String EPIC_FIGHT_CONTROLIFY_MIXIN = EPIC_FIGHT_MIXIN_PREFIX
+            + "EpicFightControlifyEntrypointMixin";
     private static final String REHOOKED_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.rehooked.";
     private static final String ALI_MIXIN_PREFIX =
@@ -66,6 +70,14 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             return mods != null
                     && mods.getModFileById("epicfight") != null
                     && mods.getModFileById("valkyrienskies") != null;
+        }
+        if (EPIC_FIGHT_CONTROLIFY_MIXIN.equals(mixinClassName)) {
+            return mods != null
+                    && mods.getModFileById("epicfight") != null
+                    && mods.getModFileById("controlify") != null;
+        }
+        if (mixinClassName.startsWith(EPIC_FIGHT_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("epicfight") != null;
         }
         if (mixinClassName.startsWith(REHOOKED_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("rehooked") != null;

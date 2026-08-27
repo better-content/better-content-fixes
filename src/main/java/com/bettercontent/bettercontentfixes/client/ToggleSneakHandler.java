@@ -1,7 +1,6 @@
 package com.bettercontent.bettercontentfixes.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.bettercontent.bettercontentfixes.client.hud.DynamicHudController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,13 +27,13 @@ public final class ToggleSneakHandler {
         final Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.screen != null) {
             physicalKeyWasDown = false;
-            DynamicHudController.cancelPhysicalSneak();
+            notifyDynamicHud("cancelPhysicalSneak", null);
             return;
         }
         final KeyMapping sneak = minecraft.options.keyShift;
         final InputConstants.Key key = sneak.getKey();
         final boolean physicalKeyDown = physicalKeyDown(minecraft, key);
-        DynamicHudController.onPhysicalSneak(physicalKeyDown);
+        notifyDynamicHud("onPhysicalSneak", physicalKeyDown);
         if (physicalKeyDown && !physicalKeyWasDown) {
             toggled = !toggled;
         }
@@ -55,5 +54,21 @@ public final class ToggleSneakHandler {
             return GLFW.glfwGetMouseButton(minecraft.getWindow().getWindow(), key.getValue()) == GLFW.GLFW_PRESS;
         }
         return false;
+    }
+
+    private static void notifyDynamicHud(final String method, final Boolean value) {
+        try {
+            final Class<?> controller = Class.forName(
+                    "com.bettercontent.dynamicsurvivalhud.client.hud.DynamicHudController");
+            if (value == null) {
+                controller.getMethod(method).invoke(null);
+            } else {
+                controller.getMethod(method, boolean.class).invoke(null, value);
+            }
+        } catch (ClassNotFoundException ignored) {
+            // Dynamic Survival HUD is optional.
+        } catch (ReflectiveOperationException failure) {
+            throw new IllegalStateException("Could not notify optional Dynamic Survival HUD", failure);
+        }
     }
 }
