@@ -3,6 +3,7 @@ package com.bettercontent.bettercontentfixes.gametest;
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.compat.RealisticBlockPhysicsDefinitions;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -27,7 +33,8 @@ public final class OptionalIntegrationGameTests {
                 .addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(EntityType.SKELETON, 1, 1, 1))
                 .build();
         final MobSpawnSettingsBuilder builder = new MobSpawnSettingsBuilder(settings);
-        final int removed = VoidWormSpawnRemoval.removeSpawns(builder, new ResourceLocation("minecraft", "zombie"));
+        final int removed = VoidWormSpawnRemoval.removeSpawns(
+                builder, ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
 
         if (removed != 1 || builder.getSpawner(MobCategory.MONSTER).size() != 1
                 || builder.getSpawner(MobCategory.MONSTER).get(0).type != EntityType.SKELETON) {
@@ -40,10 +47,25 @@ public final class OptionalIntegrationGameTests {
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
     public static void thirstLootModifierCodecIsRegisteredWhenPresent(final GameTestHelper helper) {
         if (ModList.get().isLoaded("thirst") && !ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().containsKey(
-                new ResourceLocation("thirst", "add_loot_table"))) {
+                ResourceLocation.fromNamespaceAndPath("thirst", "add_loot_table"))) {
             helper.fail("Thirst add_loot_table codec was not registered");
             return;
         }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
+    public static void thirstNestedChestLootDoesNotReenterGlobalModifiers(final GameTestHelper helper) {
+        if (!ModList.get().isLoaded("thirst")) {
+            helper.succeed();
+            return;
+        }
+        final LootTable table = helper.getLevel().getServer().getLootData().getLootTable(
+                ResourceLocation.fromNamespaceAndPath("minecraft", "chests/simple_dungeon"));
+        final LootParams params = new LootParams.Builder(helper.getLevel())
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(helper.absolutePos(BlockPos.ZERO)))
+                .create(LootContextParamSets.CHEST);
+        table.getRandomItems(params);
         helper.succeed();
     }
 

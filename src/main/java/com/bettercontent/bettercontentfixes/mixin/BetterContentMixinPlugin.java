@@ -40,6 +40,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
     private static final String RBP_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.rbp.";
+    private static final String THIRST_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.thirst.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -104,6 +106,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(RBP_MIXIN_PREFIX)) {
             return hasVersion(mods, "rbp", "1.0.0")
                     && hasVersion(mods, "realisticphysics", "1.0.1");
+        }
+        if (mixinClassName.startsWith(THIRST_MIXIN_PREFIX)) {
+            return hasVersion(mods, "thirst", "1.20.1-1.4.0");
         }
         return true;
     }

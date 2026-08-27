@@ -26,6 +26,7 @@
     "jsonthings.VanillaPackResourcesBuilderMixin",
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
+    "minecraft.FeatureSorterMixin",
     "minecraft.MobMixin",
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
@@ -37,6 +38,7 @@
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sophisticatedstorage.StorageBlockEntityMixin",
+    "thirst.AddLootTableModifierMixin",
     "valkyrienskies.VibrationSystemTickerMixin"
   ],
   "client": [

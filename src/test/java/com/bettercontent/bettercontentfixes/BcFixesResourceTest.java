@@ -35,6 +35,10 @@ final class BcFixesResourceTest {
                 "Forge hopper extraction bridge must remain a common mixin");
         assertTrue(mixins.contains(new JsonPrimitive("sophisticatedstorage.StorageBlockEntityMixin")),
                 "Sophisticated Storage barrel bridge must remain a common mixin");
+        assertTrue(mixins.contains(new JsonPrimitive("minecraft.FeatureSorterMixin")),
+                "repeated worldgen features must be removed before feature-order sorting");
+        assertTrue(mixins.contains(new JsonPrimitive("thirst.AddLootTableModifierMixin")),
+                "Thirst nested chest loot must bypass recursive global modifiers");
         assertTrue(mixins.contains(new JsonPrimitive("rehooked.HookEntityMixin")),
                 "ReHooked hook entities must carry synchronized mob targets");
         assertTrue(mixins.contains(new JsonPrimitive("rehooked.SPlayerHookHandlerMixin")),
