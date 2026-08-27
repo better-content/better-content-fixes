@@ -23,7 +23,7 @@ public final class FeatureOrderSanitizer {
             holderSteps.add(step.stream().toList());
         }
         final List<List<Holder<PlacedFeature>>> sanitized = deduplicateByIdentity(
-                holderSteps, Holder::value);
+                holderSteps, holder -> holder.unwrapKey().<Object>map(key -> key).orElseGet(holder::value));
         if (sanitized == holderSteps) {
             return steps;
         }
