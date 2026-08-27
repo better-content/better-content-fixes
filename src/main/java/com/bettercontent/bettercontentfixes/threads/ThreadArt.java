@@ -1,30 +1,23 @@
 package com.bettercontent.bettercontentfixes.threads;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 final class ThreadArt {
-    static final List<String> IDS=List.of("world_remembers","life_becomes_capable","feast_before_journey","stone_makes_promises","materials_temperaments","motion_becomes_industry","vessel_becomes_place","rails_turn_distance","pressure_changes_matter","machines_can_remember","doors_borrow_worlds","flight_engineered","army_walks_toward_you","leave_atmosphere","blood_infrastructure","reality_has_grammar","spirits_honour_contracts","world_inherited");
-    static final Map<String,ThreadAspect> EXPECTED_ASPECTS=Map.ofEntries(
-        Map.entry("world_remembers",ThreadAspect.CONTROL),Map.entry("life_becomes_capable",ThreadAspect.RENEWAL),
-        Map.entry("feast_before_journey",ThreadAspect.ENDURANCE),Map.entry("stone_makes_promises",ThreadAspect.WORK),
-        Map.entry("materials_temperaments",ThreadAspect.ROBUSTNESS),Map.entry("motion_becomes_industry",ThreadAspect.WORK),
-        Map.entry("vessel_becomes_place",ThreadAspect.MOBILITY),Map.entry("rails_turn_distance",ThreadAspect.TEMPO),
-        Map.entry("pressure_changes_matter",ThreadAspect.IMPACT),Map.entry("machines_can_remember",ThreadAspect.CONTROL),
-        Map.entry("doors_borrow_worlds",ThreadAspect.MOBILITY),Map.entry("flight_engineered",ThreadAspect.MOBILITY),
-        Map.entry("army_walks_toward_you",ThreadAspect.IMPACT),Map.entry("leave_atmosphere",ThreadAspect.ENDURANCE),
-        Map.entry("blood_infrastructure",ThreadAspect.RENEWAL),Map.entry("reality_has_grammar",ThreadAspect.CONTROL),
-        Map.entry("spirits_honour_contracts",ThreadAspect.CONTROL),Map.entry("world_inherited",ThreadAspect.RENEWAL));
-    static final Map<String,String> EXPECTED_SYMBOLS=Map.ofEntries(
-        Map.entry("world_remembers","minecraft:compass"),Map.entry("life_becomes_capable","minecraft:player_head"),
-        Map.entry("feast_before_journey","minecraft:rabbit_stew"),Map.entry("stone_makes_promises","minecraft:raw_iron"),
-        Map.entry("materials_temperaments","tconstruct:materials_and_you"),Map.entry("motion_becomes_industry","create:cogwheel"),
-        Map.entry("vessel_becomes_place","vs_eureka:oak_ship_helm"),Map.entry("rails_turn_distance","create:railway_casing"),
-        Map.entry("pressure_changes_matter","pneumaticcraft:pressure_chamber_wall"),Map.entry("machines_can_remember","ae2:controller"),
-        Map.entry("doors_borrow_worlds","minecraft:ender_eye"),Map.entry("flight_engineered","aether:golden_parachute"),
-        Map.entry("army_walks_toward_you","minecraft:white_banner"),Map.entry("leave_atmosphere","minecraft:firework_rocket"),
-        Map.entry("blood_infrastructure","bloodmagic:altar"),Map.entry("reality_has_grammar","ars_nouveau:novice_spell_book"),
-        Map.entry("spirits_honour_contracts","hexerei:book_of_shadows"),Map.entry("world_inherited","minecraft:nether_star"));
+    record Entry(String id,ThreadSuit suit,int order,ThreadAspect aspect,boolean future){}
+    static final List<Entry> ENTRIES=List.of(
+        e("stone_makes_promises",ThreadSuit.WORLD,1,ThreadAspect.CONTROL),e("world_remembers",ThreadSuit.WORLD,2,ThreadAspect.ENDURANCE),e("seasons_turn_work",ThreadSuit.WORLD,3,ThreadAspect.TEMPO),e("forest_many_lives",ThreadSuit.WORLD,4,ThreadAspect.RENEWAL),e("roads_make_neighbours",ThreadSuit.WORLD,5,ThreadAspect.MOBILITY),e("fire_has_country",ThreadSuit.WORLD,6,ThreadAspect.IMPACT),e("sky_another_country",ThreadSuit.WORLD,7,ThreadAspect.MOBILITY),e("deep_own_light",ThreadSuit.WORLD,8,ThreadAspect.ROBUSTNESS),e("silence_has_teeth",ThreadSuit.WORLD,9,ThreadAspect.ENDURANCE),e("weather_has_momentum",ThreadSuit.WORLD,10,ThreadAspect.TEMPO),e("body_has_weather",ThreadSuit.WORLD,11,ThreadAspect.ROBUSTNESS),e("water_made_safe",ThreadSuit.WORLD,12,ThreadAspect.CONTROL),e("feast_before_journey",ThreadSuit.WORLD,13,ThreadAspect.RENEWAL),
+        e("hands_learn_repair",ThreadSuit.WORKS,1,ThreadAspect.RENEWAL),e("materials_temperaments",ThreadSuit.WORKS,2,ThreadAspect.CONTROL),e("motion_becomes_industry",ThreadSuit.WORKS,3,ThreadAspect.WORK),e("rivers_turn_work",ThreadSuit.WORKS,4,ThreadAspect.WORK),e("precision_has_rhythm",ThreadSuit.WORKS,5,ThreadAspect.TEMPO),e("heat_go_somewhere",ThreadSuit.WORKS,6,ThreadAspect.ROBUSTNESS),e("pressure_changes_matter",ThreadSuit.WORKS,7,ThreadAspect.CONTROL),e("chemistry_remembers_sequence",ThreadSuit.WORKS,8,ThreadAspect.CONTROL),e("electricity_agreement",ThreadSuit.WORKS,9,ThreadAspect.WORK),e("machines_can_remember",ThreadSuit.WORKS,10,ThreadAspect.CONTROL),e("rails_turn_distance",ThreadSuit.WORKS,11,ThreadAspect.MOBILITY),e("vessel_becomes_place",ThreadSuit.WORKS,12,ThreadAspect.MOBILITY),e("leave_atmosphere",ThreadSuit.WORKS,13,ThreadAspect.IMPACT),
+        e("life_becomes_capable",ThreadSuit.POWERS,1,ThreadAspect.RENEWAL),e("blood_infrastructure",ThreadSuit.POWERS,2,ThreadAspect.ENDURANCE),e("dead_leave_work",ThreadSuit.POWERS,3,ThreadAspect.IMPACT),e("spirits_honour_contracts",ThreadSuit.POWERS,4,ThreadAspect.CONTROL),e("reality_has_grammar",ThreadSuit.POWERS,5,ThreadAspect.CONTROL),e("elements_change_sentence",ThreadSuit.POWERS,6,ThreadAspect.IMPACT),e("doors_borrow_worlds",ThreadSuit.POWERS,7,ThreadAspect.MOBILITY),e("power_needs_anchor",ThreadSuit.POWERS,8,ThreadAspect.ROBUSTNESS),e("traditions_can_cross",ThreadSuit.POWERS,9,ThreadAspect.CONTROL),e("relics_remember_wearers",ThreadSuit.POWERS,10,ThreadAspect.ENDURANCE),e("source_becomes_machinery",ThreadSuit.POWERS,11,ThreadAspect.WORK),e("rules_adhere_matter",ThreadSuit.POWERS,12,ThreadAspect.ROBUSTNESS),e("body_borrow_state",ThreadSuit.POWERS,13,ThreadAspect.TEMPO),
+        e("life_reaches_tether",ThreadSuit.FRAGILITY,1,ThreadAspect.ENDURANCE),e("ruins_are_instructions",ThreadSuit.FRAGILITY,2,ThreadAspect.CONTROL),e("enemies_no_cause",ThreadSuit.FRAGILITY,3,ThreadAspect.TEMPO),e("copy_outlives_work",ThreadSuit.FRAGILITY,4,ThreadAspect.ROBUSTNESS),e("army_walks_toward_you",ThreadSuit.FRAGILITY,5,ThreadAspect.ENDURANCE),e("world_can_be_condensed",ThreadSuit.FRAGILITY,6,ThreadAspect.RENEWAL),f("world_can_be_wagered",7,ThreadAspect.IMPACT),f("severity_has_yield",8,ThreadAspect.ENDURANCE),f("disaster_has_agenda",9,ThreadAspect.CONTROL),f("apocalypses_disagree",10,ThreadAspect.TEMPO),f("other_hands_built_caches",11,ThreadAspect.ROBUSTNESS),f("recognition_changes_both",12,ThreadAspect.CONTROL),f("defeat_not_erasure",13,ThreadAspect.RENEWAL));
+    static final List<String> IDS=ENTRIES.stream().map(Entry::id).toList();
+    static final Map<String,Entry> BY_ID=index();
+    static final Map<String,ThreadAspect> EXPECTED_ASPECTS=aspects();
+    private static Entry e(String id,ThreadSuit suit,int order,ThreadAspect aspect){return new Entry(id,suit,order,aspect,false);}
+    private static Entry f(String id,int order,ThreadAspect aspect){return new Entry(id,ThreadSuit.FRAGILITY,order,aspect,true);}
+    private static Map<String,Entry> index(){var out=new LinkedHashMap<String,Entry>();ENTRIES.forEach(e->out.put(e.id(),e));return Map.copyOf(out);}
+    private static Map<String,ThreadAspect> aspects(){var out=new LinkedHashMap<String,ThreadAspect>();ENTRIES.forEach(e->out.put(e.id(),e.aspect()));return Map.copyOf(out);}
     static float itemIndex(String id){int index=IDS.indexOf(id);return index<0?0:index+1;}
     private ThreadArt(){}
 }

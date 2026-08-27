@@ -1,6 +1,9 @@
 package com.bettercontent.bettercontentfixes.threads;
 
 import com.google.gson.JsonParser;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,53 +11,20 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class ThreadContractsTest {
-    @Test void artCatalogueContainsExactlyEighteenUniqueIds(){assertEquals(18,ThreadArt.IDS.size());assertEquals(18,new HashSet<>(ThreadArt.IDS).size());assertEquals(new HashSet<>(ThreadArt.IDS),ThreadArt.EXPECTED_ASPECTS.keySet());assertEquals(new HashSet<>(ThreadArt.IDS),ThreadArt.EXPECTED_SYMBOLS.keySet());}
-    @Test void artCatalogueUsesTheExactApprovedAspectAssignments(){assertEquals(Map.ofEntries(
-        Map.entry("world_remembers",ThreadAspect.CONTROL),Map.entry("life_becomes_capable",ThreadAspect.RENEWAL),Map.entry("feast_before_journey",ThreadAspect.ENDURANCE),
-        Map.entry("stone_makes_promises",ThreadAspect.WORK),Map.entry("materials_temperaments",ThreadAspect.ROBUSTNESS),Map.entry("motion_becomes_industry",ThreadAspect.WORK),
-        Map.entry("vessel_becomes_place",ThreadAspect.MOBILITY),Map.entry("rails_turn_distance",ThreadAspect.TEMPO),Map.entry("pressure_changes_matter",ThreadAspect.IMPACT),
-        Map.entry("machines_can_remember",ThreadAspect.CONTROL),Map.entry("doors_borrow_worlds",ThreadAspect.MOBILITY),Map.entry("flight_engineered",ThreadAspect.MOBILITY),
-        Map.entry("army_walks_toward_you",ThreadAspect.IMPACT),Map.entry("leave_atmosphere",ThreadAspect.ENDURANCE),Map.entry("blood_infrastructure",ThreadAspect.RENEWAL),
-        Map.entry("reality_has_grammar",ThreadAspect.CONTROL),Map.entry("spirits_honour_contracts",ThreadAspect.CONTROL),Map.entry("world_inherited",ThreadAspect.RENEWAL)),ThreadArt.EXPECTED_ASPECTS);}
-    @Test void definitionsRequireArtRevealAndThreePhases(){
-        var json=JsonParser.parseString("{\"id\":\"test\",\"title\":\"Test\",\"symbol\":\"minecraft:stone\",\"aspect\":\"control\",\"art\":\"better_content_fixes:textures/gui/threads/test.png\",\"reveal\":\"Something answered.\",\"phases\":[\"a\",\"b\",\"c\"],\"discover\":[],\"contact\":[],\"lived\":[],\"doorway\":{\"type\":\"emi\",\"target\":\"minecraft:stone\"}}").getAsJsonObject();
-        var definition=ThreadDefinition.parse(json);assertEquals("test",definition.id());assertEquals(3,definition.phases().size());assertEquals("Something answered.",definition.reveal());
-        json.getAsJsonArray("phases").remove(2);assertThrows(IllegalArgumentException.class,()->ThreadDefinition.parse(json));
-    }
-    @Test void aspectsUseTheExactSystemicSalienceIdsAndColors(){
-        assertEquals(Set.of("impact","tempo","work","mobility","endurance","robustness","renewal","control"),Arrays.stream(ThreadAspect.values()).map(ThreadAspect::id).collect(java.util.stream.Collectors.toSet()));
-        assertEquals(0xE4717D,ThreadAspect.IMPACT.color());assertEquals(0xAA652B,ThreadAspect.TEMPO.color());assertEquals(0xCAA903,ThreadAspect.WORK.color());assertEquals(0xC0E304,ThreadAspect.MOBILITY.color());
-        assertEquals(0x35BBD0,ThreadAspect.ENDURANCE.color());assertEquals(0x1175FC,ThreadAspect.ROBUSTNESS.color());assertEquals(0x6FEDBA,ThreadAspect.RENEWAL.color());assertEquals(0x8A6CB2,ThreadAspect.CONTROL.color());
-        assertThrows(IllegalArgumentException.class,()->ThreadAspect.parse("Control"));
-    }
-    @Test void noticePayloadContainsNoGameAssetOrProse(){
-        assertArrayEquals(new String[]{"id","title","aspect"},Arrays.stream(ThreadNetwork.Notice.class.getRecordComponents()).map(java.lang.reflect.RecordComponent::getName).toArray(String[]::new));
-        assertDoesNotThrow(()->new ThreadNetwork.Notice("world_remembers","The World Remembers","control"));
-        assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice("world_remembers","The World Remembers","Control"));
-    }
-    @Test void automaticTeaseUsesACompactGlyphLockup(){
-        assertEquals("✦",ThreadClient.NOTICE_GLYPH);assertTrue(ThreadClient.NOTICE_TEXT_SCALE<1.0f);
-        assertTrue(ThreadClient.NOTICE_TEXT_OFFSET_Y-ThreadClient.NOTICE_GLYPH_OFFSET_Y<=10);
-    }
-    @Test void noticesQueueOneAtATimeAndPauseWithoutAdvancing(){
-        var queue=new ThreadNoticeQueue<String>(value->value);queue.addAll(List.of("first","second","first"));assertEquals(2,queue.size());
-        var first=queue.advance(0,false);assertEquals("first",first.notice());assertTrue(first.started());
-        assertEquals(0,queue.advance(900,true).elapsedMs());assertNull(queue.advance(3_200,false));
-        var second=queue.advance(0,false);assertEquals("second",second.notice());assertTrue(second.started());
-    }
-    @Test void readStateChangesOnlyAfterCompletedDevelopment(){
-        var reveal=new ThreadRevealState();reveal.select(true);assertEquals(ThreadRevealState.Phase.SEALED,reveal.phase());
-        assertEquals(ThreadRevealState.Activation.STARTED,reveal.activate());assertEquals(ThreadRevealState.Phase.DEVELOPING,reveal.phase());
-        assertFalse(reveal.advance(1_799));assertEquals(ThreadRevealState.Phase.DEVELOPING,reveal.phase());assertTrue(reveal.advance(1));assertEquals(ThreadRevealState.Phase.COMPLETE,reveal.phase());
-    }
-    @Test void developmentSkipIsConsumedBeforeControlsCanActivate(){
-        var reveal=new ThreadRevealState();reveal.select(true);assertEquals(ThreadRevealState.Activation.STARTED,reveal.activate());
-        assertEquals(ThreadRevealState.Activation.COMPLETED,reveal.activate());assertEquals(ThreadRevealState.Activation.IGNORED,reveal.activate());
-    }
-    @Test void phaseAdvancementNeverRegresses(){var state=new ThreadPlayerState();assertEquals(2,state.advance("test",2));assertEquals(2,state.advance("test",0));}
-    @Test void contextualEventsContainNoLoginOverture() throws Exception {
-        String source=Files.readString(Path.of("src/main/java/com/bettercontent/bettercontentfixes/threads/ThreadEvents.java"));
-        assertFalse(source.contains("overture("));assertFalse(source.contains("RETURN_MS"));assertFalse(source.contains("lastLoginReal"));
-    }
-    @Test void everyFacsimileModelExists() {for(String id:ThreadArt.IDS)assertTrue(Files.isRegularFile(Path.of("src/main/resources/assets/better_content_fixes/models/item/thread_cards",id+".json")),id);}
+    @Test void catalogueContainsFourOrderedSuitsOfThirteen(){assertEquals(52,ThreadArt.IDS.size());assertEquals(52,new HashSet<>(ThreadArt.IDS).size());for(var suit:ThreadSuit.values())assertEquals(java.util.stream.IntStream.rangeClosed(1,13).boxed().toList(),ThreadArt.ENTRIES.stream().filter(e->e.suit()==suit).map(ThreadArt.Entry::order).toList());assertEquals(7,ThreadArt.ENTRIES.stream().filter(ThreadArt.Entry::future).count());}
+    @Test void exactAssignmentsCoverEveryIdentity(){assertEquals(new HashSet<>(ThreadArt.IDS),ThreadArt.EXPECTED_ASPECTS.keySet());assertEquals(ThreadAspect.CONTROL,ThreadArt.EXPECTED_ASPECTS.get("stone_makes_promises"));assertEquals(ThreadAspect.RENEWAL,ThreadArt.EXPECTED_ASPECTS.get("defeat_not_erasure"));}
+    @Test void liveDefinitionsRequireRoutesInvitationAndDoorway(){var json=JsonParser.parseString("{\"id\":\"test\",\"title\":\"Test\",\"suit\":\"world\",\"order\":1,\"aspect\":\"control\",\"art\":\"better_content_fixes:textures/gui/threads/test.png\",\"prose\":\"Prose\",\"invitation\":\"Invitation\",\"action\":\"Do it.\",\"reveal_routes\":[{\"id\":\"r\",\"label\":\"Reveal\",\"type\":\"event\",\"value\":\"a\"}],\"completion_routes\":[{\"id\":\"c\",\"label\":\"Complete\",\"type\":\"event\",\"value\":\"b\"}],\"doorway\":{\"type\":\"emi\",\"target\":\"minecraft:stone\"}}").getAsJsonObject();var definition=ThreadDefinition.parse(json);assertFalse(definition.future());assertEquals(1,definition.revealRoutes().size());json.remove("completion_routes");assertThrows(IllegalArgumentException.class,()->ThreadDefinition.parse(json));}
+    @Test void futureDefinitionsForbidTriggerOrLoreLeaks(){var json=JsonParser.parseString("{\"id\":\"future\",\"title\":\"Future\",\"suit\":\"fragility\",\"order\":7,\"aspect\":\"impact\",\"art\":\"better_content_fixes:textures/gui/threads/future.png\",\"future\":true}").getAsJsonObject();assertTrue(ThreadDefinition.parse(json).future());json.addProperty("prose","Leak");assertThrows(IllegalArgumentException.class,()->ThreadDefinition.parse(json));}
+    @Test void aspectsAndSuitsUseExactIdsAndColors(){assertEquals(0xE4717D,ThreadAspect.IMPACT.color());assertEquals(0x8A6CB2,ThreadAspect.CONTROL.color());assertEquals(0x66704C,ThreadSuit.WORLD.color());assertEquals(0x805356,ThreadSuit.FRAGILITY.color());assertThrows(IllegalArgumentException.class,()->ThreadAspect.parse("Control"));assertThrows(IllegalArgumentException.class,()->ThreadSuit.parse("World"));}
+    @Test void noticePayloadContainsNoGameAssetOrProse(){assertArrayEquals(new String[]{"kind","id","title","suit","aspect"},Arrays.stream(ThreadNetwork.Notice.class.getRecordComponents()).map(java.lang.reflect.RecordComponent::getName).toArray(String[]::new));assertDoesNotThrow(()->new ThreadNetwork.Notice(ThreadNetwork.NoticeKind.REVEAL,"world_remembers","The World Remembers","world","endurance"));assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice(ThreadNetwork.NoticeKind.REVEAL,"world_remembers","The World Remembers","world","Control"));}
+    @Test void automaticTeaseUsesSmallCodeGlyphLockup(){assertEquals(8,ThreadClient.NOTICE_GLYPH_SIZE);assertTrue(ThreadClient.NOTICE_TEXT_SCALE<1);assertEquals(2,ThreadClient.NOTICE_TEXT_OFFSET_Y-(ThreadClient.NOTICE_GLYPH_OFFSET_Y+ThreadClient.NOTICE_GLYPH_SIZE));}
+    @Test void noticesQueueByKindAndPauseWithoutAdvancing(){var queue=new ThreadNoticeQueue<String>(value->value);queue.addAll(List.of("reveal:first","complete:first","reveal:first"));assertEquals(2,queue.size());var first=queue.advance(0,false);assertEquals("reveal:first",first.notice());assertTrue(first.started());assertEquals(0,queue.advance(900,true).elapsedMs());assertNull(queue.advance(3_200,false));assertEquals("complete:first",queue.advance(0,false).notice());}
+    @Test void readStateChangesOnlyAfterEightHundredMillisecondDevelopment(){var reveal=new ThreadRevealState();reveal.select(true);assertEquals(ThreadRevealState.Activation.STARTED,reveal.activate());assertFalse(reveal.advance(799));assertTrue(reveal.advance(1));assertEquals(ThreadRevealState.Phase.COMPLETE,reveal.phase());}
+    @Test void developmentSkipIsConsumedBeforeControls(){var reveal=new ThreadRevealState();reveal.select(true);assertEquals(ThreadRevealState.Activation.STARTED,reveal.activate());assertEquals(ThreadRevealState.Activation.COMPLETED,reveal.activate());assertEquals(ThreadRevealState.Activation.IGNORED,reveal.activate());}
+    @Test void oldCollectedStateMigratesAsKnownWithoutCompletion(){var root=new CompoundTag();var collected=new ListTag();collected.add(StringTag.valueOf("world_remembers"));root.put("collected",collected);var state=ThreadPlayerState.fromTag(root);assertTrue(state.known.contains("world_remembers"));assertTrue(state.completed.isEmpty());assertEquals(0,state.completionCounts.size());}
+    @Test void completionHistoryIsMonotonicAndRouteAware(){var root=new CompoundTag();var known=new ListTag();known.add(StringTag.valueOf("world_remembers"));root.put("known",known);var active=new ListTag();active.add(StringTag.valueOf("world_remembers"));root.put("active",active);var state=ThreadPlayerState.fromTag(root);assertTrue(state.complete("world_remembers","Returned trace",3));assertFalse(state.complete("world_remembers","Returned trace",3));assertEquals(1,state.completionCounts.get("world_remembers"));assertEquals("Returned trace ×1",state.routeSummary("world_remembers"));}
+    @Test void knownCardReactivatesInSuccessorWithoutBecomingUnreadAgain(){var state=new ThreadPlayerState();assertTrue(state.reveal("world_remembers"));assertTrue(state.markRead("world_remembers"));state.enterGeneration(1);assertTrue(state.reveal("world_remembers"));assertTrue(state.active.contains("world_remembers"));assertFalse(state.unread.contains("world_remembers"));assertFalse(state.reveal("world_remembers"));}
+    @Test void contextualEventsContainNoLoginDiscovery()throws Exception{String source=Files.readString(Path.of("src/main/java/com/bettercontent/bettercontentfixes/threads/ThreadEvents.java"));String login=source.substring(source.indexOf("void login"),source.indexOf("void logout"));assertFalse(login.contains("ThreadSignals.emit"));}
+    @Test void downedIntegrationUsesThePublishedPlayerSignature()throws Exception{String source=Files.readString(Path.of("src/main/java/com/bettercontent/bettercontentfixes/threads/ThreadEvents.java"));assertTrue(source.contains("getMethod(\"isDowned\",net.minecraft.world.entity.player.Player.class)"));}
+    @Test void everyFacsimileModelExists(){for(String id:ThreadArt.IDS)assertTrue(Files.isRegularFile(Path.of("src/main/resources/assets/better_content_fixes/models/item/thread_cards",id+".json")),id);}
 }

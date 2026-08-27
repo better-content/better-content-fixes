@@ -23,8 +23,4 @@ final class ThreadPacketValidation {
             throw new IllegalArgumentException("invalid thread " + field);
     }
 
-    static void symbol(String cardId, String value) {
-        resource(value, "symbol");
-        if (!value.equals(ThreadArt.EXPECTED_SYMBOLS.get(cardId))) throw new IllegalArgumentException("invalid thread symbol");
-    }
 }

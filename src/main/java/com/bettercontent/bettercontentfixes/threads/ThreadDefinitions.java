@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 
 public final class ThreadDefinitions extends SimpleJsonResourceReloadListener {
@@ -22,17 +21,19 @@ public final class ThreadDefinitions extends SimpleJsonResourceReloadListener {
             else add(loaded, root.getAsJsonObject());
         });
         // The reusable mod's isolated GameTest lane intentionally has no pack-owned catalogue.
-        if (!loaded.isEmpty() && loaded.size() != 18) throw new IllegalStateException("Threads catalogue must contain exactly 18 definitions, found " + loaded.size());
+        if (!loaded.isEmpty() && loaded.size() != 52) throw new IllegalStateException("Threads catalogue must contain exactly 52 definitions, found " + loaded.size());
+        if(!loaded.isEmpty())for(var suit:ThreadSuit.values()){
+            var orders=loaded.values().stream().filter(d->d.suit()==suit).map(ThreadDefinition::order).collect(java.util.stream.Collectors.toSet());
+            var expected=java.util.stream.IntStream.rangeClosed(1,13).boxed().collect(java.util.stream.Collectors.toSet());
+            if(!orders.equals(expected))throw new IllegalStateException("Thread suit must contain orders 1..13: "+suit.id());
+        }
         definitions = Collections.unmodifiableMap(loaded);
     }
     private static void add(Map<String, ThreadDefinition> loaded, JsonObject json) {
         var definition = ThreadDefinition.parse(json);
-        if (ThreadArt.EXPECTED_ASPECTS.get(definition.id()) != definition.aspect())
-            throw new IllegalStateException("unapproved aspect assignment for thread " + definition.id());
-        if (!definition.symbol().toString().equals(ThreadArt.EXPECTED_SYMBOLS.get(definition.id())))
-            throw new IllegalStateException("unapproved native symbol for thread " + definition.id());
-        if (!ForgeRegistries.ITEMS.containsKey(definition.symbol()))
-            throw new IllegalStateException("unresolved native symbol for thread " + definition.id() + ": " + definition.symbol());
+        var approved=ThreadArt.BY_ID.get(definition.id());
+        if(approved==null||approved.aspect()!=definition.aspect()||approved.suit()!=definition.suit()||approved.order()!=definition.order()||approved.future()!=definition.future())
+            throw new IllegalStateException("unapproved thread identity or assignment for " + definition.id());
         if (loaded.putIfAbsent(definition.id(), definition) != null) throw new IllegalStateException("duplicate thread " + definition.id());
     }
     public Collection<ThreadDefinition> all() { return definitions.values(); }

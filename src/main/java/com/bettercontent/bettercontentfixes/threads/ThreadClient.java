@@ -28,14 +28,15 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = BetterContentFixes.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ThreadClient {
-    private static final int ARCHIVE_GOLD = 0xC6A15B;
-    static final String NOTICE_GLYPH = "✦";
+    static final int NOTICE_GLYPH_SIZE = 8;
     static final float NOTICE_TEXT_SCALE = 0.72f;
-    static final int NOTICE_GLYPH_OFFSET_Y = -9;
-    static final int NOTICE_TEXT_OFFSET_Y = 1;
+    static final float NOTICE_MIN_TEXT_SCALE = 0.55f;
+    static final int NOTICE_GLYPH_OFFSET_Y = -8;
+    static final int NOTICE_TEXT_OFFSET_Y = 2;
+    static final int ARCHIVE_GOLD = 0xC6A15B;
     public static final KeyMapping OPEN = new KeyMapping("key.better_content_fixes.threads", InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_J, "key.categories.better_content_fixes");
-    private static final ThreadNoticeQueue<ThreadNetwork.Notice> NOTICES = new ThreadNoticeQueue<>(ThreadNetwork.Notice::id);
+    private static final ThreadNoticeQueue<ThreadNetwork.Notice> NOTICES = new ThreadNoticeQueue<>(ThreadNetwork.Notice::identity);
     private static List<ThreadNetwork.Card> cards = List.of();
     private static long lastLiveFrame;
 
@@ -92,13 +93,14 @@ public final class ThreadClient {
         int centerX = screenWidth / 2;
         int centerY = screenHeight / 3;
         renderParticles(graphics, notice, elapsed, alpha, centerX, centerY - 5);
-        drawOutlinedCentered(graphics, Component.literal(NOTICE_GLYPH), centerX,
-            centerY + NOTICE_GLYPH_OFFSET_Y, 1.0f, alpha);
-        Component message = Component.translatable("message.better_content_fixes.thread_revealed", notice.title());
+        drawArchiveGlyph(graphics,centerX-4,centerY+NOTICE_GLYPH_OFFSET_Y,ARCHIVE_GOLD,alpha);
+        Component message = Component.translatable(notice.kind()==ThreadNetwork.NoticeKind.REVEAL?"message.better_content_fixes.thread_revealed":"message.better_content_fixes.thread_completed", notice.title());
         int textWidth = Minecraft.getInstance().font.width(message);
-        float scale = Math.min(NOTICE_TEXT_SCALE, (screenWidth - 24.0f) / Math.max(1, textWidth));
+        float scale = Math.max(NOTICE_MIN_TEXT_SCALE,Math.min(NOTICE_TEXT_SCALE, (screenWidth - 24.0f) / Math.max(1, textWidth)));
         drawOutlinedCentered(graphics, message, centerX, centerY + NOTICE_TEXT_OFFSET_Y, scale, alpha);
     }
+
+    private static void drawArchiveGlyph(GuiGraphics graphics,int x,int y,int rgb,float alpha){int color=(Math.round(alpha*255)<<24)|rgb;int[][]rows={{3,4},{2,5},{1,3,4,6},{0,2,5,7},{0,2,5,7},{1,3,4,6},{2,5},{3,4}};for(int py=0;py<rows.length;py++)for(int px:rows[py])graphics.fill(x+px,y+py,x+px+1,y+py+1,color);}
 
     private static void drawOutlinedCentered(GuiGraphics graphics, Component text, int centerX, int y, float scale, float alpha) {
         int textWidth = Minecraft.getInstance().font.width(text);
@@ -148,17 +150,17 @@ public final class ThreadClient {
     }
 
     private static void renderUnread(GuiGraphics graphics, int screenWidth, int screenHeight) {
-        long count = cards.stream().filter(ThreadNetwork.Card::unread).count();
+        long count = cards.stream().filter(card->card.known()&&card.unread()).count();
         if (count == 0L) return;
-        var card = cards.stream().filter(ThreadNetwork.Card::unread).findFirst().orElseThrow();
+        var card = cards.stream().filter(c->c.known()&&c.unread()).findFirst().orElseThrow();
         int x = screenWidth - 31;
         int y = Math.max(36, screenHeight / 2 - 14);
-        renderSealedPlate(graphics, x, y, 18, 27, ThreadAspect.parse(card.aspect()).color(), card.id().hashCode(), false);
+        renderSealedPlate(graphics, x, y, 18, 27, ThreadSuit.parse(card.suit()).color(),ThreadAspect.parse(card.aspect()).color(), card.id().hashCode(), false);
         graphics.drawString(Minecraft.getInstance().font, Long.toString(count), x + 13, y + 19, 0xFFF0E5CE, true);
     }
 
-    static void renderSealedPlate(GuiGraphics graphics, int x, int y, int width, int height, int aspectColor, int seed, boolean selected) {
-        graphics.fill(x - 2, y - 2, x + width + 2, y + height + 2, selected ? 0xCCB49561 : 0x668F744E);
+    static void renderSealedPlate(GuiGraphics graphics,int x,int y,int width,int height,int suitColor,int aspectColor,int seed,boolean selected) {
+        graphics.fill(x-2,y-2,x+width+2,y+height+2,((selected?0xCC:0x78)<<24)|suitColor);
         graphics.fill(x, y, x + width, y + height, 0xFF111513);
         int traceAlpha = selected ? 0xB0 : 0x78;
         for (int i = 0; i < 5; i++) {

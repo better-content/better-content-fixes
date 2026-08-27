@@ -4,191 +4,37 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class ThreadDeckScreen extends Screen {
-    private final List<ThreadNetwork.Card> cards;
-    private final Set<String> readHere = new HashSet<>();
-    private final ThreadRevealState reveal = new ThreadRevealState();
-    private int selected;
+    private final List<ThreadNetwork.Card>cards;
+    private final Set<String>readHere=new HashSet<>();
+    private final ThreadRevealState reveal=new ThreadRevealState();
+    private ThreadSuit suit=ThreadSuit.WORLD;
+    private int selected,scrollRow;
+    private boolean detail;
     private long lastFrame;
+    ThreadDeckScreen(List<ThreadNetwork.Card>cards){super(Component.literal("Threads"));this.cards=new ArrayList<>(cards);for(var card:cards)if(card.unread()){suit=ThreadSuit.parse(card.suit());selected=card.order()-1;break;}selectCurrent();}
+    @Override public boolean isPauseScreen(){return true;}
+    private List<ThreadNetwork.Card>suitCards(){return cards.stream().filter(c->c.suit().equals(suit.id())).sorted(Comparator.comparingInt(ThreadNetwork.Card::order)).toList();}
+    private ThreadNetwork.Card current(){var list=suitCards();return list.isEmpty()?null:list.get(Math.floorMod(selected,list.size()));}
+    private boolean unread(ThreadNetwork.Card card){return card.known()&&card.unread()&&!readHere.contains(card.id());}
+    private void selectCurrent(){var card=current();reveal.select(card!=null&&unread(card));lastFrame=System.currentTimeMillis();}
 
-    ThreadDeckScreen(List<ThreadNetwork.Card> cards) {
-        super(Component.literal("Threads"));
-        this.cards = new ArrayList<>(cards);
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).unread()) {
-                selected = i;
-                break;
-            }
-        }
-        selectCurrent();
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return true;
-    }
-
-    private boolean unread(ThreadNetwork.Card card) {
-        return card.unread() && !readHere.contains(card.id());
-    }
-
-    private void selectCurrent() {
-        reveal.select(!cards.isEmpty() && unread(cards.get(selected)));
-        lastFrame = System.currentTimeMillis();
-    }
-
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partial) {
-        long now = System.currentTimeMillis();
-        long delta = Math.min(100L, Math.max(0L, now - lastFrame));
-        lastFrame = now;
-        if (!cards.isEmpty() && reveal.advance(delta)) finishDevelopment(cards.get(selected));
-
-        renderBackground(graphics);
-        graphics.drawCenteredString(font, "THREADS", width / 2, 12, 0xF0E5CE);
-        graphics.drawCenteredString(font, cards.size() + " of 18 remembered", width / 2, 25, 0x928B80);
-        if (cards.isEmpty()) {
-            graphics.drawCenteredString(font, "Nothing has answered yet.", width / 2, height / 2, 0xAAA397);
-            super.render(graphics, mouseX, mouseY, partial);
-            return;
-        }
-        int cardH = Math.min(300, height - 108);
-        int cardW = cardH * 2 / 3;
-        int cardX = width / 2 - cardW / 2;
-        int cardY = 45;
-        renderIndex(graphics, cardX, cardY);
-        var card = cards.get(selected);
-        renderCard(graphics, card, cardX, cardY, cardW, cardH);
-        renderDetails(graphics, card, cardX + cardW + 18, cardY, Math.max(120, width - (cardX + cardW + 30)));
-        super.render(graphics, mouseX, mouseY, partial);
-    }
-
-    private void renderIndex(GuiGraphics graphics, int cardX, int cardY) {
-        int start = Math.max(10, cardX - 92);
-        for (int i = 0; i < cards.size(); i++) {
-            int x = start + (i % 2) * 35;
-            int y = cardY + (i / 2) * 37;
-            var card = cards.get(i);
-            if (unread(card)) {
-                ThreadClient.renderSealedPlate(graphics, x, y, 18, 27, ThreadAspect.parse(card.aspect()).color(), card.id().hashCode(), i == selected);
-            } else {
-                graphics.fill(x - 2, y - 2, x + 20, y + 29, i == selected ? 0xCC9E8562 : 0x66484B49);
-                ThreadClient.renderArt(graphics, card.art(), x, y, 18, 27);
-            }
-        }
-    }
-
-    private void renderCard(GuiGraphics graphics, ThreadNetwork.Card card, int x, int y, int width, int height) {
-        graphics.fill(x - 4, y - 4, x + width + 4, y + height + 4, 0xFF252421);
-        graphics.fill(x - 2, y - 2, x + width + 2, y + height + 2, 0xFF8E7758);
-        if (reveal.phase() == ThreadRevealState.Phase.COMPLETE) {
-            ThreadClient.renderArt(graphics, card.art(), x, y, width, height);
-            return;
-        }
-        int aspect = ThreadAspect.parse(card.aspect()).color();
-        ThreadClient.renderSealedPlate(graphics, x, y, width, height, aspect, card.id().hashCode(), true);
-        if (reveal.phase() == ThreadRevealState.Phase.SEALED) {
-            ThreadClient.renderArt(graphics, ThreadClient.layer(card.art(), "archive"), x, y, width, height, 0.10f);
-            return;
-        }
-        long elapsed = reveal.elapsedMs();
-        float archive = 0.10f + 0.90f * stage(elapsed, 0L);
-        float pigment = stage(elapsed, 600L);
-        float trace = stage(elapsed, 1_200L);
-        ThreadClient.renderArt(graphics, ThreadClient.layer(card.art(), "archive"), x, y, width, height, archive);
-        if (pigment > 0.0f) ThreadClient.renderArt(graphics, ThreadClient.layer(card.art(), "pigment"), x, y, width, height, pigment);
-        if (trace > 0.0f) ThreadClient.renderArt(graphics, ThreadClient.layer(card.art(), "aspect"), x, y, width, height, trace);
-    }
-
-    private static float stage(long elapsed, long start) {
-        return Math.max(0.0f, Math.min(1.0f, (elapsed - start) / 600.0f));
-    }
-
-    private void renderDetails(GuiGraphics graphics, ThreadNetwork.Card card, int x, int y, int available) {
-        int panelW = Math.min(230, available);
-        if (panelW < 100) return;
-        if (reveal.phase() == ThreadRevealState.Phase.SEALED) {
-            graphics.drawString(font, "Let the plate develop", x, y + 154, 0xA99573, false);
-            graphics.drawString(font, "Click or Space to remember", x, y + 168, 0x7F796F, false);
-            return;
-        }
-        if (reveal.phase() != ThreadRevealState.Phase.COMPLETE) return;
-        graphics.drawString(font, card.title(), x, y + 4, 0xF0E5CE, false);
-        var lines = font.split(Component.literal(card.prose()), panelW);
-        for (int i = 0; i < Math.min(lines.size(), 10); i++) graphics.drawString(font, lines.get(i), x, y + 24 + i * 11, 0xC8C0B0, false);
-        graphics.drawString(font, "Look closer  ›", x, y + 154, 0xAEBFD0, false);
-        graphics.drawString(font, "Issue signed facsimile", x, y + 176, 0xC9AE7A, false);
-        graphics.drawString(font, "Display copy only — grants nothing", x, y + 190, 0x77736B, false);
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (cards.isEmpty()) return super.mouseClicked(mouseX, mouseY, button);
-        int cardH = Math.min(300, height - 108);
-        int cardW = cardH * 2 / 3;
-        int cardX = width / 2 - cardW / 2;
-        int cardY = 45;
-        int start = Math.max(10, cardX - 92);
-        for (int i = 0; i < cards.size(); i++) {
-            int x = start + (i % 2) * 35;
-            int y = cardY + (i / 2) * 37;
-            if (mouseX >= x - 2 && mouseX < x + 23 && mouseY >= y - 2 && mouseY < y + 33) {
-                selected = i;
-                selectCurrent();
-                return true;
-            }
-        }
-        var card = cards.get(selected);
-        if (unread(card)) {
-            activateReveal(card);
-            return true;
-        }
-        int detailsX = cardX + cardW + 18;
-        if (mouseX >= detailsX && mouseY >= cardY + 145 && mouseY < cardY + 170) {
-            ThreadDoorways.open(card);
-            return true;
-        }
-        if (mouseX >= detailsX && mouseY >= cardY + 170 && mouseY < cardY + 198) {
-            ThreadNetwork.request("issue", card.id());
-            return true;
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    private void activateReveal(ThreadNetwork.Card card) {
-        if (reveal.activate() == ThreadRevealState.Activation.COMPLETED) finishDevelopment(card);
-    }
-
-    private void finishDevelopment(ThreadNetwork.Card card) {
-        reveal.complete();
-        if (readHere.add(card.id())) ThreadNetwork.request("read", card.id());
-    }
-
-    @Override
-    public boolean keyPressed(int key, int scan, int mods) {
-        if (!cards.isEmpty() && key == GLFW.GLFW_KEY_SPACE && unread(cards.get(selected))) {
-            activateReveal(cards.get(selected));
-            return true;
-        }
-        if (!cards.isEmpty() && (key == GLFW.GLFW_KEY_LEFT || key == GLFW.GLFW_KEY_RIGHT)) {
-            selected = Math.floorMod(selected + (key == GLFW.GLFW_KEY_RIGHT ? 1 : -1), cards.size());
-            selectCurrent();
-            return true;
-        }
-        return super.keyPressed(key, scan, mods);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (cards.isEmpty()) return false;
-        selected = Math.floorMod(selected + (delta < 0 ? 1 : -1), cards.size());
-        selectCurrent();
-        return true;
-    }
+    @Override public void render(GuiGraphics graphics,int mouseX,int mouseY,float partial){long now=System.currentTimeMillis(),delta=Math.min(100L,Math.max(0L,now-lastFrame));lastFrame=now;var card=current();if(detail&&card!=null&&reveal.advance(delta))finishDevelopment(card);renderBackground(graphics);graphics.drawCenteredString(font,"THREADS",width/2,10,0xFFF0E5CE);renderTabs(graphics);if(detail)renderDetail(graphics,card);else renderCatalogue(graphics);super.render(graphics,mouseX,mouseY,partial);}
+    private void renderTabs(GuiGraphics g){int total=Math.min(width-20,320),tabW=total/4,start=(width-total)/2;for(var candidate:ThreadSuit.values()){int x=start+candidate.ordinal()*tabW;boolean active=candidate==suit;g.fill(x,24,x+tabW-2,43,(active?0xD0:0x66)<<24|candidate.color());g.drawCenteredString(font,capital(candidate.id()),x+(tabW-2)/2,30,0xFFFFFFFF);}}
+    private void renderCatalogue(GuiGraphics g){var list=suitCards();int remembered=(int)list.stream().filter(ThreadNetwork.Card::known).count();g.drawCenteredString(font,remembered+" of 13 remembered",width/2,48,0xFF928B80);int top=62,rowH=34,cols=2,cellW=Math.min(250,(width-24)/cols),startX=(width-cellW*cols)/2,visible=Math.max(1,(height-top-14)/rowH);scrollRow=Math.max(0,Math.min(scrollRow,Math.max(0,7-visible)));for(int i=0;i<list.size();i++){int row=i/cols-scrollRow;if(row<0||row>=visible)continue;int col=i%cols,x=startX+col*cellW,y=top+row*rowH;var card=list.get(i);renderThumb(g,card,x+3,y+3,16,24,false);int color=card.known()?0xFFF0E5CE:0xFF9A948B;g.drawString(font,fit(card.title(),cellW-29),x+26,y+7,color,false);g.drawString(font,capital(card.aspect()),x+26,y+19,ThreadAspect.parse(card.aspect()).color()|0xFF000000,false);}}
+    private void renderThumb(GuiGraphics g,ThreadNetwork.Card card,int x,int y,int w,int h,boolean selected){if(!card.known()||unread(card)){ThreadClient.renderSealedPlate(g,x,y,w,h,ThreadSuit.parse(card.suit()).color(),ThreadAspect.parse(card.aspect()).color(),card.id().hashCode(),selected);return;}g.fill(x-2,y-2,x+w+2,y+h+2,((selected?0xCC:0x66)<<24)|ThreadSuit.parse(card.suit()).color());ThreadClient.renderArt(g,ThreadClient.layer(card.art(),"thumb"),x,y,w,h);}
+    private void renderDetail(GuiGraphics g,ThreadNetwork.Card card){if(card==null)return;int cardH=Math.max(90,Math.min(300,height-92)),cardW=cardH*2/3,cardX=Math.max(12,width/2-cardW/2-70),cardY=56,detailsX=cardX+cardW+18,panelW=Math.max(96,Math.min(230,width-detailsX-12));g.drawString(font,"‹ Catalogue",12,48,0xFFB6A98D,false);g.fill(cardX-4,cardY-4,cardX+cardW+4,cardY+cardH+4,0xFF252421);g.fill(cardX-2,cardY-2,cardX+cardW+2,cardY+cardH+2,0xFF000000|ThreadSuit.parse(card.suit()).color());if(!card.known()){ThreadClient.renderSealedPlate(g,cardX,cardY,cardW,cardH,ThreadSuit.parse(card.suit()).color(),ThreadAspect.parse(card.aspect()).color(),card.id().hashCode(),true);renderLocked(g,card,detailsX,cardY);return;}renderCard(g,card,cardX,cardY,cardW,cardH);renderDetails(g,card,detailsX,cardY,panelW,cardH);}
+    private void renderLocked(GuiGraphics g,ThreadNetwork.Card card,int x,int y){g.drawString(font,card.title(),x,y+4,0xFFF0E5CE,false);g.drawString(font,capital(card.suit())+" · "+capital(card.aspect()),x,y+19,0xFF9A948B,false);g.drawString(font,card.future()?"This plate belongs to a system beyond this world.":"The plate has not answered yet.",x,y+48,0xFF756F68,false);}
+    private void renderCard(GuiGraphics g,ThreadNetwork.Card card,int x,int y,int w,int h){if(reveal.phase()==ThreadRevealState.Phase.COMPLETE){ThreadClient.renderArt(g,card.art(),x,y,w,h);return;}ThreadClient.renderSealedPlate(g,x,y,w,h,ThreadSuit.parse(card.suit()).color(),ThreadAspect.parse(card.aspect()).color(),card.id().hashCode(),true);if(reveal.phase()==ThreadRevealState.Phase.SEALED){ThreadClient.renderArt(g,ThreadClient.layer(card.art(),"archive"),x,y,w,h,0.10f);return;}long elapsed=reveal.elapsedMs();float archive=0.10f+0.90f*stage(elapsed,0),pigment=stage(elapsed,267),trace=stage(elapsed,534);ThreadClient.renderArt(g,ThreadClient.layer(card.art(),"archive"),x,y,w,h,archive);if(pigment>0)ThreadClient.renderArt(g,ThreadClient.layer(card.art(),"pigment"),x,y,w,h,pigment);if(trace>0)ThreadClient.renderArt(g,ThreadClient.layer(card.art(),"aspect"),x,y,w,h,trace);}
+    private static float stage(long elapsed,long start){return Math.max(0,Math.min(1,(elapsed-start)/267.0f));}
+    private void renderDetails(GuiGraphics g,ThreadNetwork.Card card,int x,int y,int panelW,int cardH){if(reveal.phase()==ThreadRevealState.Phase.SEALED){g.drawString(font,"Let the plate develop",x,y+Math.min(80,cardH/2),0xFFA99573,false);g.drawString(font,"Click or Space to remember",x,y+Math.min(94,cardH/2+14),0xFF7F796F,false);return;}if(reveal.phase()!=ThreadRevealState.Phase.COMPLETE)return;g.drawString(font,fit(card.title(),panelW),x,y+2,0xFFF0E5CE,false);g.drawString(font,capital(card.suit())+" · "+capital(card.aspect()),x,y+14,0xFF9A948B,false);int lineY=y+28;for(var line:font.split(Component.literal(card.prose()),panelW)){if(lineY>y+70)break;g.drawString(font,line,x,lineY,0xFFC8C0B0,false);lineY+=11;}if(card.active()){g.drawString(font,fit(card.invitation(),panelW),x,y+76,0xFFA99573,false);for(var line:font.split(Component.literal(card.action()),panelW)){g.drawString(font,line,x,y+88,0xFFF0E5CE,false);break;}}else g.drawString(font,"Remembered in an earlier world",x,y+76,0xFF7F796F,false);if(card.completed())g.drawString(font,"Completed in this world",x,y+101,0xFF9BB59B,false);if(card.completionCount()>0)g.drawString(font,"Remembered "+card.completionCount()+" time"+(card.completionCount()==1?"":"s"),x,y+112,0xFF928B80,false);if(cardH>=175&&!card.routeSummary().isEmpty())g.drawString(font,fit(card.routeSummary(),panelW),x,y+124,0xFF77736B,false);g.drawString(font,"Look closer  ›",x,y+cardH-27,0xFFAEBFD0,false);g.drawString(font,"Issue signed facsimile",x,y+cardH-14,0xFFC9AE7A,false);}
+    private String fit(String text,int max){if(font.width(text)<=max)return text;String value=text;while(value.length()>1&&font.width(value+"…")>max)value=value.substring(0,value.length()-1);return value+"…";}
+    private static String capital(String value){return Character.toUpperCase(value.charAt(0))+value.substring(1);}
+    @Override public boolean mouseClicked(double mouseX,double mouseY,int button){int total=Math.min(width-20,320),tabW=total/4,start=(width-total)/2;if(mouseY>=24&&mouseY<43&&mouseX>=start&&mouseX<start+total){suit=ThreadSuit.values()[Math.min(3,(int)((mouseX-start)/tabW))];selected=0;scrollRow=0;detail=false;selectCurrent();return true;}if(!detail){var list=suitCards();int top=62,rowH=34,cellW=Math.min(250,(width-24)/2),startX=(width-cellW*2)/2,visible=Math.max(1,(height-top-14)/rowH);for(int i=0;i<list.size();i++){int row=i/2-scrollRow,col=i%2,x=startX+col*cellW,y=top+row*rowH;if(row>=0&&row<visible&&mouseX>=x&&mouseX<x+cellW&&mouseY>=y&&mouseY<y+rowH){selected=i;detail=true;selectCurrent();return true;}}return true;}var card=current();if(card==null)return true;if(mouseX<100&&mouseY>=43&&mouseY<60){detail=false;return true;}if(unread(card)){activateReveal(card);return true;}if(!card.known())return true;int cardH=Math.max(90,Math.min(300,height-92)),cardW=cardH*2/3,cardX=Math.max(12,width/2-cardW/2-70),cardY=56,detailsX=cardX+cardW+18;if(mouseX>=detailsX&&mouseY>=cardY+cardH-32&&mouseY<cardY+cardH-18){ThreadDoorways.open(card);return true;}if(mouseX>=detailsX&&mouseY>=cardY+cardH-18&&mouseY<cardY+cardH){ThreadNetwork.request("issue",card.id());return true;}return super.mouseClicked(mouseX,mouseY,button);}
+    private void activateReveal(ThreadNetwork.Card card){if(reveal.activate()==ThreadRevealState.Activation.COMPLETED)finishDevelopment(card);}
+    private void finishDevelopment(ThreadNetwork.Card card){reveal.complete();if(readHere.add(card.id()))ThreadNetwork.request("read",card.id());}
+    @Override public boolean keyPressed(int key,int scan,int mods){var card=current();if(detail&&card!=null&&key==GLFW.GLFW_KEY_SPACE&&unread(card)){activateReveal(card);return true;}if(detail&&(key==GLFW.GLFW_KEY_LEFT||key==GLFW.GLFW_KEY_RIGHT)){selected=Math.floorMod(selected+(key==GLFW.GLFW_KEY_RIGHT?1:-1),13);selectCurrent();return true;}if(key==GLFW.GLFW_KEY_ESCAPE&&detail){detail=false;return true;}return super.keyPressed(key,scan,mods);}
+    @Override public boolean mouseScrolled(double mouseX,double mouseY,double delta){if(detail){selected=Math.floorMod(selected+(delta<0?1:-1),13);selectCurrent();return true;}int visible=Math.max(1,(height-76)/34);scrollRow=Math.max(0,Math.min(Math.max(0,7-visible),scrollRow+(delta<0?1:-1)));return true;}
 }
