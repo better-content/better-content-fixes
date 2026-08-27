@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.mixin.minecraft;
 
 import com.bettercontent.bettercontentfixes.compat.FeatureOrderSanitizer;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.HolderSet;
@@ -35,18 +36,20 @@ public abstract class FeatureSorterMixin {
             if (cycle.getMessage() == null || !cycle.getMessage().startsWith("Feature order cycle found")) throw cycle;
             final java.util.ArrayList<FeatureSorter.StepFeatureData> result = new java.util.ArrayList<>(stepCount);
             for (int step = 0; step < stepCount; step++) {
-                final int isolatedStep = step;
-                final List<FeatureSorter.StepFeatureData> isolated = original.call(sources,
-                        (Function<T, List<HolderSet<PlacedFeature>>>) source -> isolate(sanitized.get(source), isolatedStep), false);
-                result.add(isolated.get(step));
+                final Object2IntOpenHashMap<PlacedFeature> indexes = new Object2IntOpenHashMap<>();
+                indexes.defaultReturnValue(-1);
+                final java.util.ArrayList<PlacedFeature> ordered = new java.util.ArrayList<>();
+                for (final T source : sources) {
+                    final List<HolderSet<PlacedFeature>> steps = sanitized.get(source);
+                    if (step >= steps.size()) continue;
+                    for (final net.minecraft.core.Holder<PlacedFeature> holder : steps.get(step)) {
+                        final PlacedFeature feature = holder.value();
+                        if (indexes.putIfAbsent(feature, indexes.size()) == -1) ordered.add(feature);
+                    }
+                }
+                result.add(StepFeatureDataAccessor.betterContentFixes$create(ordered));
             }
             return List.copyOf(result);
         }
-    }
-
-    private static List<HolderSet<PlacedFeature>> isolate(final List<HolderSet<PlacedFeature>> steps, final int selected) {
-        final java.util.ArrayList<HolderSet<PlacedFeature>> isolated = new java.util.ArrayList<>(steps.size());
-        for (int step = 0; step < steps.size(); step++) isolated.add(step == selected ? steps.get(step) : HolderSet.direct());
-        return List.copyOf(isolated);
     }
 }
