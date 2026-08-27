@@ -27,12 +27,14 @@ final class ThreadContractsTest {
         assertEquals(0x35BBD0,ThreadAspect.ENDURANCE.color());assertEquals(0x1175FC,ThreadAspect.ROBUSTNESS.color());assertEquals(0x6FEDBA,ThreadAspect.RENEWAL.color());assertEquals(0x8A6CB2,ThreadAspect.CONTROL.color());
         assertThrows(IllegalArgumentException.class,()->ThreadAspect.parse("Control"));
     }
-    @Test void noticePayloadContainsOnlyIdentityTitleNativeSymbolAndAspect(){
-        assertArrayEquals(new String[]{"id","title","symbol","aspect"},Arrays.stream(ThreadNetwork.Notice.class.getRecordComponents()).map(java.lang.reflect.RecordComponent::getName).toArray(String[]::new));
-        assertDoesNotThrow(()->new ThreadNetwork.Notice("world_remembers","The World Remembers","minecraft:compass","control"));
-        assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice("world_remembers","The World Remembers","not a symbol","control"));
-        assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice("world_remembers","The World Remembers","minecraft:stone","control"));
-        assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice("world_remembers","The World Remembers","minecraft:compass","Control"));
+    @Test void noticePayloadContainsNoGameAssetOrProse(){
+        assertArrayEquals(new String[]{"id","title","aspect"},Arrays.stream(ThreadNetwork.Notice.class.getRecordComponents()).map(java.lang.reflect.RecordComponent::getName).toArray(String[]::new));
+        assertDoesNotThrow(()->new ThreadNetwork.Notice("world_remembers","The World Remembers","control"));
+        assertThrows(IllegalArgumentException.class,()->new ThreadNetwork.Notice("world_remembers","The World Remembers","Control"));
+    }
+    @Test void automaticTeaseUsesACompactGlyphLockup(){
+        assertEquals("✦",ThreadClient.NOTICE_GLYPH);assertTrue(ThreadClient.NOTICE_TEXT_SCALE<1.0f);
+        assertTrue(ThreadClient.NOTICE_TEXT_OFFSET_Y-ThreadClient.NOTICE_GLYPH_OFFSET_Y<=10);
     }
     @Test void noticesQueueOneAtATimeAndPauseWithoutAdvancing(){
         var queue=new ThreadNoticeQueue<String>(value->value);queue.addAll(List.of("first","second","first"));assertEquals(2,queue.size());

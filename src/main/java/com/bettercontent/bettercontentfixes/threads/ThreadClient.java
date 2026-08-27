@@ -29,6 +29,10 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = BetterContentFixes.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class ThreadClient {
     private static final int ARCHIVE_GOLD = 0xC6A15B;
+    static final String NOTICE_GLYPH = "✦";
+    static final float NOTICE_TEXT_SCALE = 0.72f;
+    static final int NOTICE_GLYPH_OFFSET_Y = -9;
+    static final int NOTICE_TEXT_OFFSET_Y = 1;
     public static final KeyMapping OPEN = new KeyMapping("key.better_content_fixes.threads", InputConstants.Type.KEYSYM,
         GLFW.GLFW_KEY_J, "key.categories.better_content_fixes");
     private static final ThreadNoticeQueue<ThreadNetwork.Notice> NOTICES = new ThreadNoticeQueue<>(ThreadNetwork.Notice::id);
@@ -87,16 +91,27 @@ public final class ThreadClient {
         float alpha = noticeAlpha(elapsed);
         int centerX = screenWidth / 2;
         int centerY = screenHeight / 3;
-        renderParticles(graphics, notice, elapsed, alpha, centerX, centerY);
-        renderSymbol32(graphics, notice.symbol(), centerX, centerY, alpha);
+        renderParticles(graphics, notice, elapsed, alpha, centerX, centerY - 5);
+        drawOutlinedCentered(graphics, Component.literal(NOTICE_GLYPH), centerX,
+            centerY + NOTICE_GLYPH_OFFSET_Y, 1.0f, alpha);
         Component message = Component.translatable("message.better_content_fixes.thread_revealed", notice.title());
         int textWidth = Minecraft.getInstance().font.width(message);
-        float scale = Math.min(1.0f, (screenWidth - 24.0f) / Math.max(1, textWidth));
+        float scale = Math.min(NOTICE_TEXT_SCALE, (screenWidth - 24.0f) / Math.max(1, textWidth));
+        drawOutlinedCentered(graphics, message, centerX, centerY + NOTICE_TEXT_OFFSET_Y, scale, alpha);
+    }
+
+    private static void drawOutlinedCentered(GuiGraphics graphics, Component text, int centerX, int y, float scale, float alpha) {
+        int textWidth = Minecraft.getInstance().font.width(text);
+        int colorAlpha = Math.round(alpha * 255.0f) << 24;
         graphics.pose().pushPose();
-        graphics.pose().translate(centerX, centerY + 42, 0);
+        graphics.pose().translate(centerX, y, 0);
         graphics.pose().scale(scale, scale, 1.0f);
-        graphics.drawString(Minecraft.getInstance().font, message, -textWidth / 2, 0,
-            ((int) (alpha * 255.0f) << 24) | 0xF0E5CE, true);
+        for (int ox = -1; ox <= 1; ox++) for (int oy = -1; oy <= 1; oy++) {
+            if (ox != 0 || oy != 0) graphics.drawString(Minecraft.getInstance().font, text,
+                -textWidth / 2 + ox, oy, colorAlpha, false);
+        }
+        graphics.drawString(Minecraft.getInstance().font, text, -textWidth / 2, 0,
+            colorAlpha | 0xFFFFFF, false);
         graphics.pose().popPose();
     }
 
@@ -113,15 +128,14 @@ public final class ThreadClient {
         for (int i = 0; i < 20; i++) {
             int mixed = mix(seed + i * 0x9E3779B9);
             double angle = ((mixed & 0xFFFF) / 65535.0) * Math.PI * 2.0;
-            double baseRadius = 10.0 + ((mixed >>> 16) & 7);
-            double drift = progress * (8.0 + ((mixed >>> 20) & 7));
+            double baseRadius = 6.0 + ((mixed >>> 16) & 3);
+            double drift = progress * (4.0 + ((mixed >>> 20) & 3));
             int x = centerX + (int) Math.round(Math.cos(angle) * (baseRadius + drift));
-            int y = centerY + (int) Math.round(Math.sin(angle) * baseRadius - progress * (9.0 + ((mixed >>> 24) & 7)));
+            int y = centerY + (int) Math.round(Math.sin(angle) * baseRadius - progress * (6.0 + ((mixed >>> 24) & 3)));
             float pulse = (float) (0.58 + 0.42 * Math.sin(Math.PI * Math.min(1.0, progress * 1.25 + (i % 4) * 0.06)));
             int particleAlpha = (int) (noticeAlpha * pulse * (i < 12 ? 150 : 190));
             int rgb = i < 12 ? aspect : ARCHIVE_GOLD;
-            int size = i < 12 && (i & 3) == 0 ? 2 : 1;
-            graphics.fill(x, y, x + size, y + size, (particleAlpha << 24) | rgb);
+            graphics.fill(x, y, x + 1, y + 1, (particleAlpha << 24) | rgb);
         }
     }
 
@@ -170,24 +184,6 @@ public final class ThreadClient {
 
     static String layer(String art, String layer) {
         return art.endsWith(".png") ? art.substring(0, art.length() - 4) + "_" + layer + ".png" : art + "_" + layer;
-    }
-
-    static void renderSymbol(GuiGraphics graphics, String symbol, int x, int y) {
-        var id = ResourceLocation.tryParse(symbol);
-        var item = id == null ? null : net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(id);
-        if (item != null) graphics.renderItem(item.getDefaultInstance(), x, y);
-    }
-
-    private static void renderSymbol32(GuiGraphics graphics, String symbol, int centerX, int centerY, float alpha) {
-        graphics.flush();
-        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha);
-        graphics.pose().pushPose();
-        graphics.pose().translate(centerX - 16, centerY - 16, 0);
-        graphics.pose().scale(2.0f, 2.0f, 1.0f);
-        renderSymbol(graphics, symbol, 0, 0);
-        graphics.pose().popPose();
-        graphics.flush();
-        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     @Mod.EventBusSubscriber(modid = BetterContentFixes.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
