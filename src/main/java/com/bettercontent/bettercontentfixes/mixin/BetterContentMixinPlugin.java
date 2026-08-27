@@ -42,6 +42,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.rbp.";
     private static final String THIRST_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.thirst.";
+    private static final String DYNAMIC_TREES_POISSON_MIXIN =
+            "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -109,6 +111,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(THIRST_MIXIN_PREFIX)) {
             return hasVersion(mods, "thirst", "1.20.1-1.4.0");
+        }
+        if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {
+            return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");
         }
         return true;
     }
