@@ -1,35 +1,35 @@
 package com.bettercontent.bettercontentfixes.mixin.thirst;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-
-import java.util.function.Consumer;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Pseudo
 @Mixin(targets = "dev.ghen.thirst.foundation.common.loot.AddLootTableModifier", remap = false)
 public abstract class AddLootTableModifierMixin {
-    @Redirect(
-            method = "doApply",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/storage/loot/LootTable;getRandomItems("
-                            + "Lnet/minecraft/world/level/storage/loot/LootContext;"
-                            + "Ljava/util/function/Consumer;)V",
-                    remap = true
-            ),
-            remap = false,
-            require = 1
-    )
+    @Shadow(remap = false)
+    @Final
+    private ResourceLocation lootTable;
+
+    @Inject(method = "doApply", at = @At("HEAD"), cancellable = true, remap = false, require = 1)
     private void betterContentFixes$generateNestedLootWithoutGlobalModifiers(
-            final LootTable table,
+            final ObjectArrayList<ItemStack> generatedLoot,
             final LootContext context,
-            final Consumer<ItemStack> output
+            final CallbackInfoReturnable<ObjectArrayList<ItemStack>> callback
     ) {
-        table.getRandomItemsRaw(context, LootTable.createStackSplitter(context.getLevel(), output));
+        final LootTable nestedTable = context.getResolver().getLootTable(lootTable);
+        nestedTable.getRandomItemsRaw(
+                context,
+                LootTable.createStackSplitter(context.getLevel(), generatedLoot::add));
+        callback.setReturnValue(generatedLoot);
     }
 }
