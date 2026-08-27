@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes.compat;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -18,16 +19,20 @@ public final class FeatureOrderSanitizer {
     public static List<HolderSet<PlacedFeature>> deduplicate(
             final List<HolderSet<PlacedFeature>> steps
     ) {
-        final List<List<Holder<PlacedFeature>>> holderSteps = new ArrayList<>(steps.size());
+        final Object2IntOpenHashMap<PlacedFeature> indexes = new Object2IntOpenHashMap<>();
+        indexes.defaultReturnValue(-1);
+        final List<HolderSet<PlacedFeature>> sanitized = new ArrayList<>(steps.size());
+        boolean changed = false;
         for (final HolderSet<PlacedFeature> step : steps) {
-            holderSteps.add(step.stream().toList());
+            final List<Holder<PlacedFeature>> retained = new ArrayList<>();
+            for (final Holder<PlacedFeature> holder : step) {
+                final int previous = indexes.putIfAbsent(holder.value(), indexes.size());
+                if (previous == -1) retained.add(holder);
+                else changed = true;
+            }
+            sanitized.add(retained.size() == step.size() ? step : HolderSet.direct(retained));
         }
-        final List<List<Holder<PlacedFeature>>> sanitized = deduplicateByIdentity(
-                holderSteps, holder -> holder.unwrapKey().<Object>map(key -> key).orElseGet(holder::value));
-        if (sanitized == holderSteps) {
-            return steps;
-        }
-        return sanitized.stream().map(HolderSet::direct).map(step -> (HolderSet<PlacedFeature>) step).toList();
+        return changed ? List.copyOf(sanitized) : steps;
     }
 
     static <T> List<List<T>> deduplicateByIdentity(
