@@ -42,8 +42,7 @@
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sophisticatedstorage.StorageBlockEntityMixin",
-    "thirst.AddLootTableModifierMixin",
-    "valkyrienskies.VibrationSystemTickerMixin"
+    "thirst.AddLootTableModifierMixin"
   ],
   "client": [
     "ali.EmiCompatibilityMixin",

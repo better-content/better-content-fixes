@@ -57,8 +57,6 @@ final class BcFixesResourceTest {
                 "steam locomotive fuel consumption must retain its AdPother callback");
         assertTrue(mixins.contains(new JsonPrimitive("adpother.littlelogistics.SteamTugEntityMixin")),
                 "steam tug fuel consumption must retain its AdPother callback");
-        assertTrue(mixins.contains(new JsonPrimitive("valkyrienskies.VibrationSystemTickerMixin")),
-                "Valkyrien Skies sculk destinations must be transformed to world space");
         assertTrue(mixins.contains(new JsonPrimitive("jsonthings.VanillaPackResourcesBuilderMixin")),
                 "vanilla pack root discovery must stay limited to built-in pack types");
         assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
