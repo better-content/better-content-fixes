@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "burnt.GrassCatchProcedureMixin",
+    "burnt.Weather2SamplerMixin",
     "create.HandCrankBlockMixin",
     "create.WaterWheelBlockEntityMixin",
     "complicatedbees.ForgeConfigSpecMixin",
