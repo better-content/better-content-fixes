@@ -37,6 +37,8 @@ final class BcFixesResourceTest {
                 "Sophisticated Storage barrel bridge must remain a common mixin");
         assertTrue(mixins.contains(new JsonPrimitive("minecraft.FeatureSorterMixin")),
                 "repeated worldgen features must be removed before feature-order sorting");
+        assertTrue(mixins.contains(new JsonPrimitive("minecraft.AttributeModifierMixin")),
+                "missing serialized attribute modifiers must be discarded before vanilla logs a warning");
         assertTrue(mixins.contains(new JsonPrimitive("thirst.AddLootTableModifierMixin")),
                 "Thirst nested chest loot must bypass recursive global modifiers");
         assertTrue(mixins.contains(new JsonPrimitive("rehooked.HookEntityMixin")),

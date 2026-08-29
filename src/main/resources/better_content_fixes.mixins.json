@@ -32,6 +32,7 @@
     "lostcities.LostCityFeatureMixin",
     "minecraft.FeatureSorterMixin",
     "minecraft.StepFeatureDataAccessor",
+    "minecraft.AttributeModifierMixin",
     "minecraft.MobMixin",
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
