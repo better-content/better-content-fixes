@@ -40,21 +40,6 @@ public final class AmbientSurfaceSpawnControl {
             return;
         }
 
-        if (BcFixesConfig.mobsVerticalNaturalSpawnScaling()
-                && spawnType == MobSpawnType.NATURAL
-                && event.getLevel().getRandom().nextFloat() > VerticalNaturalSpawnScaling.passAcceptanceChance(
-                        VerticalNaturalSpawnScaling.multiplier(
-                                Mth.floor(event.getY()),
-                                event.getLevel().getSeaLevel(),
-                                event.getLevel().getMinBuildHeight(),
-                                event.getLevel().getMaxBuildHeight(),
-                                BcFixesConfig.mobsVerticalSpawnUpperMinimumRange(),
-                                BcFixesConfig.mobsVerticalSpawnMaxMultiplier()),
-                        BcFixesConfig.mobsVerticalSpawnMaxMultiplier())) {
-            event.setResult(Event.Result.DENY);
-            return;
-        }
-
         if (!BcFixesConfig.mobsBlockNaturalSurfaceHostiles()) {
             return;
         }
