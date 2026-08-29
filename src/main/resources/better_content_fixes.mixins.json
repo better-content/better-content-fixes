@@ -19,6 +19,7 @@
     "tconstruct.PartBuilderPatternSlotPlacementMixin",
     "dynamictrees.NormalSeasonManagerMixin",
     "dynamictrees.LevelPoissonDiscProviderMixin",
+    "dtaether.TagEntryMixin",
     "epicfight.PlayerPatchMixin",
     "epicfight.ServerPlayerPatchMixin",
     "epicfightvs.ColliderMixin",

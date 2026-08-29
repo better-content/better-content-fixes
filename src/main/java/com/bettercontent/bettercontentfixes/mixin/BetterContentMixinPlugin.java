@@ -54,6 +54,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.kubejs.";
     private static final String DYNAMIC_TREES_POISSON_MIXIN =
             "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
+    private static final String DTAETHER_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.dtaether.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -141,6 +143,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {
             return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");
+        }
+        if (mixinClassName.startsWith(DTAETHER_MIXIN_PREFIX)) {
+            return hasVersion(mods, "dtaether", "1.3.3");
         }
         return true;
     }

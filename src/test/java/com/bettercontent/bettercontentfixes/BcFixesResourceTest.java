@@ -65,6 +65,8 @@ final class BcFixesResourceTest {
                 "KubeJS initial-world log-location notices must not be emitted as warnings");
         assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
                 "Realistic Block Physics definitions must be filtered to usable registered states");
+        assertTrue(mixins.contains(new JsonPrimitive("dtaether.TagEntryMixin")),
+                "DTAether's obsolete imbued branch tag entry must remain a common mixin");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
                 "acid-rain texture selection must follow vanilla precipitation bindings");
         assertTrue(clientMixins.contains(new JsonPrimitive("sodiumdynamiclights.SodiumDynamicLightsMixin")),
@@ -88,6 +90,16 @@ final class BcFixesResourceTest {
         assertTrue(!config.get("required").getAsBoolean(), "optional compatibility mixins must stay non-required");
         assertTrue(config.getAsJsonObject("injectors").get("defaultRequire").getAsInt() == 0,
                 "optional compatibility injectors should not require target matches");
+    }
+
+    @Test
+    void dtaetherMixinIsPinnedToTheKnownBrokenRelease() throws IOException {
+        String plugin = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/mixin/BetterContentMixinPlugin.java"));
+        String manifest = Files.readString(Path.of("src/main/resources/META-INF/mods.toml"));
+
+        assertTrue(plugin.contains("hasVersion(mods, \"dtaether\", \"1.3.3\")"));
+        assertTrue(manifest.contains("versionRange=\"[1.3.3,1.3.4)\""));
     }
 
     @Test
