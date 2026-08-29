@@ -98,8 +98,8 @@ final class BcFixesResourceTest {
                 "src/main/java/com/bettercontent/bettercontentfixes/mixin/BetterContentMixinPlugin.java"));
         String manifest = Files.readString(Path.of("src/main/resources/META-INF/mods.toml"));
 
-        assertTrue(plugin.contains("hasVersion(mods, \"dtaether\", \"1.3.3\")"));
-        assertTrue(manifest.contains("versionRange=\"[1.3.3,1.3.4)\""));
+        assertTrue(plugin.contains("hasVersion(mods, \"dtaether\", \"1.20.1-1.3.3\")"));
+        assertTrue(manifest.contains("versionRange=\"[1.20.1-1.3.3,1.20.1-1.3.4)\""));
     }
 
     @Test
