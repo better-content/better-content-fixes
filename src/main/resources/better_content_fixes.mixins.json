@@ -28,6 +28,7 @@
     "hyle.RoughNoiseSamplerMixin",
     "hyle.StoneReplacerMixin",
     "jsonthings.VanillaPackResourcesBuilderMixin",
+    "kubejs.ConsoleJSMixin",
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.FeatureSorterMixin",

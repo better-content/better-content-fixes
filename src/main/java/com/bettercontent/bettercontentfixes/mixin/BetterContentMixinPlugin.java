@@ -50,6 +50,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.thirst.";
     private static final String BURNT_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.burnt.";
+    private static final String KUBEJS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.kubejs.";
     private static final String DYNAMIC_TREES_POISSON_MIXIN =
             "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
 
@@ -133,6 +135,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(BURNT_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("burnt") != null;
+        }
+        if (mixinClassName.startsWith(KUBEJS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "kubejs", "2001.6.5-build.16");
         }
         if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {
             return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");

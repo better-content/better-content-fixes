@@ -61,6 +61,8 @@ final class BcFixesResourceTest {
                 "steam tug fuel consumption must retain its AdPother callback");
         assertTrue(mixins.contains(new JsonPrimitive("jsonthings.VanillaPackResourcesBuilderMixin")),
                 "vanilla pack root discovery must stay limited to built-in pack types");
+        assertTrue(mixins.contains(new JsonPrimitive("kubejs.ConsoleJSMixin")),
+                "KubeJS initial-world log-location notices must not be emitted as warnings");
         assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
                 "Realistic Block Physics definitions must be filtered to usable registered states");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
