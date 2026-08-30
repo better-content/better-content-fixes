@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Serialized global dispenser-behavior registration during Forge's parallel common setup, preventing concurrent mod registrations from corrupting vanilla's backing map.
 - Serialized Dynamic Trees 1.4.10 Poisson-disc chunk-data access on its existing provider monitor, preventing C2ME asynchronous chunk loads from corrupting the shared cache without disabling asynchronous I/O pack-wide.
 - Locked every player into Epic Fight Battle mode and removed the obsolete Battle/Mining mode switch from keyboard and controller configuration.
 - Automatically accepted Explosion Overhaul's affirmative load-or-scan policy without displaying its scan-choice HUD.

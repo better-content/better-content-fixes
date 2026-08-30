@@ -33,6 +33,7 @@
     "lostcities.ChunkGeneratorMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.FeatureSorterMixin",
+    "minecraft.DispenserBlockMixin",
     "minecraft.StepFeatureDataAccessor",
     "minecraft.AttributeModifierMixin",
     "minecraft.MobMixin",
