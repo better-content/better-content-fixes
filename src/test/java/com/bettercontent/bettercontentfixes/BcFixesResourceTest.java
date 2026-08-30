@@ -76,6 +76,15 @@ final class BcFixesResourceTest {
     }
 
     @Test
+    void malformedAttributeModifiersAreDiscardedBeforeVanillaReadsTheirUuid() throws IOException {
+        String source = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/AttributeModifierMixin.java"));
+
+        assertTrue(source.contains("tag == null || !tag.hasUUID(\"UUID\")"),
+                "the guard must reject both absent modifier compounds and compounds without a UUID");
+    }
+
+    @Test
     void voidWormRemovalShipsAsAnAlexsMobsConditionalBiomeModifier() throws IOException {
         JsonObject modifier = JsonParser.parseReader(Files.newBufferedReader(Path.of(
                 "src/main/resources/data/better_content_fixes/forge/biome_modifier/remove_void_worm_spawns.json"

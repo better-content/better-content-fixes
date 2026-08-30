@@ -19,7 +19,7 @@ public abstract class AttributeModifierMixin {
             final CompoundTag tag,
             final CallbackInfoReturnable<AttributeModifier> cir
     ) {
-        if (tag == null) {
+        if (tag == null || !tag.hasUUID("UUID")) {
             cir.setReturnValue(null);
         }
     }
