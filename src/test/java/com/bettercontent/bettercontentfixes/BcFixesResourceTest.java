@@ -114,6 +114,23 @@ final class BcFixesResourceTest {
     }
 
     @Test
+    void dtaetherGoldenOakDoesNotUseTheRemovedImbuedBranch() throws IOException {
+        JsonObject species = JsonParser.parseReader(Files.newBufferedReader(Path.of(
+                "src/main/resources/trees/dtaether/species/golden_oak.json"))).getAsJsonObject();
+        JsonArray features = species.getAsJsonArray("features");
+        boolean keepsGoldenAppleFruit = false;
+
+        for (var element : features) {
+            String name = element.getAsJsonObject().get("name").getAsString();
+            assertTrue(!"dtaether:alt_branch".equals(name),
+                    "golden oak must not request the removed imbued skyroot branch block");
+            keepsGoldenAppleFruit |= "fruit".equals(name);
+        }
+
+        assertTrue(keepsGoldenAppleFruit, "golden oak must retain its golden apple feature");
+    }
+
+    @Test
     void featureSorterMixinTargetsTheProductionSrgMethodWithoutARefmap() throws IOException {
         String source = Files.readString(Path.of(
                 "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/FeatureSorterMixin.java"));
