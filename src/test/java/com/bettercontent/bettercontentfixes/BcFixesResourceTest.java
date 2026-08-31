@@ -89,7 +89,8 @@ final class BcFixesResourceTest {
         String source = Files.readString(Path.of(
                 "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/DispenserBlockMixin.java"));
 
-        assertTrue(source.contains("Collections.synchronizedMap(DISPENSER_REGISTRY)"),
+        assertTrue(source.contains("@Shadow(remap = false)")
+                        && source.contains("Collections.synchronizedMap(f_52661_)"),
                 "direct dispenser registry writers must share a thread-safe map during parallel mod setup");
     }
 
