@@ -85,6 +85,15 @@ final class BcFixesResourceTest {
     }
 
     @Test
+    void dispenserRegistryItselfIsThreadSafeForDirectModWriters() throws IOException {
+        String source = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/DispenserBlockMixin.java"));
+
+        assertTrue(source.contains("Collections.synchronizedMap(DISPENSER_REGISTRY)"),
+                "direct dispenser registry writers must share a thread-safe map during parallel mod setup");
+    }
+
+    @Test
     void voidWormRemovalShipsAsAnAlexsMobsConditionalBiomeModifier() throws IOException {
         JsonObject modifier = JsonParser.parseReader(Files.newBufferedReader(Path.of(
                 "src/main/resources/data/better_content_fixes/forge/biome_modifier/remove_void_worm_spawns.json"
