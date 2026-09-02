@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DispenserBlock.class)
 public abstract class DispenserBlockMixin {
-    @Shadow
+    @Shadow(remap = false, aliases = "f_52661_")
     @Final
     @Mutable
     private static Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY;

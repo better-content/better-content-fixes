@@ -1,3 +1,5 @@
+import java.util.zip.ZipFile
+
 plugins {
     idea
     `maven-publish`
@@ -195,6 +197,27 @@ tasks.processResources {
 
 mixin {
     config("better_content_fixes.mixins.json")
+}
+
+val verifyRuntimeDispenserAlias by tasks.registering {
+    group = "verification"
+    description = "Requires the runtime JAR dispenser mixin to retain its production SRG field alias."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            val mixin = zip.getEntry("com/bettercontent/bettercontentfixes/mixin/minecraft/DispenserBlockMixin.class")
+                ?: throw GradleException("Runtime JAR is missing DispenserBlockMixin: $runtimeJar")
+            val bytecode = zip.getInputStream(mixin).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            check(bytecode.contains("f_52661_")) {
+                "Runtime dispenser mixin lacks the production SRG alias f_52661_: $runtimeJar"
+            }
+        }
+    }
+}
+
+tasks.named("verifyFast") {
+    dependsOn(verifyRuntimeDispenserAlias)
 }
 
 jacoco {
