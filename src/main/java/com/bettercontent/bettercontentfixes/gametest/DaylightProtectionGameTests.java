@@ -25,7 +25,7 @@ public final class DaylightProtectionGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 400)
     public static void skeletonsDoNotIgniteUnderOpenSky(final GameTestHelper helper) {
-        final Skeleton skeleton = helper.spawn(EntityType.SKELETON, new BlockPos(2, 2, 2));
+        final Skeleton skeleton = helper.spawnWithNoFreeWill(EntityType.SKELETON, new BlockPos(2, 2, 2));
         validateMobStaysOutOfSunBurn(helper, skeleton, "skeleton");
     }
 
