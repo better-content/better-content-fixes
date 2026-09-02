@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -21,7 +22,10 @@ final class RealisticHandsResourceTest {
         final Path itemTag = ROOT.resolve("tags/items/realistic_hands/tools/axe.json");
 
         assertEquals(Set.of("#minecraft:logs"), readValues(blockTag));
-        assertEquals(Set.of("#forge:tools/axes"), readValues(itemTag));
+        JsonObject itemTagJson = JsonParser.parseReader(Files.newBufferedReader(itemTag)).getAsJsonObject();
+        JsonObject optionalAxes = itemTagJson.getAsJsonArray("values").get(0).getAsJsonObject();
+        assertEquals("#forge:tools/axes", optionalAxes.get("id").getAsString());
+        assertTrue(!optionalAxes.get("required").getAsBoolean());
         assertEquals(Set.of("axe.json"), fileNames(blockTag.getParent()));
         assertEquals(Set.of("axe.json"), fileNames(itemTag.getParent()));
     }

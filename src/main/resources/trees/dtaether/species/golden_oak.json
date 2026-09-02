@@ -1,4 +1,5 @@
 {
+  "only_if_loaded": "dtaether",
   "type": "dtaether:mod_dependent",
   "family": "dtaether:skyroot",
   "variant_properties": [

@@ -1,6 +1,9 @@
 {
   "replace": true,
   "values": [
-    "#forge:tools/axes"
+    {
+      "id": "#forge:tools/axes",
+      "required": false
+    }
   ]
 }

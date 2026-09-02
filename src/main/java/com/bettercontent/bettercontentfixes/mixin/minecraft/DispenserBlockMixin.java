@@ -18,15 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DispenserBlock.class)
 public abstract class DispenserBlockMixin {
-    // This project intentionally ships without a refmap, so target the 1.20.1 SRG field directly.
-    @Shadow(remap = false)
+    @Shadow
     @Final
     @Mutable
-    private static Map<Item, DispenseItemBehavior> f_52661_;
+    private static Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY;
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void better_content_fixes$makeBehaviorRegistryThreadSafe(final CallbackInfo callback) {
-        f_52661_ = Collections.synchronizedMap(f_52661_);
+        DISPENSER_REGISTRY = Collections.synchronizedMap(DISPENSER_REGISTRY);
     }
 
     @WrapMethod(method = "registerBehavior")

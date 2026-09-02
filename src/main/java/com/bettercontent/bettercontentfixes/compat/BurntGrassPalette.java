@@ -90,7 +90,7 @@ public final class BurntGrassPalette {
     private static BlockBehaviour.Properties resolveSourceProperties(final ResourceLocation sourceId) {
         Block sourceBlock = ForgeRegistries.BLOCKS.getValue(sourceId);
         if (sourceBlock == null || sourceBlock == Blocks.AIR) {
-            LOGGER.warn("Falling back to grass properties for missing burnt source block {}", sourceId);
+            LOGGER.debug("Using grass properties because optional burnt source block {} is not loaded", sourceId);
             return BlockBehaviour.Properties.copy(Blocks.GRASS_BLOCK);
         }
         return BlockBehaviour.Properties.copy(sourceBlock);

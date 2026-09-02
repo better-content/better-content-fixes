@@ -56,6 +56,18 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
     private static final String DTAETHER_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.dtaether.";
+    private static final String CREATE_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.create.";
+    private static final String HYLE_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.hyle.";
+    private static final String LOST_CITIES_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.lostcities.";
+    private static final String POLLUTION_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.pollution.";
+    private static final String SGI_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.sgi.";
+    private static final String SOPHISTICATED_STORAGE_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.sophisticatedstorage.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -146,6 +158,24 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(DTAETHER_MIXIN_PREFIX)) {
             return hasVersion(mods, "dtaether", "1.20.1-1.3.3");
+        }
+        if (mixinClassName.startsWith(CREATE_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("create") != null;
+        }
+        if (mixinClassName.startsWith(HYLE_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("hyle") != null;
+        }
+        if (mixinClassName.startsWith(LOST_CITIES_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("lostcities") != null;
+        }
+        if (mixinClassName.startsWith(POLLUTION_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("adpother") != null;
+        }
+        if (mixinClassName.startsWith(SGI_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("structure_generation_improver") != null;
+        }
+        if (mixinClassName.startsWith(SOPHISTICATED_STORAGE_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("sophisticatedstorage") != null;
         }
         return true;
     }
