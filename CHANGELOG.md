@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replaced the Structure Generation Improver compatibility post-pass with bounded, write-time Hyle/Unearthed stone translation, eliminating a second Hyle feature run and full-chunk rock sweep.
 - Serialized global dispenser-behavior registration during Forge's parallel common setup, preventing concurrent mod registrations from corrupting vanilla's backing map.
 - Serialized Dynamic Trees 1.4.10 Poisson-disc chunk-data access on its existing provider monitor, preventing C2ME asynchronous chunk loads from corrupting the shared cache without disabling asynchronous I/O pack-wide.
 - Locked every player into Epic Fight Battle mode and removed the obsolete Battle/Mining mode switch from keyboard and controller configuration.

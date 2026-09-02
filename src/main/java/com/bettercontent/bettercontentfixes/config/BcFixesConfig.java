@@ -201,9 +201,9 @@ public final class BcFixesConfig {
         builder.push("structureGenerationImprover");
         SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM = builder
                 .comment(
-                        "Runs Hyle's stone replacer again after Structure Generation Improver conforms structure terrain.",
+                        "Translates Structure Generation Improver's vanilla rock writes to the nearby Hyle/Unearthed stone palette.",
                         "SGI writes new vanilla terrain after normal biome decoration, which means Hyle/Unearthed has already run and cannot replace those blocks.",
-                        "This post-pass keeps SGI foundations and blended terrain in the same Unearthed stone/regolith palette as surrounding terrain.")
+                        "The legacy key name is retained for compatibility; this now replaces writes directly without rerunning Hyle or scanning the full chunk.")
                 .define("rerunHyleAfterSurfaceConform", true);
         builder.pop();
 
