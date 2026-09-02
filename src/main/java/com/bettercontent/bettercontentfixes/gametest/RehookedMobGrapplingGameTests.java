@@ -3,6 +3,7 @@ package com.bettercontent.bettercontentfixes.gametest;
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.compat.rehooked.RehookedMobGrappling;
 import com.bettercontent.bettercontentfixes.compat.rehooked.RehookedMobTarget;
+import com.oe.rehooked.entities.ReHookedEntities;
 import com.oe.rehooked.entities.hook.HookEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -40,6 +41,17 @@ public final class RehookedMobGrapplingGameTests {
         }
         if (shot.mob().getHealth() != healthBefore) {
             helper.fail("Mob grappling must not deal impact damage");
+            return;
+        }
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 100)
+    public static void entityTypeConstructorDefinesMobTargetData(final GameTestHelper helper) {
+        final HookEntity hook = new HookEntity(ReHookedEntities.HOOK_PROJECTILE.get(), helper.getLevel());
+        final RehookedMobTarget target = (RehookedMobTarget) hook;
+        if (target.betterContent$getMobTargetId() != -1) {
+            helper.fail("A newly constructed hook must start without a mob grapple target");
             return;
         }
         helper.succeed();

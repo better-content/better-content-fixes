@@ -41,7 +41,7 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
         super(type, level);
     }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "defineSynchedData", at = @At("RETURN"))
     private void betterContent$defineMobTarget(final CallbackInfo ci) {
         entityData.define(BETTER_CONTENT_MOB_TARGET, -1);
     }
@@ -98,17 +98,25 @@ public abstract class HookEntityMixin extends Projectile implements RehookedMobT
 
     @Override
     public int betterContent$getMobTargetId() {
+        if (!entityData.hasItem(BETTER_CONTENT_MOB_TARGET)) {
+            return -1;
+        }
         return entityData.get(BETTER_CONTENT_MOB_TARGET);
     }
 
     @Override
     public void betterContent$setMobTarget(final Mob target) {
+        if (!entityData.hasItem(BETTER_CONTENT_MOB_TARGET)) {
+            entityData.define(BETTER_CONTENT_MOB_TARGET, -1);
+        }
         entityData.set(BETTER_CONTENT_MOB_TARGET, target.getId());
     }
 
     @Override
     public void betterContent$clearMobTarget() {
-        entityData.set(BETTER_CONTENT_MOB_TARGET, -1);
+        if (entityData.hasItem(BETTER_CONTENT_MOB_TARGET)) {
+            entityData.set(BETTER_CONTENT_MOB_TARGET, -1);
+        }
     }
 
     @Override
