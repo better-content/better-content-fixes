@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes.client;
 
+import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
@@ -23,6 +24,12 @@ public final class ToggleSneakHandler {
     @SubscribeEvent
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
+
+        if (!BcFixesConfig.toggleSneak()) {
+            toggled = false;
+            physicalKeyWasDown = false;
+            return;
+        }
 
         final Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.screen != null) {

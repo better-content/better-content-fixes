@@ -35,9 +35,18 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
     public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
+    public static final ForgeConfigSpec.BooleanValue TOGGLE_SNEAK;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+
+        builder.push("controls");
+        TOGGLE_SNEAK = builder
+                .comment(
+                        "Enables the custom press-to-toggle sneak behavior.",
+                        "When disabled, vanilla hold-to-sneak input remains active and the custom toggle handler is inert.")
+                .define("toggleSneak", false);
+        builder.pop();
 
         builder.push("dynamicTrees");
         DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP = builder
@@ -354,6 +363,10 @@ public final class BcFixesConfig {
 
     public static boolean rehookedMobGrappling() {
         return isLoaded("rehooked") && REHOOKED_MOB_GRAPPLING.get();
+    }
+
+    public static boolean toggleSneak() {
+        return TOGGLE_SNEAK.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {
