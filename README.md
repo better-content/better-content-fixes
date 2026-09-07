@@ -21,6 +21,13 @@ block horizontally without changing vertical reach, and moving living entities h
 per block entry to remove vanilla grass or tall grass. These policies are configurable in the
 common Better Content Fixes config.
 
+The foreground tick governor records active server-tick p50/p95/p99/max over a 100-tick window.
+When p95 exceeds 50 ms or a tick exceeds 100 ms, it uses Distant Horizons 2.4.5's API to pause only
+optional distant generation. It clears only its own in-memory override after 600 consecutive ticks
+at p95 40 ms or better, never rewrites DH configuration, and never enables a user-disabled setting.
+Use the permission-level-2 `/better_content_fixes performance_status` command to inspect the current
+window and governor state. C2ME scheduling and IO settings are not changed by this service.
+
 ## Common commands
 
 ```bash

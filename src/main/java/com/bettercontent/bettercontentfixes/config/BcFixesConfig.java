@@ -40,6 +40,12 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.IntValue SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND;
     public static final ForgeConfigSpec.DoubleValue ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS;
     public static final ForgeConfigSpec.DoubleValue VEGETATION_DECORATIVE_TRAMPLE_CHANCE;
+    public static final ForgeConfigSpec.BooleanValue PERFORMANCE_GOVERNOR_ENABLED;
+    public static final ForgeConfigSpec.IntValue PERFORMANCE_SAMPLE_WINDOW_TICKS;
+    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_PAUSE_P95_MS;
+    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_RESUME_P95_MS;
+    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_SPIKE_PAUSE_MS;
+    public static final ForgeConfigSpec.IntValue PERFORMANCE_RECOVERY_TICKS;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -71,6 +77,27 @@ public final class BcFixesConfig {
         VEGETATION_DECORATIVE_TRAMPLE_CHANCE = builder
                 .comment("Chance to remove vanilla grass or tall grass once per distinct block entry by a moving living entity.")
                 .defineInRange("decorativeTrampleChance", 0.10D, 0.0D, 1.0D);
+        builder.pop();
+
+        builder.push("performance");
+        PERFORMANCE_GOVERNOR_ENABLED = builder
+                .comment("Measures active server tick time and pauses only optional Distant Horizons generation under sustained pressure.")
+                .define("governorEnabled", true);
+        PERFORMANCE_SAMPLE_WINDOW_TICKS = builder
+                .comment("Sliding tick-time sample count used for p50, p95, p99, and maximum measurements.")
+                .defineInRange("sampleWindowTicks", 100, 20, 1200);
+        PERFORMANCE_PAUSE_P95_MS = builder
+                .comment("Pause DH distant generation when the sampled p95 exceeds this many milliseconds.")
+                .defineInRange("pauseP95Ms", 50.0D, 1.0D, 1000.0D);
+        PERFORMANCE_RESUME_P95_MS = builder
+                .comment("Recovery p95 threshold. Values above pauseP95Ms are clamped to pauseP95Ms at runtime.")
+                .defineInRange("resumeP95Ms", 40.0D, 1.0D, 1000.0D);
+        PERFORMANCE_SPIKE_PAUSE_MS = builder
+                .comment("Pause DH distant generation when any sampled active tick exceeds this many milliseconds.")
+                .defineInRange("spikePauseMs", 100.0D, 1.0D, 5000.0D);
+        PERFORMANCE_RECOVERY_TICKS = builder
+                .comment("Consecutive healthy ticks required before the governor clears its own DH API override.")
+                .defineInRange("recoveryTicks", 600, 20, 12000);
         builder.pop();
 
         builder.push("dynamicTrees");
@@ -408,6 +435,30 @@ public final class BcFixesConfig {
 
     public static double vegetationDecorativeTrampleChance() {
         return VEGETATION_DECORATIVE_TRAMPLE_CHANCE.get();
+    }
+
+    public static boolean performanceGovernorEnabled() {
+        return PERFORMANCE_GOVERNOR_ENABLED.get();
+    }
+
+    public static int performanceSampleWindowTicks() {
+        return PERFORMANCE_SAMPLE_WINDOW_TICKS.get();
+    }
+
+    public static double performancePauseP95Ms() {
+        return PERFORMANCE_PAUSE_P95_MS.get();
+    }
+
+    public static double performanceResumeP95Ms() {
+        return PERFORMANCE_RESUME_P95_MS.get();
+    }
+
+    public static double performanceSpikePauseMs() {
+        return PERFORMANCE_SPIKE_PAUSE_MS.get();
+    }
+
+    public static int performanceRecoveryTicks() {
+        return PERFORMANCE_RECOVERY_TICKS.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {

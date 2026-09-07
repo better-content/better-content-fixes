@@ -31,6 +31,9 @@ import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTest
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
+import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
+import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
+import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorService;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
@@ -48,6 +51,16 @@ public final class BetterContentFixes {
         EmiDefaultsBootstrap.seedIfApplicable();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
+        PerformanceGovernorService.configure(
+                () -> new PerformanceGovernorService.Configuration(
+                        BcFixesConfig.performanceGovernorEnabled(),
+                        new PerformanceGovernorPolicy.Settings(
+                                BcFixesConfig.performanceSampleWindowTicks(),
+                                BcFixesConfig.performancePauseP95Ms(),
+                                Math.min(BcFixesConfig.performanceResumeP95Ms(), BcFixesConfig.performancePauseP95Ms()),
+                                Math.max(BcFixesConfig.performanceSpikePauseMs(), BcFixesConfig.performancePauseP95Ms()),
+                                BcFixesConfig.performanceRecoveryTicks())),
+                DistantHorizonsGenerationControl::create);
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         if (ModList.get().isLoaded("thirst")) {
             ThirstLootModifierCompat.register(modEventBus);
@@ -68,6 +81,7 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
+        MinecraftForge.EVENT_BUS.register(PerformanceGovernorService.class);
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added active-tick percentile monitoring and a hysteretic Distant Horizons generation governor, with read-only operator status output.
 - Paced Sleeping Overhaul timelapses, extended ordinary-item pickup one block horizontally, and made vanilla grass/tall-grass trampling a 10% roll once per block entry.
 - Seeded the TConstruct Part Builder and Tinker Station as editable EMI favorites for new client profiles while preserving every existing `emi.json` byte-for-byte.
 - Added a seven-tick, release-gated W/A/S/D double-tap path into ParCool's own dodge action while preserving its stamina, cooldown, synchronization, and direct R binding.
