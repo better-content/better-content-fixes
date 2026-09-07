@@ -36,6 +36,10 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
     public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
     public static final ForgeConfigSpec.BooleanValue TOGGLE_SNEAK;
+    public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_PACE_TIMELAPSE;
+    public static final ForgeConfigSpec.IntValue SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND;
+    public static final ForgeConfigSpec.DoubleValue ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS;
+    public static final ForgeConfigSpec.DoubleValue VEGETATION_DECORATIVE_TRAMPLE_CHANCE;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -46,6 +50,27 @@ public final class BcFixesConfig {
                         "Enables the custom press-to-toggle sneak behavior.",
                         "When disabled, vanilla hold-to-sneak input remains active and the custom toggle handler is inert.")
                 .define("toggleSneak", false);
+        builder.pop();
+
+        builder.push("sleepingOverhaul");
+        SLEEPING_OVERHAUL_PACE_TIMELAPSE = builder
+                .comment("Paces Sleeping Overhaul's simulated ticks instead of allowing an effectively instant night.")
+                .define("paceTimelapse", true);
+        SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND = builder
+                .comment("Target simulated ticks per real second while Sleeping Overhaul timelapse is active.")
+                .defineInRange("targetTicksPerSecond", 800, 20, 2000);
+        builder.pop();
+
+        builder.push("items");
+        ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS = builder
+                .comment("Extra horizontal item-pickup radius in blocks. Vanilla vertical reach is unchanged.")
+                .defineInRange("extraPickupHorizontalRadius", 1.0D, 0.0D, 8.0D);
+        builder.pop();
+
+        builder.push("vegetation");
+        VEGETATION_DECORATIVE_TRAMPLE_CHANCE = builder
+                .comment("Chance to remove vanilla grass or tall grass once per distinct block entry by a moving living entity.")
+                .defineInRange("decorativeTrampleChance", 0.10D, 0.0D, 1.0D);
         builder.pop();
 
         builder.push("dynamicTrees");
@@ -367,6 +392,22 @@ public final class BcFixesConfig {
 
     public static boolean toggleSneak() {
         return TOGGLE_SNEAK.get();
+    }
+
+    public static boolean sleepingOverhaulPaceTimelapse() {
+        return SLEEPING_OVERHAUL_PACE_TIMELAPSE.get();
+    }
+
+    public static int sleepingOverhaulTargetTicksPerSecond() {
+        return SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND.get();
+    }
+
+    public static double itemsExtraPickupHorizontalRadius() {
+        return ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS.get();
+    }
+
+    public static double vegetationDecorativeTrampleChance() {
+        return VEGETATION_DECORATIVE_TRAMPLE_CHANCE.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {

@@ -74,6 +74,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.sgi.";
     private static final String SOPHISTICATED_STORAGE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.sophisticatedstorage.";
+    private static final String SLEEPING_OVERHAUL_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.sleepingoverhaul.";
 
     @Override
     public void onLoad(final String mixinPackage) {
@@ -192,6 +194,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(SOPHISTICATED_STORAGE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("sophisticatedstorage") != null;
+        }
+        if (mixinClassName.startsWith(SLEEPING_OVERHAUL_MIXIN_PREFIX)) {
+            return hasVersion(mods, "sleepingoverhaul", "2.1.0-Forge-1.20.1");
         }
         return true;
     }

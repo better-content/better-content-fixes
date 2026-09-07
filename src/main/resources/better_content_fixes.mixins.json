@@ -46,6 +46,7 @@
     "rbp.BlockDefinitionCatalogFactoryMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
+    "sleepingoverhaul.MinecraftServerMixin",
     "sophisticatedstorage.StorageBlockEntityMixin",
     "thirst.AddLootTableModifierMixin"
   ],

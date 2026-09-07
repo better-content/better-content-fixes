@@ -5,6 +5,7 @@ import com.bettercontent.bettercontentfixes.compat.AmbientSurfaceSpawnControl;
 import com.bettercontent.bettercontentfixes.compat.BurntGrassPalette;
 import com.bettercontent.bettercontentfixes.compat.ButcherKnifeDurability;
 import com.bettercontent.bettercontentfixes.compat.FarmlandTrampleProtection;
+import com.bettercontent.bettercontentfixes.compat.ExtendedItemPickup;
 import com.bettercontent.bettercontentfixes.compat.FluidMixBlocker;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnsupportedTreeFallover;
 import com.bettercontent.bettercontentfixes.compat.DecorativeVegetationTrample;
@@ -22,6 +23,7 @@ import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTe
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DecorativeVegetationTrampleGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
+import com.bettercontent.bettercontentfixes.gametest.ExtendedItemPickupGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
 import com.bettercontent.bettercontentfixes.gametest.RehookedMobGrapplingGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
@@ -62,6 +64,7 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DecorativeVegetationTrample.class);
+        MinecraftForge.EVENT_BUS.register(ExtendedItemPickup.class);
         MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
@@ -72,6 +75,7 @@ public final class BetterContentFixes {
         event.register(AmbientSurfaceSpawnGameTests.class);
         event.register(DaylightProtectionGameTests.class);
         event.register(DecorativeVegetationTrampleGameTests.class);
+        event.register(ExtendedItemPickupGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
         event.register(SourceberryFarmlandGameTests.class);

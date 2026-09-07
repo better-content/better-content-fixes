@@ -15,6 +15,12 @@ On a client with EMI and TConstruct, a profile that has no `emi.json` starts wit
 Part Builder and Tinker Station pinned in EMI. The file is created before EMI initializes. Existing
 EMI data is never parsed, merged, or replaced, so players can remove either favorite permanently.
 
+Sleeping Overhaul's timelapse keeps simulating the world but is paced to 800 ticks per second by
+default, making a full 12,000-tick night take about 15 seconds. Ordinary item pickup extends one
+block horizontally without changing vertical reach, and moving living entities have one 10% roll
+per block entry to remove vanilla grass or tall grass. These policies are configurable in the
+common Better Content Fixes config.
+
 ## Common commands
 
 ```bash

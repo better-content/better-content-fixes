@@ -80,6 +80,13 @@ versionRange="[0.1.0,)"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="sleepingoverhaul"
+    mandatory=false
+    versionRange="[2.1.0-Forge-1.20.1]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="epicfight"
     mandatory=false
     versionRange="[20.14.17,20.15)"
