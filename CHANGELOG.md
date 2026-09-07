@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Seeded the TConstruct Part Builder and Tinker Station as editable EMI favorites for new client profiles while preserving every existing `emi.json` byte-for-byte.
 - Added a seven-tick, release-gated W/A/S/D double-tap path into ParCool's own dodge action while preserving its stamina, cooldown, synchronization, and direct R binding.
 - Added a one-time conservative client keymap migration for Shift fast run, Mouse 5 contextual parkour, Mouse 4 ping, unbound Epic Fight dodge, and Caps Lock targeting controls.
 - Hid player and armor limb geometry in Epic Fight first person without cancelling held-item layers or weapon animation transforms.

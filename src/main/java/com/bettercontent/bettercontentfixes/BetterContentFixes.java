@@ -14,6 +14,7 @@ import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
 import com.bettercontent.bettercontentfixes.compat.ThirstLootModifierCompat;
+import com.bettercontent.bettercontentfixes.compat.emi.EmiDefaultsBootstrap;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
@@ -42,6 +43,7 @@ public final class BetterContentFixes {
 
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
+        EmiDefaultsBootstrap.seedIfApplicable();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();

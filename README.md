@@ -11,6 +11,10 @@ The client control profile moves ParCool Fast Run to Shift, ParCool's contextual
 Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized bindings are preserved;
 only exact legacy defaults are migrated once. ParCool's direct R dodge remains available.
 
+On a client with EMI and TConstruct, a profile that has no `emi.json` starts with the TConstruct
+Part Builder and Tinker Station pinned in EMI. The file is created before EMI initializes. Existing
+EMI data is never parsed, merged, or replaced, so players can remove either favorite permanently.
+
 ## Common commands
 
 ```bash
