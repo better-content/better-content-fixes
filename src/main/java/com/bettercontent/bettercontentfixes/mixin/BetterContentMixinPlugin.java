@@ -18,6 +18,12 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.epicfight.";
     private static final String EPIC_FIGHT_CONTROLIFY_MIXIN = EPIC_FIGHT_MIXIN_PREFIX
             + "EpicFightControlifyEntrypointMixin";
+    private static final String EPIC_FIGHT_FIRST_PERSON_RENDERER_MIXIN = EPIC_FIGHT_MIXIN_PREFIX
+            + "FirstPersonRendererMixin";
+    private static final String EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.epicfightfirstperson.";
+    private static final String PARCOOL_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.parcool.";
     private static final String REHOOKED_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.rehooked.";
     private static final String ALI_MIXIN_PREFIX =
@@ -95,6 +101,16 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             return mods != null
                     && mods.getModFileById("epicfight") != null
                     && mods.getModFileById("controlify") != null;
+        }
+        if (EPIC_FIGHT_FIRST_PERSON_RENDERER_MIXIN.equals(mixinClassName)) {
+            return hasVersion(mods, "epicfight", "20.14.17");
+        }
+        if (mixinClassName.startsWith(EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX)) {
+            return hasVersion(mods, "epicfight", "20.14.17")
+                    && hasVersion(mods, "epicfight_first_person_model", "1.0");
+        }
+        if (mixinClassName.startsWith(PARCOOL_MIXIN_PREFIX)) {
+            return hasVersion(mods, "parcool", "3.4.3.3");
         }
         if (mixinClassName.startsWith(EPIC_FIGHT_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("epicfight") != null;

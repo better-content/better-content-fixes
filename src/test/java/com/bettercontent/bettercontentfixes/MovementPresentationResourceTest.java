@@ -1,0 +1,64 @@
+package com.bettercontent.bettercontentfixes;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.Test;
+
+final class MovementPresentationResourceTest {
+    private static final Path MIXIN_CONFIG = Path.of("src/main/resources/better_content_fixes.mixins.json");
+    private static final Path SOURCE_ROOT = Path.of("src/main/java/com/bettercontent/bettercontentfixes");
+
+    @Test
+    void clientMixinsArePackagedOnTheClientSide() throws IOException {
+        final JsonObject config = JsonParser.parseReader(Files.newBufferedReader(MIXIN_CONFIG)).getAsJsonObject();
+        final String client = config.getAsJsonArray("client").toString();
+
+        assertTrue(client.contains("parcool.DodgeMixin"));
+        assertTrue(client.contains("minecraft.LocalPlayerSprintMixin"));
+        assertTrue(client.contains("epicfight.FirstPersonRendererMixin"));
+        assertTrue(client.contains("epicfightfirstperson.FirstPersonWearableItemLayerMixin"));
+    }
+
+    @Test
+    void optionalCompatibilityIsPinnedToInspectedVersions() throws IOException {
+        final String plugin = Files.readString(SOURCE_ROOT.resolve("mixin/BetterContentMixinPlugin.java"));
+        final String metadata = Files.readString(Path.of("src/main/resources/META-INF/mods.toml"));
+
+        assertTrue(plugin.contains("hasVersion(mods, \"parcool\", \"3.4.3.3\")"));
+        assertTrue(plugin.contains("hasVersion(mods, \"epicfight\", \"20.14.17\")"));
+        assertTrue(plugin.contains("hasVersion(mods, \"epicfight_first_person_model\", \"1.0\")"));
+        assertTrue(metadata.contains("modId=\"parcool\""));
+        assertTrue(metadata.contains("modId=\"pingwheel\""));
+        assertTrue(metadata.contains("modId=\"epicfight_first_person_model\""));
+    }
+
+    @Test
+    void directionalDodgeUsesParcoolAndNoRetiredCombatRollSurface() throws IOException {
+        final String handler = Files.readString(SOURCE_ROOT.resolve("client/ParCoolDirectionalDodgeClient.java"));
+        final String config = Files.readString(SOURCE_ROOT.resolve("config/BcFixesClientConfig.java"));
+
+        assertTrue(handler.contains("key.parcool.Dodge"));
+        assertTrue(handler.contains("setDown(true)"));
+        assertTrue(handler.contains("restoreDodgeKey()"));
+        assertTrue(config.contains("doubleTapWindowTicks\", 7, 2, 20"));
+        assertTrue(!handler.toLowerCase().contains("combatroll"));
+        assertTrue(!config.toLowerCase().contains("combatroll"));
+    }
+
+    @Test
+    void firstPersonPolicyHidesLimbsWithoutTouchingHeldItemRendering() throws IOException {
+        final String visibility = Files.readString(SOURCE_ROOT.resolve("client/FirstPersonLimbVisibility.java"));
+        final String renderer = Files.readString(SOURCE_ROOT.resolve("mixin/epicfight/FirstPersonRendererMixin.java"));
+
+        assertTrue(visibility.contains("leftArm.setHidden(true)"));
+        assertTrue(visibility.contains("rightLeg.setHidden(true)"));
+        assertTrue(renderer.contains("hidePlayerLimbs"));
+        assertTrue(!visibility.contains("PatchedItemInHandLayer"));
+        assertTrue(!renderer.contains("PatchedItemInHandLayer"));
+    }
+}

@@ -3,8 +3,13 @@
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
-automatic affirmative Explosion Overhaul scan decisions, weight-based ReHooked mob grappling, and the
-pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
+ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
+that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
+weight-based ReHooked mob grappling, and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
+
+The client control profile moves ParCool Fast Run to Shift, ParCool's contextual mouse actions to Mouse 5,
+Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized bindings are preserved;
+only exact legacy defaults are migrated once. ParCool's direct R dodge remains available.
 
 ## Common commands
 

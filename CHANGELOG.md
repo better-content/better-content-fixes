@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added a seven-tick, release-gated W/A/S/D double-tap path into ParCool's own dodge action while preserving its stamina, cooldown, synchronization, and direct R binding.
+- Added a one-time conservative client keymap migration for Shift fast run, Mouse 5 contextual parkour, Mouse 4 ping, unbound Epic Fight dodge, and Caps Lock targeting controls.
+- Hid player and armor limb geometry in Epic Fight first person without cancelling held-item layers or weapon animation transforms.
 - Replaced the Structure Generation Improver compatibility post-pass with bounded, write-time Hyle/Unearthed stone translation, eliminating a second Hyle feature run and full-chunk rock sweep.
 - Serialized global dispenser-behavior registration during Forge's parallel common setup, preventing concurrent mod registrations from corrupting vanilla's backing map.
 - Serialized Dynamic Trees 1.4.10 Poisson-disc chunk-data access on its existing provider monitor, preventing C2ME asynchronous chunk loads from corrupting the shared cache without disabling asynchronous I/O pack-wide.
