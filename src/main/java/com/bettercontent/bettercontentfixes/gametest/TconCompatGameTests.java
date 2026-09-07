@@ -3,6 +3,7 @@ package com.bettercontent.bettercontentfixes.gametest;
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.compat.tconstruct.TconLoginToolSync;
 import com.bettercontent.bettercontentfixes.compat.tconstruct.polymorph.CraftingStationRecipeData;
+import com.bettercontent.bettercontentfixes.compat.tconstruct.polymorph.CraftingStationOutputSlot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.gametest.framework.GameTest;
@@ -133,6 +134,37 @@ public final class TconCompatGameTests {
         helper.assertTrue(
                 restored.getLoadedRecipe().filter(SECOND_CONFLICT::equals).isPresent(),
                 "Selected station recipe ID must persist in capability data");
+        helper.succeed();
+    }
+
+    @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
+    public static void craftingStationOutputUsesInventoryContract(final GameTestHelper helper) {
+        final Block stationBlock = ForgeRegistries.BLOCKS.getValue(CRAFTING_STATION);
+        if (stationBlock == null || stationBlock == Blocks.AIR) {
+            helper.fail("Missing required TConstruct crafting station");
+            return;
+        }
+
+        final BlockPos relativePos = new BlockPos(2, 2, 2);
+        helper.setBlock(relativePos, stationBlock.defaultBlockState());
+        final BlockEntity blockEntity = helper.getLevel().getBlockEntity(helper.absolutePos(relativePos));
+        if (!(blockEntity instanceof CraftingStationBlockEntity station)) {
+            helper.fail("TConstruct crafting station did not create its block entity");
+            return;
+        }
+
+        final var distractor = new net.minecraft.world.SimpleContainer(1);
+        final var expected = new net.minecraft.world.inventory.Slot(
+                station.getCraftingResult(), 0, 124, 35);
+        final var output = CraftingStationOutputSlot.find(
+                java.util.List.of(
+                        new net.minecraft.world.inventory.Slot(distractor, 0, 0, 0),
+                        expected),
+                station.getCraftingResult());
+        helper.assertTrue(output != null, "Crafting station output must be discoverable");
+        helper.assertTrue(
+                output.container == station.getCraftingResult() && output.getContainerSlot() == 0,
+                "Polymorph output must be identified by the station result-container contract");
         helper.succeed();
     }
 
