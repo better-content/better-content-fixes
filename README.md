@@ -15,9 +15,10 @@ Distant Horizons is not required for the guard to activate.
 
 Fallout Wastelands Beta 3.8.1 registers its city ruins as placed features even though its largest
 template is 38 blocks wide. Better Content Fixes minimally shifts those templates in X/Z so their
-rotation- and mirror-aware bounds remain inside `WorldGenRegion`'s writable 3x3 chunk envelope.
-Templates wider or deeper than that 48-block envelope are skipped before placement, preventing partial
-ruins and far-chunk writes. Placement outside `WorldGenRegion` is unchanged. Fallout exposes the
+rotation- and mirror-aware bounds, plus vanilla's one-block shape-update margin, remain inside
+`WorldGenRegion`'s writable 3x3 chunk envelope. Templates wider or deeper than the resulting 46-block
+content span are skipped before placement, preventing partial ruins and far-chunk writes. Placement
+outside `WorldGenRegion` is unchanged. Fallout exposes the
 non-distinct mod version `1.0.0`, so this compatibility is additionally tied to the pack's pinned Curse
 artifact `431248/7127023` (Beta 3.8.1).
 

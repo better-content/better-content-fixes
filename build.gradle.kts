@@ -362,10 +362,12 @@ val verifyRuntimeFalloutStructureBounds by tasks.registering {
             val bounds = classBytes(
                 "com/bettercontent/bettercontentfixes/compat/FalloutStructurePlacementBounds.class")
             check(bounds.contains("WRITABLE_ENVELOPE_BLOCKS")
+                    && bounds.contains("EDGE_UPDATE_MARGIN_BLOCKS")
+                    && bounds.contains("PLACEABLE_TEMPLATE_BLOCKS")
                     && bounds.contains("fit")
                     && bounds.contains("m_71056_")
                     && bounds.contains("m_71058_")) {
-                "Runtime Fallout bounds helper lacks its 48-block atomic fit contract: $runtimeJar"
+                "Runtime Fallout bounds helper lacks its 48-block envelope and edge-update margin contract: $runtimeJar"
             }
 
             val mixin = classBytes(

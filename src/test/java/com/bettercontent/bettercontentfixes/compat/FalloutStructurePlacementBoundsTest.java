@@ -22,6 +22,10 @@ final class FalloutStructurePlacementBoundsTest {
     private static final int MAX_X = EVIDENCE_CENTER.getMaxBlockX() + 16;
     private static final int MIN_Z = EVIDENCE_CENTER.getMinBlockZ() - 16;
     private static final int MAX_Z = EVIDENCE_CENTER.getMaxBlockZ() + 16;
+    private static final int FIT_MIN_X = MIN_X + FalloutStructurePlacementBounds.EDGE_UPDATE_MARGIN_BLOCKS;
+    private static final int FIT_MAX_X = MAX_X - FalloutStructurePlacementBounds.EDGE_UPDATE_MARGIN_BLOCKS;
+    private static final int FIT_MIN_Z = MIN_Z + FalloutStructurePlacementBounds.EDGE_UPDATE_MARGIN_BLOCKS;
+    private static final int FIT_MAX_Z = MAX_Z - FalloutStructurePlacementBounds.EDGE_UPDATE_MARGIN_BLOCKS;
 
     @Test
     void minimallyFitsTheThirtyEightBlockFalloutRuinForEveryTransform() throws Exception {
@@ -39,9 +43,11 @@ final class FalloutStructurePlacementBoundsTest {
                 final BoundingBox fittedBounds = template.getBoundingBox(settings, fitted.position());
 
                 assertInsideWritableEnvelope(fittedBounds);
-                assertEquals(expectedMinimalShift(originalBounds.minX(), originalBounds.maxX(), MIN_X, MAX_X),
+                assertEquals(expectedMinimalShift(
+                                originalBounds.minX(), originalBounds.maxX(), FIT_MIN_X, FIT_MAX_X),
                         fitted.shiftX());
-                assertEquals(expectedMinimalShift(originalBounds.minZ(), originalBounds.maxZ(), MIN_Z, MAX_Z),
+                assertEquals(expectedMinimalShift(
+                                originalBounds.minZ(), originalBounds.maxZ(), FIT_MIN_Z, FIT_MAX_Z),
                         fitted.shiftZ());
                 assertEquals(fitted.position(), fitted.pivot());
             }
@@ -76,16 +82,25 @@ final class FalloutStructurePlacementBoundsTest {
     }
 
     @Test
-    void acceptsTheFullFortyEightBlockEnvelope() {
+    void reservesOneBlockOnEveryHorizontalEdgeForVanillaShapeUpdates() {
         final BlockPos position = new BlockPos(1_000_000, 70, 1_000_000);
         final BoundingBox fullEnvelope = new BoundingBox(MIN_X, 0, MIN_Z, MAX_X, 255, MAX_Z);
+        final BoundingBox placeableEnvelope =
+                new BoundingBox(FIT_MIN_X, 0, FIT_MIN_Z, FIT_MAX_X, 255, FIT_MAX_Z);
+
+        assertFalse(FalloutStructurePlacementBounds.fit(
+                fullEnvelope, position, position, EVIDENCE_CENTER).isPresent());
+
         final Optional<FalloutStructurePlacementBounds.Placement> fitted =
                 FalloutStructurePlacementBounds.fit(
-                        fullEnvelope, position, position, EVIDENCE_CENTER);
+                        placeableEnvelope, position, position, EVIDENCE_CENTER);
 
         assertTrue(fitted.isPresent());
         assertEquals(48, fullEnvelope.getXSpan());
         assertEquals(48, fullEnvelope.getZSpan());
+        assertEquals(46, placeableEnvelope.getXSpan());
+        assertEquals(46, placeableEnvelope.getZSpan());
+        assertInsideWritableEnvelope(expandHorizontally(placeableEnvelope, 1));
     }
 
     private static StructureTemplate templateWithSize(final int x, final int y, final int z) throws Exception {
@@ -101,6 +116,16 @@ final class FalloutStructurePlacementBoundsTest {
         assertTrue(bounds.maxX() <= MAX_X, bounds::toString);
         assertTrue(bounds.minZ() >= MIN_Z, bounds::toString);
         assertTrue(bounds.maxZ() <= MAX_Z, bounds::toString);
+    }
+
+    private static BoundingBox expandHorizontally(final BoundingBox bounds, final int blocks) {
+        return new BoundingBox(
+                bounds.minX() - blocks,
+                bounds.minY(),
+                bounds.minZ() - blocks,
+                bounds.maxX() + blocks,
+                bounds.maxY(),
+                bounds.maxZ() + blocks);
     }
 
     private static int expectedMinimalShift(
