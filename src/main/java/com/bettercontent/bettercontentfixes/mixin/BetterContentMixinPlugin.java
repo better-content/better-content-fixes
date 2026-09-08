@@ -74,6 +74,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.hyle.";
     private static final String LOST_CITIES_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.lostcities.";
+    private static final String LOST_CITIES_SECTION_BOUNDS_MIXIN = LOST_CITIES_MIXIN_PREFIX
+            + "ChunkDriverMixin";
     private static final String POLLUTION_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.pollution.";
     private static final String SGI_MIXIN_PREFIX =
@@ -199,6 +201,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(HYLE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("hyle") != null;
+        }
+        if (LOST_CITIES_SECTION_BOUNDS_MIXIN.equals(mixinClassName)) {
+            return hasVersion(mods, "lostcities", "1.20-7.4.11");
         }
         if (mixinClassName.startsWith(LOST_CITIES_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("lostcities") != null;

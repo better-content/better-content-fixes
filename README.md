@@ -13,6 +13,11 @@ accessing the same chunk section concurrently while leaving C2ME enabled and unr
 parallel. The existing `lostCities.serializeDhC2meFeaturePlacement` config key remains for compatibility;
 Distant Horizons is not required for the guard to activate.
 
+Lost Cities 1.20-7.4.11 can ask its 16-section cache for vertical neighbor blocks at the exclusive
+upper build limit while correcting scattered-building blocks. Better Content Fixes routes only those
+out-of-height reads through the level accessor, preserving every cached in-height read while avoiding
+the otherwise invalid section index 16.
+
 Fallout Wastelands Beta 3.8.1 registers its city ruins as placed features even though its largest
 template is 38 blocks wide. Better Content Fixes minimally shifts those templates in X/Z so their
 rotation- and mirror-aware bounds, plus vanilla's one-block shape-update margin, remain inside

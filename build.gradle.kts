@@ -329,17 +329,28 @@ val verifyRuntimeLostCitiesSerialization by tasks.registering {
                 "com/bettercontent/bettercontentfixes/mixin/lostcities/ChunkGeneratorMixin.class")
             val lostCityFeature = classBytes(
                 "com/bettercontent/bettercontentfixes/mixin/lostcities/LostCityFeatureMixin.class")
+            val sectionBounds = classBytes(
+                "com/bettercontent/bettercontentfixes/compat/LostCitiesSectionBounds.class")
+            val chunkDriver = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/lostcities/ChunkDriverMixin.class")
             check(chunkGenerator.contains("shouldSerialize")
                     && chunkGenerator.contains("runSerialized")
                     && lostCityFeature.contains("shouldSerialize")
                     && lostCityFeature.contains("callSerialized")) {
                 "Runtime Lost Cities decoration and feature wrappers do not share the serialization helper: $runtimeJar"
             }
+            check(sectionBounds.contains("m_151570_")
+                    && chunkDriver.contains("mcjty.lostcities.worldgen.ChunkDriver")
+                    && chunkDriver.contains("getBlockSafe")
+                    && chunkDriver.contains("LostCitiesSectionBounds")) {
+                "Runtime Lost Cities section-cache boundary hook did not survive reobfuscation: $runtimeJar"
+            }
 
             val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
                 ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
             val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
             check(mixins.contains("lostcities.ChunkGeneratorMixin")
+                    && mixins.contains("lostcities.ChunkDriverMixin")
                     && mixins.contains("lostcities.LostCityFeatureMixin")) {
                 "Runtime mixin configuration is missing a Lost Cities serialization wrapper: $runtimeJar"
             }

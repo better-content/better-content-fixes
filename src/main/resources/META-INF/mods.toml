@@ -204,3 +204,10 @@ versionRange="[0.1.0,)"
     versionRange="[1.0.1,1.0.2)"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="lostcities"
+    mandatory=false
+    versionRange="[1.20-7.4.11]"
+    ordering="AFTER"
+    side="BOTH"
