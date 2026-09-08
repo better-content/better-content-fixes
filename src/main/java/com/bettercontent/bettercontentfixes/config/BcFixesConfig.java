@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes.config;
 
+import com.bettercontent.bettercontentfixes.compat.LostCitiesC2meDhSerialization;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 
@@ -271,9 +272,10 @@ public final class BcFixesConfig {
         builder.push("lostCities");
         LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT = builder
                 .comment(
-                        "Serializes Lost Cities feature placement only in the lostcities:lostcity dimension when Lost Cities, Distant Horizons, and C2ME are all loaded.",
-                        "This keeps Lost Cities structures, Distant Horizons generation, and C2ME threaded settings active while avoiding shared Lost Cities generation-state races from DH/C2ME worker threads.",
-                        "Disable only when diagnosing Lost Cities/Distant Horizons/C2ME compatibility behavior.")
+                        "Serializes Lost Cities feature placement only in the lostcities:lostcity dimension when Lost Cities and C2ME are loaded.",
+                        "This keeps Lost Cities structures and C2ME threaded generation active elsewhere while avoiding shared Lost Cities generation-state races on C2ME workers.",
+                        "The legacy key name is retained for config compatibility; Distant Horizons is not required.",
+                        "Disable only when diagnosing Lost Cities/C2ME compatibility behavior.")
                 .define("serializeDhC2meFeaturePlacement", true);
         LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS = builder
                 .comment(
@@ -469,10 +471,9 @@ public final class BcFixesConfig {
     }
 
     public static boolean lostCitiesSerializeDhC2meFeaturePlacement() {
-        return LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT.get()
-                && isLoaded("lostcities")
-                && isLoaded("distanthorizons")
-                && isLoaded("c2me");
+        return LostCitiesC2meDhSerialization.dependenciesAvailable(
+                LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT.get(),
+                BcFixesConfig::isLoaded);
     }
 
     public static boolean lostCitiesCancelStaleDhClientRequests() {

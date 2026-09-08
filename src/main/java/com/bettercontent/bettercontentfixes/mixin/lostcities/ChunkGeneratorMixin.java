@@ -22,11 +22,7 @@ public abstract class ChunkGeneratorMixin {
             return;
         }
 
-        LostCitiesC2meDhSerialization.lock();
-        try {
-            original.call(level, chunk, structureManager);
-        } finally {
-            LostCitiesC2meDhSerialization.unlock();
-        }
+        LostCitiesC2meDhSerialization.runSerialized(
+                () -> original.call(level, chunk, structureManager));
     }
 }

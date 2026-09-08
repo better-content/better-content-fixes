@@ -2,6 +2,8 @@ package com.bettercontent.bettercontentfixes.compat;
 
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.WorldGenLevel;
 
@@ -17,11 +19,27 @@ public final class LostCitiesC2meDhSerialization {
                 && LOSTCITY_DIMENSION.equals(level.getLevel().dimension().location());
     }
 
-    public static void lock() {
-        LOSTCITY_GENERATION_LOCK.lock();
+    public static boolean dependenciesAvailable(
+            final boolean enabled,
+            final Predicate<String> modLoaded) {
+        return enabled && modLoaded.test("lostcities") && modLoaded.test("c2me");
     }
 
-    public static void unlock() {
-        LOSTCITY_GENERATION_LOCK.unlock();
+    public static void runSerialized(final Runnable operation) {
+        LOSTCITY_GENERATION_LOCK.lock();
+        try {
+            operation.run();
+        } finally {
+            LOSTCITY_GENERATION_LOCK.unlock();
+        }
+    }
+
+    public static <T> T callSerialized(final Supplier<T> operation) {
+        LOSTCITY_GENERATION_LOCK.lock();
+        try {
+            return operation.get();
+        } finally {
+            LOSTCITY_GENERATION_LOCK.unlock();
+        }
     }
 }

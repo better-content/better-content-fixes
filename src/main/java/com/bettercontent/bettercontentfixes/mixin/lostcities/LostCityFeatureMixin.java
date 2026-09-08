@@ -17,11 +17,6 @@ public abstract class LostCityFeatureMixin {
             return original.call(context);
         }
 
-        LostCitiesC2meDhSerialization.lock();
-        try {
-            return original.call(context);
-        } finally {
-            LostCitiesC2meDhSerialization.unlock();
-        }
+        return LostCitiesC2meDhSerialization.callSerialized(() -> original.call(context));
     }
 }

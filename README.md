@@ -7,6 +7,12 @@ range. This preserves Better Caves and C2ME generation at valid heights while pr
 `2.0.6` from writing negative `CarvingMask` indices in zero-minimum dimensions such as
 `lostcities:lostcity`.
 
+When Lost Cities and C2ME are installed, biome decoration and Lost Cities feature placement share one
+reentrant lock only in `lostcities:lostcity`. This prevents neighboring Lost Cities feature jobs from
+accessing the same chunk section concurrently while leaving C2ME enabled and unrelated dimensions
+parallel. The existing `lostCities.serializeDhC2meFeaturePlacement` config key remains for compatibility;
+Distant Horizons is not required for the guard to activate.
+
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
 ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,

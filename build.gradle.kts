@@ -292,10 +292,64 @@ val verifyRuntimeBetterCavesBounds by tasks.registering {
     }
 }
 
+val verifyRuntimeLostCitiesSerialization by tasks.registering {
+    group = "verification"
+    description = "Requires the reobfuscated runtime JAR to retain dimension-scoped Lost Cities/C2ME serialization."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            val serialization = classBytes(
+                "com/bettercontent/bettercontentfixes/compat/LostCitiesC2meDhSerialization.class")
+            check(serialization.contains("lostcities")
+                    && serialization.contains("lostcity")
+                    && serialization.contains("c2me")
+                    && !serialization.contains("distanthorizons")
+                    && serialization.contains("ReentrantLock")
+                    && serialization.contains("runSerialized")
+                    && serialization.contains("callSerialized")) {
+                "Runtime Lost Cities serialization must require only Lost Cities/C2ME and retain its shared reentrant lock: $runtimeJar"
+            }
+
+            val config = classBytes(
+                "com/bettercontent/bettercontentfixes/config/BcFixesConfig.class")
+            check(config.contains("LostCitiesC2meDhSerialization")
+                    && config.contains("dependenciesAvailable")) {
+                "Runtime Lost Cities config gate is not linked to the corrected dependency policy: $runtimeJar"
+            }
+
+            val chunkGenerator = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/lostcities/ChunkGeneratorMixin.class")
+            val lostCityFeature = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/lostcities/LostCityFeatureMixin.class")
+            check(chunkGenerator.contains("shouldSerialize")
+                    && chunkGenerator.contains("runSerialized")
+                    && lostCityFeature.contains("shouldSerialize")
+                    && lostCityFeature.contains("callSerialized")) {
+                "Runtime Lost Cities decoration and feature wrappers do not share the serialization helper: $runtimeJar"
+            }
+
+            val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(mixins.contains("lostcities.ChunkGeneratorMixin")
+                    && mixins.contains("lostcities.LostCityFeatureMixin")) {
+                "Runtime mixin configuration is missing a Lost Cities serialization wrapper: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
     dependsOn(verifyRuntimeBetterCavesBounds)
+    dependsOn(verifyRuntimeLostCitiesSerialization)
 }
 
 jacoco {
