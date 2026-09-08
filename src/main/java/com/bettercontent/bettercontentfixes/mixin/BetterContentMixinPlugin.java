@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
+    private static final String BETTER_CAVES_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.bettercaves.";
     private static final String CRAFTING_STATION_POLYMORPH_MIXIN =
             "com.bettercontent.bettercontentfixes.mixin.tconstruct.CraftingStationPolymorphMixin";
     private static final String EPIC_FIGHT_VS_MIXIN_PREFIX =
@@ -89,6 +91,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
         final LoadingModList mods = FMLLoader.getLoadingModList();
+        if (mixinClassName.startsWith(BETTER_CAVES_MIXIN_PREFIX)) {
+            return hasVersion(mods, "bettercaves", "1.20.1-Forge-2.0.6");
+        }
         if (CRAFTING_STATION_POLYMORPH_MIXIN.equals(mixinClassName)) {
             return mods != null
                     && mods.getModFileById("tconstruct") != null

@@ -93,6 +93,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:epic-fight-first-person-model-1553233:8142215"))
     compileOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
     compileOnly(fg.deobf("curse.maven:distant-horizons-508933:7375280"))
+    compileOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
     compileOnly(fg.deobf("curse.maven:explosion-overhaul-a-new-level-of-destruction-1296203:7659431"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
@@ -100,6 +101,8 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     testRuntimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     runtimeOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
+    runtimeOnly(fg.deobf("curse.maven:yungs-api-421850:5769971"))
+    runtimeOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
     compileOnly(fg.deobf("curse.maven:patchouli-306770:7731017"))
     compileOnly("org.valkyrienskies.core:api:1.1.0+cf208d8b56")
     runtimeOnly(fg.deobf("curse.maven:thirst-was-taken-679270:6660408"))
@@ -260,9 +263,39 @@ val verifyRuntimeSprintBridge by tasks.registering {
     }
 }
 
+val verifyRuntimeBetterCavesBounds by tasks.registering {
+    group = "verification"
+    description = "Requires the reobfuscated runtime JAR to retain the exact Better Caves bounds hook."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            val bounds = classBytes(
+                "com/bettercontent/bettercontentfixes/compat/BetterCavesCarvingBounds.class")
+            check(bounds.contains("m_151570_")) {
+                "Runtime Better Caves bounds guard does not use the reobfuscated build-height predicate: $runtimeJar"
+            }
+
+            val mixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/bettercaves/AbstractCarverMixin.class")
+            check(mixin.contains("com.yungnickyoung.minecraft.bettercaves.worldgen.carver.AbstractCarver")
+                    && mixin.contains("carveBlock")
+                    && mixin.contains("BetterCavesCarvingBounds")) {
+                "Runtime Better Caves mixin lacks its exact target or bounds guard: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
+    dependsOn(verifyRuntimeBetterCavesBounds)
 }
 
 jacoco {

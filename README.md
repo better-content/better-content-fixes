@@ -2,6 +2,11 @@
 
 Pack-owned compatibility and runtime patch mod for Forge `1.20.1`.
 
+The Better Caves compatibility hook clips only block-carve attempts outside a chunk's legal vertical
+range. This preserves Better Caves and C2ME generation at valid heights while preventing Better Caves
+`2.0.6` from writing negative `CarvingMask` indices in zero-minimum dimensions such as
+`lostcities:lostcity`.
+
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
 ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
