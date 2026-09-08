@@ -428,7 +428,7 @@ val verifyRuntimeTwilightForestMazeSerialization by tasks.registering {
 
 val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
     group = "verification"
-    description = "Requires the runtime JAR to retain vanilla dungeon spawner recovery after reobfuscation."
+    description = "Requires the runtime JAR to retain the exact protected-origin dungeon failure path."
     dependsOn(stageRuntimeJar)
     doLast {
         val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
@@ -439,14 +439,12 @@ val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
             val bytecode = zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
             check(bytecode.contains("MonsterRoomFeature")
                     && bytecode.contains("m_142674_")
-                    && bytecode.contains("WorldGenRegion")
-                    && bytecode.contains("SpawnerBlockEntity")
-                    && bytecode.contains("m_7702_")
-                    && bytecode.contains("m_142169_")
                     && bytecode.contains("org/slf4j/Logger")
                     && bytecode.contains("CallbackInfoReturnable")
-                    && bytecode.contains("setReturnValue")) {
-                "Runtime dungeon correction lacks recovery or the exact failed-placement return path: $runtimeJar"
+                    && bytecode.contains("setReturnValue")
+                    && !bytecode.contains("SpawnerBlockEntity")
+                    && !bytecode.contains("m_142169_")) {
+                "Runtime dungeon correction lacks the exact failed-placement return path: $runtimeJar"
             }
 
             val config = zip.getEntry("better_content_fixes.mixins.json")
