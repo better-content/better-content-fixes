@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.gson.JsonObject;
@@ -48,6 +49,24 @@ final class MovementPresentationResourceTest {
         assertTrue(config.contains("doubleTapWindowTicks\", 7, 2, 20"));
         assertTrue(!handler.toLowerCase().contains("combatroll"));
         assertTrue(!config.toLowerCase().contains("combatroll"));
+    }
+
+    @Test
+    void vanillaSprintSuppressionTargetsOnlyTheDoubleTapWindowWithoutAFieldShadow() throws IOException {
+        final String mixin = Files.readString(
+                SOURCE_ROOT.resolve("mixin/minecraft/LocalPlayerSprintMixin.java"));
+
+        assertTrue(mixin.contains("@ModifyConstant"));
+        assertTrue(mixin.contains("method = {\"aiStep\", \"m_8119_\"}"));
+        assertTrue(mixin.contains("@Constant(intValue = 7, ordinal = 0)"));
+        assertTrue(mixin.contains("remap = false"));
+        assertTrue(mixin.contains("replaceForwardDoubleTapSprint()"));
+        assertTrue(mixin.contains("? 0"));
+        assertTrue(mixin.contains(": original"));
+        assertFalse(mixin.contains("@Shadow"));
+        assertFalse(mixin.contains("sprintTriggerTime"));
+        assertFalse(mixin.contains("KeyMapping"));
+        assertFalse(mixin.contains("setDown("));
     }
 
     @Test
