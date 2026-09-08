@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.config;
 
 import com.bettercontent.bettercontentfixes.compat.LostCitiesC2meDhSerialization;
+import com.bettercontent.bettercontentfixes.compat.TwilightForestMazeSerialization;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 
@@ -22,6 +23,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue SGI_RERUN_HYLE_AFTER_SURFACE_CONFORM;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_SERIALIZE_DH_C2ME_FEATURE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue LOST_CITIES_CANCEL_STALE_DH_CLIENT_REQUESTS;
+    public static final ForgeConfigSpec.BooleanValue TWILIGHT_FOREST_SERIALIZE_C2ME_MAZE_PLACEMENT;
     public static final ForgeConfigSpec.BooleanValue THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC;
     public static final ForgeConfigSpec.BooleanValue WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS;
     public static final ForgeConfigSpec.BooleanValue SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION;
@@ -285,6 +287,14 @@ public final class BcFixesConfig {
                 .define("cancelStaleDhClientRequests", true);
         builder.pop();
 
+        builder.push("twilightForest");
+        TWILIGHT_FOREST_SERIALIZE_C2ME_MAZE_PLACEMENT = builder
+                .comment(
+                        "Serializes placement only among Twilight Forest mazes that share one random source when C2ME is loaded.",
+                        "This prevents parallel Minotaur Maze chunks from tripping LegacyRandomSource's threading detector without serializing unrelated world generation.")
+                .define("serializeC2meMazePlacement", true);
+        builder.pop();
+
         builder.push("theFleshThatHates");
         THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC = builder
                 .comment(
@@ -481,6 +491,12 @@ public final class BcFixesConfig {
                 && isLoaded("lostcities")
                 && isLoaded("distanthorizons")
                 && isLoaded("c2me");
+    }
+
+    public static boolean twilightForestSerializeC2meMazePlacement() {
+        return TwilightForestMazeSerialization.dependenciesAvailable(
+                TWILIGHT_FOREST_SERIALIZE_C2ME_MAZE_PLACEMENT.get(),
+                BcFixesConfig::isLoaded);
     }
 
     public static boolean theFleshThatHatesDisableProximityMusic() {

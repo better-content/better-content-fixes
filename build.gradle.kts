@@ -95,6 +95,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:distant-horizons-508933:7375280"))
     compileOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
     compileOnly(fg.deobf("curse.maven:fallout-wastelands-431248:7127023"))
+    compileOnly(fg.deobf("curse.maven:the-twilight-forest-227639:5468648"))
     compileOnly(fg.deobf("curse.maven:explosion-overhaul-a-new-level-of-destruction-1296203:7659431"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
@@ -386,12 +387,52 @@ val verifyRuntimeFalloutStructureBounds by tasks.registering {
     }
 }
 
+val verifyRuntimeTwilightForestMazeSerialization by tasks.registering {
+    group = "verification"
+    description = "Requires the runtime JAR to retain the exact Twilight Forest/C2ME maze-random lock."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            val helper = classBytes(
+                "com/bettercontent/bettercontentfixes/compat/TwilightForestMazeSerialization.class")
+            check(helper.contains("twilightforest")
+                    && helper.contains("c2me")
+                    && helper.contains("runSerialized")) {
+                "Runtime Twilight Forest helper lacks its exact dependency and monitor contract: $runtimeJar"
+            }
+
+            val mixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/twilightforest/TFMazeMixin.class")
+            check(mixin.contains("twilightforest.world.components.structures.TFMaze")
+                    && mixin.contains("copyToStructure")
+                    && mixin.contains("runSerialized")
+                    && mixin.contains("rand")) {
+                "Runtime Twilight Forest mixin lacks its exact maze placement/random-source wrapper: $runtimeJar"
+            }
+
+            val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(mixins.contains("twilightforest.TFMazeMixin")) {
+                "Runtime mixin configuration is missing the Twilight Forest maze wrapper: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
     dependsOn(verifyRuntimeBetterCavesBounds)
     dependsOn(verifyRuntimeLostCitiesSerialization)
     dependsOn(verifyRuntimeFalloutStructureBounds)
+    dependsOn(verifyRuntimeTwilightForestMazeSerialization)
 }
 
 jacoco {

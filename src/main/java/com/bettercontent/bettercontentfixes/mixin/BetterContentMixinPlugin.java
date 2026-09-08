@@ -26,6 +26,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.epicfightfirstperson.";
     private static final String FALLOUT_WASTELANDS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.falloutwastelands.";
+    private static final String TWILIGHT_FOREST_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.twilightforest.";
     private static final String PARCOOL_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.parcool.";
     private static final String REHOOKED_MIXIN_PREFIX =
@@ -120,6 +122,11 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(FALLOUT_WASTELANDS_MIXIN_PREFIX)) {
             return hasVersion(mods, "fallout_wastelands_", "1.0.0");
+        }
+        if (mixinClassName.startsWith(TWILIGHT_FOREST_MIXIN_PREFIX)) {
+            return hasVersion(mods, "twilightforest", "4.3.2508")
+                    && mods != null
+                    && mods.getModFileById("c2me") != null;
         }
         if (mixinClassName.startsWith(PARCOOL_MIXIN_PREFIX)) {
             return hasVersion(mods, "parcool", "3.4.3.3");

@@ -21,6 +21,11 @@ ruins and far-chunk writes. Placement outside `WorldGenRegion` is unchanged. Fal
 non-distinct mod version `1.0.0`, so this compatibility is additionally tied to the pack's pinned Curse
 artifact `431248/7127023` (Beta 3.8.1).
 
+Twilight Forest 4.3.2508 retains one random source on each generated maze and may place different
+chunks of that maze concurrently under C2ME. Better Content Fixes synchronizes only
+`TFMaze.copyToStructure` calls that share that random source. Other structures, dimensions, and C2ME
+work remain parallel.
+
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
 ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
