@@ -24,6 +24,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             + "FirstPersonRendererMixin";
     private static final String EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.epicfightfirstperson.";
+    private static final String FALLOUT_WASTELANDS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.falloutwastelands.";
     private static final String PARCOOL_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.parcool.";
     private static final String REHOOKED_MIXIN_PREFIX =
@@ -115,6 +117,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX)) {
             return hasVersion(mods, "epicfight", "20.14.17")
                     && hasVersion(mods, "epicfight_first_person_model", "1.0");
+        }
+        if (mixinClassName.startsWith(FALLOUT_WASTELANDS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "fallout_wastelands_", "1.0.0");
         }
         if (mixinClassName.startsWith(PARCOOL_MIXIN_PREFIX)) {
             return hasVersion(mods, "parcool", "3.4.3.3");

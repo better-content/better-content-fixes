@@ -94,6 +94,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
     compileOnly(fg.deobf("curse.maven:distant-horizons-508933:7375280"))
     compileOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
+    compileOnly(fg.deobf("curse.maven:fallout-wastelands-431248:7127023"))
     compileOnly(fg.deobf("curse.maven:explosion-overhaul-a-new-level-of-destruction-1296203:7659431"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
@@ -345,11 +346,52 @@ val verifyRuntimeLostCitiesSerialization by tasks.registering {
     }
 }
 
+val verifyRuntimeFalloutStructureBounds by tasks.registering {
+    group = "verification"
+    description = "Requires the reobfuscated runtime JAR to retain Fallout's bounded template-placement redirect."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            val bounds = classBytes(
+                "com/bettercontent/bettercontentfixes/compat/FalloutStructurePlacementBounds.class")
+            check(bounds.contains("WRITABLE_ENVELOPE_BLOCKS")
+                    && bounds.contains("fit")
+                    && bounds.contains("m_71056_")
+                    && bounds.contains("m_71058_")) {
+                "Runtime Fallout bounds helper lacks its 48-block atomic fit contract: $runtimeJar"
+            }
+
+            val mixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/falloutwastelands/StructureFeatureMixin.class")
+            check(mixin.contains("net.mcreator.falloutwastelands.world.features.StructureFeature")
+                    && mixin.contains("m_142674_")
+                    && mixin.contains("m_230328_")
+                    && mixin.contains("FalloutStructurePlacementBounds")) {
+                "Runtime Fallout mixin lacks its exact reobfuscated target or placement redirect: $runtimeJar"
+            }
+
+            val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(mixins.contains("falloutwastelands.StructureFeatureMixin")) {
+                "Runtime mixin configuration is missing the Fallout placement redirect: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
     dependsOn(verifyRuntimeBetterCavesBounds)
     dependsOn(verifyRuntimeLostCitiesSerialization)
+    dependsOn(verifyRuntimeFalloutStructureBounds)
 }
 
 jacoco {

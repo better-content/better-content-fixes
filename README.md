@@ -13,6 +13,14 @@ accessing the same chunk section concurrently while leaving C2ME enabled and unr
 parallel. The existing `lostCities.serializeDhC2meFeaturePlacement` config key remains for compatibility;
 Distant Horizons is not required for the guard to activate.
 
+Fallout Wastelands Beta 3.8.1 registers its city ruins as placed features even though its largest
+template is 38 blocks wide. Better Content Fixes minimally shifts those templates in X/Z so their
+rotation- and mirror-aware bounds remain inside `WorldGenRegion`'s writable 3x3 chunk envelope.
+Templates wider or deeper than that 48-block envelope are skipped before placement, preventing partial
+ruins and far-chunk writes. Placement outside `WorldGenRegion` is unchanged. Fallout exposes the
+non-distinct mod version `1.0.0`, so this compatibility is additionally tied to the pack's pinned Curse
+artifact `431248/7127023` (Beta 3.8.1).
+
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
 ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,

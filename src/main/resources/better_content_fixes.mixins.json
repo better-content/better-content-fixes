@@ -25,6 +25,7 @@
     "epicfight.ServerPlayerPatchMixin",
     "epicfightvs.ColliderMixin",
     "epicfightvs.MultiColliderMixin",
+    "falloutwastelands.StructureFeatureMixin",
     "forge.VanillaInventoryCodeHooksMixin",
     "hyle.BiomeInjectorMixin",
     "hyle.RoughNoiseSamplerMixin",

@@ -1,0 +1,120 @@
+package com.bettercontent.bettercontentfixes.compat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.lang.reflect.Field;
+import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.junit.jupiter.api.Test;
+
+final class FalloutStructurePlacementBoundsTest {
+    private static final ChunkPos EVIDENCE_CENTER = new ChunkPos(62_500, 62_500);
+    private static final int MIN_X = EVIDENCE_CENTER.getMinBlockX() - 16;
+    private static final int MAX_X = EVIDENCE_CENTER.getMaxBlockX() + 16;
+    private static final int MIN_Z = EVIDENCE_CENTER.getMinBlockZ() - 16;
+    private static final int MAX_Z = EVIDENCE_CENTER.getMaxBlockZ() + 16;
+
+    @Test
+    void minimallyFitsTheThirtyEightBlockFalloutRuinForEveryTransform() throws Exception {
+        final StructureTemplate template = templateWithSize(38, 22, 12);
+        final BlockPos original = new BlockPos(1_000_015, 62, 1_000_015);
+
+        for (final Rotation rotation : Rotation.values()) {
+            for (final Mirror mirror : Mirror.values()) {
+                final StructurePlaceSettings settings = new StructurePlaceSettings()
+                        .setRotation(rotation)
+                        .setMirror(mirror);
+                final BoundingBox originalBounds = template.getBoundingBox(settings, original);
+                final FalloutStructurePlacementBounds.Placement fitted = FalloutStructurePlacementBounds.fit(
+                        originalBounds, original, original, EVIDENCE_CENTER).orElseThrow();
+                final BoundingBox fittedBounds = template.getBoundingBox(settings, fitted.position());
+
+                assertInsideWritableEnvelope(fittedBounds);
+                assertEquals(expectedMinimalShift(originalBounds.minX(), originalBounds.maxX(), MIN_X, MAX_X),
+                        fitted.shiftX());
+                assertEquals(expectedMinimalShift(originalBounds.minZ(), originalBounds.maxZ(), MIN_Z, MAX_Z),
+                        fitted.shiftZ());
+                assertEquals(fitted.position(), fitted.pivot());
+            }
+        }
+    }
+
+    @Test
+    void preservesAnAlreadyLegalPlacementExactly() {
+        final BlockPos position = new BlockPos(1_000_000, 70, 1_000_000);
+        final BlockPos pivot = position.offset(2, 0, 3);
+        final BoundingBox bounds = new BoundingBox(999_990, 60, 999_990, 1_000_020, 90, 1_000_020);
+
+        final FalloutStructurePlacementBounds.Placement fitted = FalloutStructurePlacementBounds.fit(
+                bounds, position, pivot, EVIDENCE_CENTER).orElseThrow();
+
+        assertEquals(position, fitted.position());
+        assertEquals(pivot, fitted.pivot());
+        assertEquals(0, fitted.shiftX());
+        assertEquals(0, fitted.shiftZ());
+    }
+
+    @Test
+    void rejectsFutureOversizedTemplatesBeforeAnyPlacement() {
+        final BlockPos position = new BlockPos(1_000_000, 70, 1_000_000);
+        final BoundingBox fiftyWide = new BoundingBox(999_975, 60, 999_990, 1_000_024, 90, 1_000_020);
+        final BoundingBox fiftyDeep = new BoundingBox(999_990, 60, 999_975, 1_000_020, 90, 1_000_024);
+
+        assertFalse(FalloutStructurePlacementBounds.fit(
+                fiftyWide, position, position, EVIDENCE_CENTER).isPresent());
+        assertFalse(FalloutStructurePlacementBounds.fit(
+                fiftyDeep, position, position, EVIDENCE_CENTER).isPresent());
+    }
+
+    @Test
+    void acceptsTheFullFortyEightBlockEnvelope() {
+        final BlockPos position = new BlockPos(1_000_000, 70, 1_000_000);
+        final BoundingBox fullEnvelope = new BoundingBox(MIN_X, 0, MIN_Z, MAX_X, 255, MAX_Z);
+        final Optional<FalloutStructurePlacementBounds.Placement> fitted =
+                FalloutStructurePlacementBounds.fit(
+                        fullEnvelope, position, position, EVIDENCE_CENTER);
+
+        assertTrue(fitted.isPresent());
+        assertEquals(48, fullEnvelope.getXSpan());
+        assertEquals(48, fullEnvelope.getZSpan());
+    }
+
+    private static StructureTemplate templateWithSize(final int x, final int y, final int z) throws Exception {
+        final StructureTemplate template = new StructureTemplate();
+        final Field size = StructureTemplate.class.getDeclaredField("size");
+        size.setAccessible(true);
+        size.set(template, new Vec3i(x, y, z));
+        return template;
+    }
+
+    private static void assertInsideWritableEnvelope(final BoundingBox bounds) {
+        assertTrue(bounds.minX() >= MIN_X, bounds::toString);
+        assertTrue(bounds.maxX() <= MAX_X, bounds::toString);
+        assertTrue(bounds.minZ() >= MIN_Z, bounds::toString);
+        assertTrue(bounds.maxZ() <= MAX_Z, bounds::toString);
+    }
+
+    private static int expectedMinimalShift(
+            final int templateMin,
+            final int templateMax,
+            final int envelopeMin,
+            final int envelopeMax
+    ) {
+        if (templateMin < envelopeMin) {
+            return envelopeMin - templateMin;
+        }
+        if (templateMax > envelopeMax) {
+            return envelopeMax - templateMax;
+        }
+        return 0;
+    }
+}
