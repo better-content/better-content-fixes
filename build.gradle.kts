@@ -426,6 +426,35 @@ val verifyRuntimeTwilightForestMazeSerialization by tasks.registering {
     }
 }
 
+val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
+    group = "verification"
+    description = "Requires the runtime JAR to retain vanilla dungeon spawner recovery after reobfuscation."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            val entry = zip.getEntry(
+                "com/bettercontent/bettercontentfixes/mixin/minecraft/MonsterRoomFeatureMixin.class")
+                ?: throw GradleException("Runtime JAR is missing MonsterRoomFeatureMixin: $runtimeJar")
+            val bytecode = zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            check(bytecode.contains("MonsterRoomFeature")
+                    && bytecode.contains("WorldGenRegion")
+                    && bytecode.contains("SpawnerBlockEntity")
+                    && bytecode.contains("m_7702_")
+                    && bytecode.contains("m_142169_")) {
+                "Runtime dungeon recovery lacks its reobfuscated block-entity lookup or chunk insertion: $runtimeJar"
+            }
+
+            val config = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val mixins = zip.getInputStream(config).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(mixins.contains("minecraft.MonsterRoomFeatureMixin")) {
+                "Runtime mixin configuration is missing dungeon spawner recovery: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
@@ -433,6 +462,7 @@ tasks.named("verifyFast") {
     dependsOn(verifyRuntimeLostCitiesSerialization)
     dependsOn(verifyRuntimeFalloutStructureBounds)
     dependsOn(verifyRuntimeTwilightForestMazeSerialization)
+    dependsOn(verifyRuntimeMonsterRoomSpawnerRecovery)
 }
 
 jacoco {
