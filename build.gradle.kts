@@ -441,8 +441,11 @@ val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
                     && bytecode.contains("WorldGenRegion")
                     && bytecode.contains("SpawnerBlockEntity")
                     && bytecode.contains("m_7702_")
-                    && bytecode.contains("m_142169_")) {
-                "Runtime dungeon recovery lacks its reobfuscated block-entity lookup or chunk insertion: $runtimeJar"
+                    && bytecode.contains("m_142169_")
+                    && bytecode.contains("org/slf4j/Logger")
+                    && bytecode.contains("CallbackInfoReturnable")
+                    && bytecode.contains("setReturnValue")) {
+                "Runtime dungeon correction lacks recovery or the exact failed-placement return path: $runtimeJar"
             }
 
             val config = zip.getEntry("better_content_fixes.mixins.json")

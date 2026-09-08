@@ -20,5 +20,9 @@ final class MonsterRoomFeatureResourceTest {
         assertTrue(source.contains("level instanceof WorldGenRegion region"));
         assertTrue(source.contains("state.is(Blocks.SPAWNER)"));
         assertTrue(source.contains("region.getChunk(position).setBlockEntity(recovered)"));
+        assertTrue(source.contains("Lorg/slf4j/Logger;error(Ljava/lang/String;[Ljava/lang/Object;)V"));
+        assertTrue(source.contains("cancellable = true"));
+        assertTrue(source.contains("require = 1"));
+        assertTrue(source.contains("callback.setReturnValue(false)"));
     }
 }
