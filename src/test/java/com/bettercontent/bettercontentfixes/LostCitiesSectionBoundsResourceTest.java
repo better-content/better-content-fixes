@@ -14,7 +14,7 @@ final class LostCitiesSectionBoundsResourceTest {
             "src/main/java/com/bettercontent/bettercontentfixes/mixin/lostcities/ChunkDriverMixin.java");
 
     @Test
-    void routesOnlyOutOfHeightNeighborReadsAroundTheExactPrivateMethod() throws IOException {
+    void guardsOnlyOutOfHeightReadsAndWritesAroundTheExactPrivateMethods() throws IOException {
         final JsonObject config = JsonParser.parseReader(Files.newBufferedReader(
                 Path.of("src/main/resources/better_content_fixes.mixins.json"))).getAsJsonObject();
         final String source = Files.readString(MIXIN);
@@ -22,11 +22,13 @@ final class LostCitiesSectionBoundsResourceTest {
         assertTrue(config.getAsJsonArray("mixins").toString().contains("lostcities.ChunkDriverMixin"));
         assertTrue(source.contains("mcjty.lostcities.worldgen.ChunkDriver")
                 && source.contains("method = \"getBlockSafe\"")
+                && source.contains("method = \"setBlock(Lnet/minecraft/core/BlockPos;\"")
                 && source.contains("at = @At(\"HEAD\")")
                 && source.contains("cancellable = true")
                 && source.contains("require = 1"));
         assertTrue(source.contains("!LostCitiesSectionBounds.contains(region, pos)")
-                && source.contains("cir.setReturnValue(region.getBlockState(pos))"));
+                && source.contains("cir.setReturnValue(region.getBlockState(pos))")
+                && source.contains("ci.cancel()"));
     }
 
     @Test

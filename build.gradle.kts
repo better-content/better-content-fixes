@@ -342,6 +342,7 @@ val verifyRuntimeLostCitiesSerialization by tasks.registering {
             check(sectionBounds.contains("m_151570_")
                     && chunkDriver.contains("mcjty.lostcities.worldgen.ChunkDriver")
                     && chunkDriver.contains("getBlockSafe")
+                    && chunkDriver.contains("setBlock")
                     && chunkDriver.contains("LostCitiesSectionBounds")) {
                 "Runtime Lost Cities section-cache boundary hook did not survive reobfuscation: $runtimeJar"
             }
