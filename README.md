@@ -25,6 +25,9 @@ block horizontally without changing vertical reach, and moving living entities h
 per block entry to remove vanilla grass or tall grass. These policies are configurable in the
 common Better Content Fixes config.
 
+When Better Content Threads is installed, each participating sleeper emits one correlated
+`sleep_started/night` to `sleep_finished/simulated_time` episode across a successfully simulated night.
+
 The foreground tick governor records active server-tick p50/p95/p99/max over a 100-tick window.
 When p95 exceeds 50 ms or a tick exceeds 100 ms, it uses Distant Horizons 2.4.5's API to pause only
 optional distant generation. It clears only its own in-memory override after 600 consecutive ticks

@@ -1,5 +1,6 @@
 package com.bettercontent.bettercontentfixes.mixin.sleepingoverhaul;
 
+import com.bettercontent.bettercontentfixes.compat.sleeping.SleepThreadEpisodes;
 import com.bettercontent.bettercontentfixes.compat.sleeping.TimelapsePacer;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import github.cosmicdan.sleepingoverhaul.SleepingOverhaul;
@@ -15,9 +16,11 @@ import java.util.function.BooleanSupplier;
 abstract class MinecraftServerMixin {
     @Inject(method = "tickServer", at = @At("TAIL"))
     private void betterContent$paceSleepingOverhaulTimelapse(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
-        final boolean active = BcFixesConfig.sleepingOverhaulPaceTimelapse()
-                && SleepingOverhaul.serverState != null
+        final boolean active = SleepingOverhaul.serverState != null
                 && SleepingOverhaul.serverState.isTimelapseActive();
-        TimelapsePacer.pace(active, BcFixesConfig.sleepingOverhaulTargetTicksPerSecond());
+        SleepThreadEpisodes.update((MinecraftServer) (Object) this, active);
+        TimelapsePacer.pace(
+                BcFixesConfig.sleepingOverhaulPaceTimelapse() && active,
+                BcFixesConfig.sleepingOverhaulTargetTicksPerSecond());
     }
 }
