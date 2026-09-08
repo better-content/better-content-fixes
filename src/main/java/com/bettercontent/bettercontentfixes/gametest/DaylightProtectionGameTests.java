@@ -19,7 +19,7 @@ public final class DaylightProtectionGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 400)
     public static void zombiesDoNotIgniteUnderOpenSky(final GameTestHelper helper) {
-        final Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
+        final Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(2, 2, 2));
         validateMobStaysOutOfSunBurn(helper, zombie, "zombie");
     }
 
