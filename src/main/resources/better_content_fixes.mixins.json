@@ -70,7 +70,6 @@
     "explosionoverhaul.CameraShakeConcussionEffectMixin",
     "explosionoverhaul.DeafnessConcussionEffectMixin",
     "explosionoverhaul.LowPassConcussionEffectMixin",
-    "minecraft.LocalPlayerSprintMixin",
     "parcool.DodgeMixin",
     "sodiumdynamiclights.SodiumDynamicLightsMixin",
     "thefleshthathates.BiomeMusicMixin",

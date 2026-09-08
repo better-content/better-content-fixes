@@ -20,7 +20,7 @@ final class MovementPresentationResourceTest {
         final String client = config.getAsJsonArray("client").toString();
 
         assertTrue(client.contains("parcool.DodgeMixin"));
-        assertTrue(client.contains("minecraft.LocalPlayerSprintMixin"));
+        assertFalse(client.contains("minecraft.LocalPlayerSprintMixin"));
         assertTrue(client.contains("epicfight.FirstPersonRendererMixin"));
         assertTrue(client.contains("epicfightfirstperson.FirstPersonWearableItemLayerMixin"));
     }
@@ -52,21 +52,22 @@ final class MovementPresentationResourceTest {
     }
 
     @Test
-    void vanillaSprintSuppressionTargetsOnlyTheDoubleTapWindowWithoutAFieldShadow() throws IOException {
-        final String mixin = Files.readString(
-                SOURCE_ROOT.resolve("mixin/minecraft/LocalPlayerSprintMixin.java"));
+    void vanillaSprintSuppressionClearsOnlyTheTriggerWindowAtTheForgeInputBoundary() throws IOException {
+        final String suppressor = Files.readString(
+                SOURCE_ROOT.resolve("client/VanillaDoubleTapSprintSuppressor.java"));
 
-        assertTrue(mixin.contains("@ModifyConstant"));
-        assertTrue(mixin.contains("method = {\"aiStep\", \"m_8119_\"}"));
-        assertTrue(mixin.contains("@Constant(intValue = 7, ordinal = 0)"));
-        assertTrue(mixin.contains("remap = false"));
-        assertTrue(mixin.contains("replaceForwardDoubleTapSprint()"));
-        assertTrue(mixin.contains("? 0"));
-        assertTrue(mixin.contains(": original"));
-        assertFalse(mixin.contains("@Shadow"));
-        assertFalse(mixin.contains("sprintTriggerTime"));
-        assertFalse(mixin.contains("KeyMapping"));
-        assertFalse(mixin.contains("setDown("));
+        assertTrue(suppressor.contains("MovementInputUpdateEvent"));
+        assertTrue(suppressor.contains("ObfuscationReflectionHelper.findField(LocalPlayer.class, \"f_108583_\")"));
+        assertTrue(suppressor.contains("SPRINT_TRIGGER_TIME.setInt(player, 0)"));
+        assertTrue(suppressor.contains("replaceForwardDoubleTapSprint()"));
+        assertFalse(suppressor.contains("@Inject"));
+        assertFalse(suppressor.contains("@ModifyConstant"));
+        assertFalse(suppressor.contains("aiStep"));
+        assertFalse(suppressor.contains("m_8119_"));
+        assertFalse(suppressor.contains("keySprint"));
+        assertFalse(suppressor.contains("KeyMapping"));
+        assertFalse(suppressor.contains("setSprinting"));
+        assertFalse(suppressor.contains("setDown("));
     }
 
     @Test

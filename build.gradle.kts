@@ -221,8 +221,48 @@ val verifyRuntimeDispenserAlias by tasks.registering {
     }
 }
 
+val verifyRuntimeSprintBridge by tasks.registering {
+    group = "verification"
+    description = "Requires the staged runtime JAR to use the non-injecting production sprint bridge."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            check(zip.getEntry(
+                "com/bettercontent/bettercontentfixes/mixin/minecraft/LocalPlayerSprintMixin.class") == null) {
+                "Runtime JAR still contains the obsolete LocalPlayer sprint injector: $runtimeJar"
+            }
+
+            val suppressor = classBytes(
+                "com/bettercontent/bettercontentfixes/client/VanillaDoubleTapSprintSuppressor.class")
+            check(suppressor.contains("MovementInputUpdateEvent")) {
+                "Runtime sprint suppressor is not linked to Forge's stable movement-input event: $runtimeJar"
+            }
+            check(suppressor.contains("ObfuscationReflectionHelper") && suppressor.contains("f_108583_")) {
+                "Runtime sprint suppressor lacks SRG-aware access to f_108583_: $runtimeJar"
+            }
+            check(!suppressor.contains("ModifyConstant") && !suppressor.contains("injection/Inject")) {
+                "Runtime sprint suppressor must not contain a method or instruction-level injector: $runtimeJar"
+            }
+
+            val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(!mixins.contains("LocalPlayerSprintMixin")) {
+                "Runtime mixin configuration still enables the obsolete LocalPlayer sprint injector: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
+    dependsOn(verifyRuntimeSprintBridge)
 }
 
 jacoco {
