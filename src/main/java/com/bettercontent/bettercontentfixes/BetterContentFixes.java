@@ -31,6 +31,7 @@ import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTest
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
+import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
 import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorService;
@@ -82,6 +83,9 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(PerformanceGovernorService.class);
+        if (ModList.get().isLoaded("parcool")) {
+            MinecraftForge.EVENT_BUS.register(ParCoolControlLearning.class);
+        }
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
