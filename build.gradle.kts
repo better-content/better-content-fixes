@@ -438,6 +438,7 @@ val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
                 ?: throw GradleException("Runtime JAR is missing MonsterRoomFeatureMixin: $runtimeJar")
             val bytecode = zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
             check(bytecode.contains("MonsterRoomFeature")
+                    && bytecode.contains("m_142674_")
                     && bytecode.contains("WorldGenRegion")
                     && bytecode.contains("SpawnerBlockEntity")
                     && bytecode.contains("m_7702_")

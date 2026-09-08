@@ -19,10 +19,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(MonsterRoomFeature.class)
 public abstract class MonsterRoomFeatureMixin {
     @Redirect(
-            method = "place",
+            method = {"place", "m_142674_"},
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/level/WorldGenLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"))
+                    target = "Lnet/minecraft/world/level/WorldGenLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;"),
+            require = 1)
     private BlockEntity betterContentFixes$recoverDeferredSpawnerEntity(
             final WorldGenLevel level, final BlockPos position) {
         final BlockEntity existing = level.getBlockEntity(position);
@@ -42,7 +43,7 @@ public abstract class MonsterRoomFeatureMixin {
      * the feature failure accurately instead of treating the expected missing entity as corruption.
      */
     @Inject(
-            method = "place",
+            method = {"place", "m_142674_"},
             at = @At(
                     value = "INVOKE",
                     target = "Lorg/slf4j/Logger;error(Ljava/lang/String;[Ljava/lang/Object;)V"),
