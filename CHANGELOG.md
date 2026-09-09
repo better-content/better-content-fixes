@@ -2,10 +2,10 @@
 
 ## Unreleased
 
+- Disabled ParCool's native and pack-added directional double-tap dodge paths while retaining its explicit dodge binding and vanilla forward double-tap sprint.
 - Added active-tick percentile monitoring and a hysteretic Distant Horizons generation governor, with read-only operator status output.
 - Paced Sleeping Overhaul timelapses, extended ordinary-item pickup one block horizontally, and made vanilla grass/tall-grass trampling a 10% roll once per block entry.
 - Seeded the TConstruct Part Builder and Tinker Station as editable EMI favorites for new client profiles while preserving every existing `emi.json` byte-for-byte.
-- Added a seven-tick, release-gated W/A/S/D double-tap path into ParCool's own dodge action while preserving its stamina, cooldown, synchronization, and direct R binding.
 - Added a one-time conservative client keymap migration for Shift fast run, Mouse 5 contextual parkour, Mouse 4 ping, unbound Epic Fight dodge, and Caps Lock targeting controls.
 - Added an optional public-API Threads bridge at ParCool's authoritative server action-start boundary; one persisted episode now requires two distinct configured actions.
 - Added an optional public-API Threads episode across Sleeping Overhaul's authoritative simulated-night boundaries.

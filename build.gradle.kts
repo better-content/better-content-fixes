@@ -228,31 +228,27 @@ val verifyRuntimeDispenserAlias by tasks.registering {
 
 val verifyRuntimeSprintBridge by tasks.registering {
     group = "verification"
-    description = "Requires the staged runtime JAR to use the non-injecting production sprint bridge."
+    description = "Requires the staged runtime JAR to disable directional dodge without replacing vanilla sprint."
     dependsOn(stageRuntimeJar)
     doLast {
         val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
         ZipFile(runtimeJar).use { zip ->
-            fun classBytes(path: String): String {
-                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path: $runtimeJar")
-                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
-            }
-
             check(zip.getEntry(
                 "com/bettercontent/bettercontentfixes/mixin/minecraft/LocalPlayerSprintMixin.class") == null) {
                 "Runtime JAR still contains the obsolete LocalPlayer sprint injector: $runtimeJar"
             }
-
-            val suppressor = classBytes(
-                "com/bettercontent/bettercontentfixes/client/VanillaDoubleTapSprintSuppressor.class")
-            check(suppressor.contains("MovementInputUpdateEvent")) {
-                "Runtime sprint suppressor is not linked to Forge's stable movement-input event: $runtimeJar"
+            for (obsolete in listOf(
+                "client/ParCoolDirectionalDodgeClient.class",
+                "client/DirectionalDoubleTapTracker.class",
+                "client/VanillaDoubleTapSprintSuppressor.class"
+            )) {
+                check(zip.getEntry("com/bettercontent/bettercontentfixes/$obsolete") == null) {
+                    "Runtime JAR still contains obsolete directional double-tap code $obsolete: $runtimeJar"
+                }
             }
-            check(suppressor.contains("ObfuscationReflectionHelper") && suppressor.contains("f_108583_")) {
-                "Runtime sprint suppressor lacks SRG-aware access to f_108583_: $runtimeJar"
-            }
-            check(!suppressor.contains("ModifyConstant") && !suppressor.contains("injection/Inject")) {
-                "Runtime sprint suppressor must not contain a method or instruction-level injector: $runtimeJar"
+            check(zip.getEntry(
+                "com/bettercontent/bettercontentfixes/mixin/parcool/DodgeMixin.class") != null) {
+                "Runtime JAR is missing the ParCool native double-tap suppression mixin: $runtimeJar"
             }
 
             val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")

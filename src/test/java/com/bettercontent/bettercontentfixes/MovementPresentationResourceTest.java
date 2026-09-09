@@ -39,35 +39,17 @@ final class MovementPresentationResourceTest {
     }
 
     @Test
-    void directionalDodgeUsesParcoolAndNoRetiredCombatRollSurface() throws IOException {
-        final String handler = Files.readString(SOURCE_ROOT.resolve("client/ParCoolDirectionalDodgeClient.java"));
+    void directionalDoubleTapDodgeIsDisabledWithoutReplacingVanillaSprint() throws IOException {
+        final String mixin = Files.readString(SOURCE_ROOT.resolve("mixin/parcool/DodgeMixin.java"));
         final String config = Files.readString(SOURCE_ROOT.resolve("config/BcFixesClientConfig.java"));
 
-        assertTrue(handler.contains("key.parcool.Dodge"));
-        assertTrue(handler.contains("setDown(true)"));
-        assertTrue(handler.contains("restoreDodgeKey()"));
-        assertTrue(config.contains("doubleTapWindowTicks\", 7, 2, 20"));
-        assertTrue(!handler.toLowerCase().contains("combatroll"));
-        assertTrue(!config.toLowerCase().contains("combatroll"));
-    }
-
-    @Test
-    void vanillaSprintSuppressionClearsOnlyTheTriggerWindowAtTheForgeInputBoundary() throws IOException {
-        final String suppressor = Files.readString(
-                SOURCE_ROOT.resolve("client/VanillaDoubleTapSprintSuppressor.java"));
-
-        assertTrue(suppressor.contains("MovementInputUpdateEvent"));
-        assertTrue(suppressor.contains("ObfuscationReflectionHelper.findField(LocalPlayer.class, \"f_108583_\")"));
-        assertTrue(suppressor.contains("SPRINT_TRIGGER_TIME.setInt(player, 0)"));
-        assertTrue(suppressor.contains("replaceForwardDoubleTapSprint()"));
-        assertFalse(suppressor.contains("@Inject"));
-        assertFalse(suppressor.contains("@ModifyConstant"));
-        assertFalse(suppressor.contains("aiStep"));
-        assertFalse(suppressor.contains("m_8119_"));
-        assertFalse(suppressor.contains("keySprint"));
-        assertFalse(suppressor.contains("KeyMapping"));
-        assertFalse(suppressor.contains("setSprinting"));
-        assertFalse(suppressor.contains("setDown("));
+        assertTrue(mixin.contains("return Boolean.FALSE"));
+        assertFalse(config.contains("directionalDoubleTapDodge"));
+        assertFalse(config.contains("doubleTapWindowTicks"));
+        assertFalse(config.contains("replaceForwardDoubleTapSprint"));
+        assertFalse(Files.exists(SOURCE_ROOT.resolve("client/ParCoolDirectionalDodgeClient.java")));
+        assertFalse(Files.exists(SOURCE_ROOT.resolve("client/DirectionalDoubleTapTracker.java")));
+        assertFalse(Files.exists(SOURCE_ROOT.resolve("client/VanillaDoubleTapSprintSuppressor.java")));
     }
 
     @Test
@@ -76,7 +58,14 @@ final class MovementPresentationResourceTest {
         final String renderer = Files.readString(SOURCE_ROOT.resolve("mixin/epicfight/FirstPersonRendererMixin.java"));
 
         assertTrue(visibility.contains("leftArm.setHidden(true)"));
+        assertTrue(visibility.contains("rightArm.setHidden(true)"));
+        assertTrue(visibility.contains("leftLeg.setHidden(true)"));
         assertTrue(visibility.contains("rightLeg.setHidden(true)"));
+        assertTrue(visibility.contains("leftSleeve.setHidden(true)"));
+        assertTrue(visibility.contains("rightSleeve.setHidden(true)"));
+        assertTrue(visibility.contains("leftPants.setHidden(true)"));
+        assertTrue(visibility.contains("rightPants.setHidden(true)"));
+        assertTrue(visibility.contains("hideArmorLimbs"));
         assertTrue(renderer.contains("hidePlayerLimbs"));
         assertTrue(!visibility.contains("PatchedItemInHandLayer"));
         assertTrue(!renderer.contains("PatchedItemInHandLayer"));

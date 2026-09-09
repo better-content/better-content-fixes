@@ -33,13 +33,14 @@ chunks of that maze concurrently under C2ME. Better Content Fixes synchronizes o
 work remain parallel.
 
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
-ParCool directional double-tap dodge and recommended control migration, first-person player-limb hiding
+disabled ParCool directional double-tap dodge, recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
 weight-based ReHooked mob grappling, and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
 
 The client control profile moves ParCool Fast Run to Shift, ParCool's contextual mouse actions to Mouse 5,
 Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized bindings are preserved;
-only exact legacy defaults are migrated once. ParCool's direct R dodge remains available.
+only exact legacy defaults are migrated once. ParCool's direct R dodge remains available, and vanilla's
+forward double-tap sprint behavior is left intact.
 
 When Better Content Threads is installed, accepted server-side ParCool starts for the configured dodge,
 fast-run, and contextual actions emit optional learning signals. The first action opens one persistent

@@ -1,6 +1,5 @@
 package com.bettercontent.bettercontentfixes.mixin.parcool;
 
-import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,7 +13,7 @@ public abstract class DodgeMixin {
                     target = "Lcom/alrex/parcool/config/ParCoolConfig$Client$Booleans;get()Ljava/lang/Boolean;",
                     ordinal = 0),
             require = 1)
-    private Boolean betterContentFixes$replaceNativeDirectionalDoubleTap(final Boolean original) {
-        return BcFixesClientConfig.parcoolDirectionalDoubleTapDodge() ? Boolean.FALSE : original;
+    private Boolean betterContentFixes$disableNativeDirectionalDoubleTap(final Boolean original) {
+        return Boolean.FALSE;
     }
 }
