@@ -66,6 +66,7 @@
     "epicfight.EpicFightKeyMappingsMixin",
     "epicfight.FirstPersonRendererMixin",
     "epicfight.LocalPlayerPatchMixin",
+    "epicfightfirstperson.FirstPersonBodyRendererMixin",
     "epicfightfirstperson.FirstPersonWearableItemLayerMixin",
     "epicfightvs.CameraMixin",
     "epicfightvs.EpicFightCameraApiMixin",

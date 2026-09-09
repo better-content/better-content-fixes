@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Applied first-person limb hiding to the compatibility mod's actual overridden body renderer and after its armor visibility reset.
 - Disabled ParCool's native and pack-added directional double-tap dodge paths while retaining its explicit dodge binding and vanilla forward double-tap sprint.
 - Added active-tick percentile monitoring and a hysteretic Distant Horizons generation governor, with read-only operator status output.
 - Paced Sleeping Overhaul timelapses, extended ordinary-item pickup one block horizontally, and made vanilla grass/tall-grass trampling a 10% roll once per block entry.
