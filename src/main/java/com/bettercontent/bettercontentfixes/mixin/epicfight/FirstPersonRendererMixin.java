@@ -2,32 +2,45 @@ package com.bettercontent.bettercontentfixes.mixin.epicfight;
 
 import com.bettercontent.bettercontentfixes.client.FirstPersonLimbVisibility;
 import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import yesman.epicfight.api.model.Armature;
+import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.client.mesh.HumanoidMesh;
 import yesman.epicfight.client.renderer.FirstPersonRenderer;
-import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 
 @Mixin(value = FirstPersonRenderer.class, remap = false)
 public abstract class FirstPersonRendererMixin {
-    @Inject(
-            method = "prepareModel(Lyesman/epicfight/client/mesh/HumanoidMesh;Lnet/minecraft/client/player/LocalPlayer;Lyesman/epicfight/client/world/capabilites/entitypatch/player/LocalPlayerPatch;Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;)V",
-            at = @At("TAIL"),
-            require = 1)
-    private void betterContentFixes$hideFirstPersonPlayerLimbs(
+    @WrapOperation(
+            method = "render(Lnet/minecraft/client/player/LocalPlayer;Lyesman/epicfight/client/world/capabilites/entitypatch/player/LocalPlayerPatch;Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;Lnet/minecraft/client/renderer/MultiBufferSource;Lcom/mojang/blaze3d/vertex/PoseStack;IF)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lyesman/epicfight/client/mesh/HumanoidMesh;draw(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/client/renderer/RenderType;IFFFFILyesman/epicfight/api/model/Armature;[Lyesman/epicfight/api/utils/math/OpenMatrix4f;)V"),
+            require = 2)
+    private void betterContentFixes$hideFirstPersonPlayerLimbsBeforeDraw(
             final HumanoidMesh mesh,
-            final LocalPlayer player,
-            final LocalPlayerPatch playerPatch,
-            final LivingEntityRenderer<LocalPlayer, PlayerModel<LocalPlayer>> renderer,
-            final CallbackInfo ci
+            final PoseStack poseStack,
+            final MultiBufferSource buffers,
+            final RenderType renderType,
+            final int packedLight,
+            final float red,
+            final float green,
+            final float blue,
+            final float alpha,
+            final int overlay,
+            final Armature armature,
+            final OpenMatrix4f[] poses,
+            final Operation<Void> original
     ) {
         if (BcFixesClientConfig.hideFirstPersonLimbs()) {
             FirstPersonLimbVisibility.hidePlayerLimbs(mesh);
         }
+        original.call(mesh, poseStack, buffers, renderType, packedLight,
+                red, green, blue, alpha, overlay, armature, poses);
     }
 }

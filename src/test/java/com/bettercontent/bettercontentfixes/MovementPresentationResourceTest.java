@@ -70,7 +70,10 @@ final class MovementPresentationResourceTest {
         assertTrue(visibility.contains("rightPants.setHidden(true)"));
         assertTrue(visibility.contains("hideArmorLimbs"));
         assertTrue(renderer.contains("hidePlayerLimbs"));
-        assertTrue(renderer.contains("at = @At(\"TAIL\")"));
+        assertTrue(renderer.contains("HumanoidMesh;draw"));
+        assertTrue(renderer.contains("require = 2"));
+        assertTrue(renderer.contains("hideFirstPersonPlayerLimbsBeforeDraw"));
+        assertFalse(renderer.contains("prepareModel"));
         assertTrue(armorRenderer.contains("WearableItemLayer.class"));
         assertTrue(armorRenderer.contains("firstPersonModel"));
         assertTrue(armorRenderer.contains("WearableItemLayer;renderArmor"));
