@@ -90,7 +90,6 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:ftb-quests-forge-289412:7909594"))
     compileOnly(fg.deobf("curse.maven:epic-fight-mod-405076:8049910"))
     compileOnly(fg.deobf("curse.maven:parcool-482378:7760589"))
-    compileOnly(fg.deobf("curse.maven:epic-fight-first-person-model-1553233:8142215"))
     compileOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
     compileOnly(fg.deobf("curse.maven:distant-horizons-508933:7375280"))
     compileOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))

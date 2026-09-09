@@ -129,13 +129,6 @@ versionRange="[0.1.0,)"
     side="CLIENT"
 
 [[dependencies.${mod_id}]]
-    modId="epicfight_first_person_model"
-    mandatory=false
-    versionRange="[1.0,1.1)"
-    ordering="AFTER"
-    side="CLIENT"
-
-[[dependencies.${mod_id}]]
     modId="valkyrienskies"
     mandatory=false
     versionRange="[2.4.11,2.5)"

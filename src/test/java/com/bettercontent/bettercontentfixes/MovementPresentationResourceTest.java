@@ -22,8 +22,8 @@ final class MovementPresentationResourceTest {
         assertTrue(client.contains("parcool.DodgeMixin"));
         assertFalse(client.contains("minecraft.LocalPlayerSprintMixin"));
         assertTrue(client.contains("epicfight.FirstPersonRendererMixin"));
-        assertTrue(client.contains("epicfightfirstperson.FirstPersonBodyRendererMixin"));
-        assertTrue(client.contains("epicfightfirstperson.FirstPersonWearableItemLayerMixin"));
+        assertTrue(client.contains("epicfight.WearableItemLayerMixin"));
+        assertFalse(client.contains("epicfightfirstperson"));
     }
 
     @Test
@@ -33,10 +33,10 @@ final class MovementPresentationResourceTest {
 
         assertTrue(plugin.contains("hasVersion(mods, \"parcool\", \"3.4.3.3\")"));
         assertTrue(plugin.contains("hasVersion(mods, \"epicfight\", \"20.14.17\")"));
-        assertTrue(plugin.contains("hasVersion(mods, \"epicfight_first_person_model\", \"1.0\")"));
         assertTrue(metadata.contains("modId=\"parcool\""));
         assertTrue(metadata.contains("modId=\"pingwheel\""));
-        assertTrue(metadata.contains("modId=\"epicfight_first_person_model\""));
+        assertFalse(plugin.contains("epicfight_first_person_model"));
+        assertFalse(metadata.contains("epicfight_first_person_model"));
     }
 
     @Test
@@ -57,10 +57,8 @@ final class MovementPresentationResourceTest {
     void firstPersonPolicyHidesLimbsWithoutTouchingHeldItemRendering() throws IOException {
         final String visibility = Files.readString(SOURCE_ROOT.resolve("client/FirstPersonLimbVisibility.java"));
         final String renderer = Files.readString(SOURCE_ROOT.resolve("mixin/epicfight/FirstPersonRendererMixin.java"));
-        final String bodyRenderer = Files.readString(
-                SOURCE_ROOT.resolve("mixin/epicfightfirstperson/FirstPersonBodyRendererMixin.java"));
         final String armorRenderer = Files.readString(
-                SOURCE_ROOT.resolve("mixin/epicfightfirstperson/FirstPersonWearableItemLayerMixin.java"));
+                SOURCE_ROOT.resolve("mixin/epicfight/WearableItemLayerMixin.java"));
 
         assertTrue(visibility.contains("leftArm.setHidden(true)"));
         assertTrue(visibility.contains("rightArm.setHidden(true)"));
@@ -72,13 +70,17 @@ final class MovementPresentationResourceTest {
         assertTrue(visibility.contains("rightPants.setHidden(true)"));
         assertTrue(visibility.contains("hideArmorLimbs"));
         assertTrue(renderer.contains("hidePlayerLimbs"));
-        assertTrue(bodyRenderer.contains("FirstPersonBodyRenderer.class"));
-        assertTrue(bodyRenderer.contains("at = @At(\"TAIL\")"));
-        assertTrue(bodyRenderer.contains("hidePlayerLimbs"));
-        assertTrue(armorRenderer.contains("invokeRenderArmor"));
+        assertTrue(renderer.contains("at = @At(\"TAIL\")"));
+        assertTrue(armorRenderer.contains("WearableItemLayer.class"));
+        assertTrue(armorRenderer.contains("firstPersonModel"));
+        assertTrue(armorRenderer.contains("WearableItemLayer;renderArmor"));
         assertTrue(armorRenderer.contains("hideFirstPersonArmorLimbsBeforeDraw"));
         assertTrue(!visibility.contains("PatchedItemInHandLayer"));
         assertTrue(!renderer.contains("PatchedItemInHandLayer"));
-        assertTrue(!bodyRenderer.contains("PatchedItemInHandLayer"));
+        assertTrue(!armorRenderer.contains("PatchedItemInHandLayer"));
+        assertFalse(Files.exists(SOURCE_ROOT.resolve(
+                "mixin/epicfightfirstperson/FirstPersonBodyRendererMixin.java")));
+        assertFalse(Files.exists(SOURCE_ROOT.resolve(
+                "mixin/epicfightfirstperson/FirstPersonWearableItemLayerMixin.java")));
     }
 }

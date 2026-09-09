@@ -22,8 +22,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             + "EpicFightControlifyEntrypointMixin";
     private static final String EPIC_FIGHT_FIRST_PERSON_RENDERER_MIXIN = EPIC_FIGHT_MIXIN_PREFIX
             + "FirstPersonRendererMixin";
-    private static final String EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.epicfightfirstperson.";
+    private static final String EPIC_FIGHT_FIRST_PERSON_ARMOR_MIXIN = EPIC_FIGHT_MIXIN_PREFIX
+            + "WearableItemLayerMixin";
     private static final String FALLOUT_WASTELANDS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.falloutwastelands.";
     private static final String TWILIGHT_FOREST_MIXIN_PREFIX =
@@ -115,12 +115,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
                     && mods.getModFileById("epicfight") != null
                     && mods.getModFileById("controlify") != null;
         }
-        if (EPIC_FIGHT_FIRST_PERSON_RENDERER_MIXIN.equals(mixinClassName)) {
+        if (EPIC_FIGHT_FIRST_PERSON_RENDERER_MIXIN.equals(mixinClassName)
+                || EPIC_FIGHT_FIRST_PERSON_ARMOR_MIXIN.equals(mixinClassName)) {
             return hasVersion(mods, "epicfight", "20.14.17");
-        }
-        if (mixinClassName.startsWith(EPIC_FIGHT_FIRST_PERSON_MIXIN_PREFIX)) {
-            return hasVersion(mods, "epicfight", "20.14.17")
-                    && hasVersion(mods, "epicfight_first_person_model", "1.0");
         }
         if (mixinClassName.startsWith(FALLOUT_WASTELANDS_MIXIN_PREFIX)) {
             return hasVersion(mods, "fallout_wastelands_", "1.0.0");
