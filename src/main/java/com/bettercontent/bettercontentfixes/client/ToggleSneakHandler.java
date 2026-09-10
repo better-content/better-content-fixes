@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.ModList;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -34,13 +35,13 @@ public final class ToggleSneakHandler {
         final Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.screen != null) {
             physicalKeyWasDown = false;
-            notifyDynamicHud("cancelPhysicalSneak", null);
+            notifyDynamicHudCancel();
             return;
         }
         final KeyMapping sneak = minecraft.options.keyShift;
         final InputConstants.Key key = sneak.getKey();
         final boolean physicalKeyDown = physicalKeyDown(minecraft, key);
-        notifyDynamicHud("onPhysicalSneak", physicalKeyDown);
+        notifyDynamicHud(physicalKeyDown);
         if (physicalKeyDown && !physicalKeyWasDown) {
             toggled = !toggled;
         }
@@ -63,19 +64,15 @@ public final class ToggleSneakHandler {
         return false;
     }
 
-    private static void notifyDynamicHud(final String method, final Boolean value) {
-        try {
-            final Class<?> controller = Class.forName(
-                    "com.bettercontent.dynamicsurvivalhud.client.hud.DynamicHudController");
-            if (value == null) {
-                controller.getMethod(method).invoke(null);
-            } else {
-                controller.getMethod(method, boolean.class).invoke(null, value);
-            }
-        } catch (ClassNotFoundException ignored) {
-            // Dynamic Survival HUD is optional.
-        } catch (ReflectiveOperationException failure) {
-            throw new IllegalStateException("Could not notify optional Dynamic Survival HUD", failure);
+    private static void notifyDynamicHud(final boolean down) {
+        if (ModList.get().isLoaded("dynamic_survival_hud")) {
+            DynamicHudSneakIntegration.setPhysicalSneakDown(down);
+        }
+    }
+
+    private static void notifyDynamicHudCancel() {
+        if (ModList.get().isLoaded("dynamic_survival_hud")) {
+            DynamicHudSneakIntegration.cancelPhysicalSneak();
         }
     }
 }

@@ -64,6 +64,7 @@ repositories {
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
+    compileOnly(files("../dynamic-survival-hud/build/libs/dynamic-survival-hud-1.0.0.jar"))
     implementation(fg.deobf("com.simibubi.create:create-${property("minecraft_version")}:6.0.8-291:slim"))
     implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${property("minecraft_version")}:1.0.92"))
     compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${property("minecraft_version")}:1.0.5"))
@@ -92,6 +93,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:parcool-482378:7760589"))
     compileOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
     compileOnly(fg.deobf("curse.maven:distant-horizons-508933:7375280"))
+    compileOnly(fg.deobf("curse.maven:structure-generation-improver-1473087:8102460"))
     compileOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
     compileOnly(fg.deobf("curse.maven:fallout-wastelands-431248:7127023"))
     compileOnly(fg.deobf("curse.maven:the-twilight-forest-227639:5468648"))
@@ -121,6 +123,7 @@ dependencies {
     runtimeOnly(fg.deobf("curse.maven:farmers-respite-551453:5543547"))
     runtimeOnly(fg.deobf("curse.maven:brewin-and-chewin-637808:6237884"))
     runtimeOnly(fg.deobf("curse.maven:patchouli-306770:7731017"))
+    compileOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.10"))
     runtimeOnly(fg.deobf("com.ferreusveritas.dynamictrees:DynamicTrees-1.20.1:1.4.10"))
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtrasVersion")!!)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)

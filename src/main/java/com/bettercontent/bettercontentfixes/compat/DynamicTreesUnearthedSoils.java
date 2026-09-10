@@ -1,6 +1,9 @@
 package com.bettercontent.bettercontentfixes.compat;
 
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
+import com.ferreusveritas.dynamictrees.block.rooty.RootyBlock;
+import com.ferreusveritas.dynamictrees.block.rooty.SoilHelper;
+import com.ferreusveritas.dynamictrees.block.rooty.SoilProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -10,9 +13,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Optional;
 
 public final class DynamicTreesUnearthedSoils {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -69,45 +69,28 @@ public final class DynamicTreesUnearthedSoils {
     }
 
     private static void registerUnearthedSoils() {
-        try {
-            Class<?> soilHelper = Class.forName("com.ferreusveritas.dynamictrees.block.rooty.SoilHelper");
-            Class<?> soilProperties = Class.forName("com.ferreusveritas.dynamictrees.block.rooty.SoilProperties");
-            Class<?> rootyBlock = Class.forName("com.ferreusveritas.dynamictrees.block.rooty.RootyBlock");
-
-            Method getProperties = soilHelper.getMethod("getProperties", Block.class);
-            Method getSoilFlags = soilHelper.getMethod("getSoilFlags", String[].class);
-            Method addSoilPropertiesToMap = soilHelper.getMethod("addSoilPropertiesToMap", soilProperties);
-            Method getBlock = soilProperties.getMethod("getBlock");
-            Method setSoilFlags = soilProperties.getMethod("setSoilFlags", Integer.class);
-            Method setBlock = soilProperties.getMethod("setBlock", rootyBlock);
-            Constructor<?> newSoilProperties = soilProperties.getConstructor(Block.class, ResourceLocation.class);
-
-            Object dirtProperties = getProperties.invoke(null, Blocks.DIRT);
-            Optional<?> rootyDirt = (Optional<?>) getBlock.invoke(dirtProperties);
-            if (rootyDirt.isEmpty()) {
-                LOGGER.error("Could not register Unearthed regolith blocks as Dynamic Trees soils: rooty dirt is unavailable");
-                return;
-            }
-            Integer dirtLikeFlags = (Integer) getSoilFlags.invoke(null, (Object) new String[]{"dirt_like"});
-
-            int registered = 0;
-            for (String path : REGOLITH_SOILS) {
-                ResourceLocation blockId = new ResourceLocation("unearthed", path);
-                Block block = ForgeRegistries.BLOCKS.getValue(blockId);
-                if (block == null) {
-                    LOGGER.warn("Skipping missing Unearthed soil block {}", blockId);
-                    continue;
-                }
-                ResourceLocation soilId = new ResourceLocation("better_content_fixes", "unearthed_" + path);
-                Object unearthedProperties = newSoilProperties.newInstance(block, soilId);
-                setSoilFlags.invoke(unearthedProperties, dirtLikeFlags);
-                setBlock.invoke(unearthedProperties, rootyDirt.get());
-                addSoilPropertiesToMap.invoke(null, unearthedProperties);
-                registered++;
-            }
-            LOGGER.info("Registered {} Unearthed regolith blocks as Dynamic Trees dirt-like soil aliases", registered);
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            LOGGER.error("Failed to register Unearthed regolith blocks as Dynamic Trees soils", e);
+        final RootyBlock rootyDirt = SoilHelper.getProperties(Blocks.DIRT).getBlock().orElse(null);
+        if (rootyDirt == null) {
+            LOGGER.error("Could not register Unearthed regolith blocks as Dynamic Trees soils: rooty dirt is unavailable");
+            return;
         }
+        final Integer dirtLikeFlags = SoilHelper.getSoilFlags(SoilHelper.DIRT_LIKE);
+
+        int registered = 0;
+        for (String path : REGOLITH_SOILS) {
+            ResourceLocation blockId = new ResourceLocation("unearthed", path);
+            Block block = ForgeRegistries.BLOCKS.getValue(blockId);
+            if (block == null) {
+                LOGGER.warn("Skipping missing Unearthed soil block {}", blockId);
+                continue;
+            }
+            ResourceLocation soilId = new ResourceLocation("better_content_fixes", "unearthed_" + path);
+            SoilProperties unearthedProperties = new SoilProperties(block, soilId);
+            unearthedProperties.setSoilFlags(dirtLikeFlags);
+            unearthedProperties.setBlock(rootyDirt);
+            SoilHelper.addSoilPropertiesToMap(unearthedProperties);
+            registered++;
+        }
+        LOGGER.info("Registered {} Unearthed regolith blocks as Dynamic Trees dirt-like soil aliases", registered);
     }
 }

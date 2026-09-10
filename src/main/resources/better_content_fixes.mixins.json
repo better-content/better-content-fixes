@@ -62,6 +62,7 @@
     "apotheosis.EnchModuleClientMixin",
     "pneumaticcraft.PneumaticCraftRecipeTypeMixin",
     "distanthorizons.AbstractFullDataNetworkRequestQueueMixin",
+    "distanthorizons.NetRequestTaskAccessor",
     "epicfight.EpicFightControlifyEntrypointMixin",
     "epicfight.EpicFightKeyMappingsMixin",
     "epicfight.FirstPersonRendererMixin",

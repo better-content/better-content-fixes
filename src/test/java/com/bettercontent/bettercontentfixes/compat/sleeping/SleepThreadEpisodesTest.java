@@ -15,17 +15,8 @@ final class SleepThreadEpisodesTest {
 
     @Test
     void reusesOneValidEpisodeToken() {
-        assertEquals("active", SleepThreadEpisodes.episodeToken("active", "persisted", "generated"));
-        assertEquals("persisted", SleepThreadEpisodes.episodeToken(null, "persisted", "generated"));
-        assertEquals("generated", SleepThreadEpisodes.episodeToken(null, "", "generated"));
-    }
-
-    @Test
-    void exposesTheExpectedThreadsDataContract() {
-        assertEquals("sleep_is_not_an_anchor", SleepThreadEpisodes.THREAD_ID);
-        assertEquals("sleep_started", SleepThreadEpisodes.START_TYPE);
-        assertEquals("night", SleepThreadEpisodes.START_VALUE);
-        assertEquals("sleep_finished", SleepThreadEpisodes.FINISH_TYPE);
-        assertEquals("simulated_time", SleepThreadEpisodes.FINISH_VALUE);
+        assertEquals("persisted", SleepThreadEpisodes.episodeToken(true, "persisted", "generated"));
+        assertEquals("generated", SleepThreadEpisodes.episodeToken(false, "persisted", "generated"));
+        assertEquals("generated", SleepThreadEpisodes.episodeToken(true, "", "generated"));
     }
 }

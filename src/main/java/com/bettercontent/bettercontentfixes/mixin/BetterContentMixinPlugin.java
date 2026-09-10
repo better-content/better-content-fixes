@@ -80,6 +80,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.pollution.";
     private static final String SGI_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.sgi.";
+    private static final String DISTANT_HORIZONS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.distanthorizons.";
     private static final String SOPHISTICATED_STORAGE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.sophisticatedstorage.";
     private static final String SLEEPING_OVERHAUL_MIXIN_PREFIX =
@@ -209,7 +211,10 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             return mods != null && mods.getModFileById("adpother") != null;
         }
         if (mixinClassName.startsWith(SGI_MIXIN_PREFIX)) {
-            return mods != null && mods.getModFileById("structure_generation_improver") != null;
+            return hasVersion(mods, "structure_generation_improver", "1.0.0");
+        }
+        if (mixinClassName.startsWith(DISTANT_HORIZONS_MIXIN_PREFIX)) {
+            return hasVersion(mods, "distanthorizons", "2.4.5-b");
         }
         if (mixinClassName.startsWith(SOPHISTICATED_STORAGE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("sophisticatedstorage") != null;

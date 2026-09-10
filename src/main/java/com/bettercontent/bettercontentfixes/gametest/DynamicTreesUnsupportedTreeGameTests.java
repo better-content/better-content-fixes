@@ -14,15 +14,12 @@ public final class DynamicTreesUnsupportedTreeGameTests {
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty", timeoutTicks = 1200)
     public static void allRegisteredSpeciesLoseSupport(final GameTestHelper helper) {
-        try {
-            final var failures = DynamicTreesSupportSweep.run(helper.getLevel(), helper.absolutePos(new BlockPos(2, 2, 2)));
-            if (!failures.isEmpty()) {
-                helper.fail(String.join("; ", failures));
-                return;
-            }
-            helper.succeed();
-        } catch (ReflectiveOperationException e) {
-            helper.fail("DT reflection failed: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        final var failures = DynamicTreesSupportSweep.run(
+                helper.getLevel(), helper.absolutePos(new BlockPos(2, 2, 2)));
+        if (!failures.isEmpty()) {
+            helper.fail(String.join("; ", failures));
+            return;
         }
+        helper.succeed();
     }
 }

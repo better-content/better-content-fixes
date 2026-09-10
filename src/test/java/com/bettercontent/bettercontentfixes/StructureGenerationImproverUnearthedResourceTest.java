@@ -33,8 +33,8 @@ final class StructureGenerationImproverUnearthedResourceTest {
                 "the SGI surface conform invocation must be redirected");
         assertTrue(source.contains("@At(\"TAIL\")"),
                 "the deferred SGI pass must execute after Hyle/Unearthed decoration");
-        assertTrue(source.contains("applyDuringSurface.invoke(null, level, structureManager, chunk)"),
-                "the deferred SGI pass must invoke the original conform routine at decoration tail");
+        assertTrue(source.contains("TerrainConformUtil.applyDuringSurface"),
+                "the deferred SGI pass must use the pinned public API at decoration tail");
         assertTrue(postPassSource.contains("@WrapMethod(method = \"applyDuringSurface\", remap = false)"),
                 "the translation context must cover exactly one SGI conform invocation");
         assertTrue(postPassSource.contains("new ThreadLocal<>()")

@@ -4,16 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.junit.jupiter.api.Test;
 
 final class FalloutStructurePlacementBoundsTest {
@@ -28,29 +22,26 @@ final class FalloutStructurePlacementBoundsTest {
     private static final int FIT_MAX_Z = MAX_Z - FalloutStructurePlacementBounds.EDGE_UPDATE_MARGIN_BLOCKS;
 
     @Test
-    void minimallyFitsTheThirtyEightBlockFalloutRuinForEveryTransform() throws Exception {
-        final StructureTemplate template = templateWithSize(38, 22, 12);
+    void minimallyFitsTheThirtyEightBlockFalloutRuinForBothHorizontalOrientations() {
         final BlockPos original = new BlockPos(1_000_015, 62, 1_000_015);
 
-        for (final Rotation rotation : Rotation.values()) {
-            for (final Mirror mirror : Mirror.values()) {
-                final StructurePlaceSettings settings = new StructurePlaceSettings()
-                        .setRotation(rotation)
-                        .setMirror(mirror);
-                final BoundingBox originalBounds = template.getBoundingBox(settings, original);
-                final FalloutStructurePlacementBounds.Placement fitted = FalloutStructurePlacementBounds.fit(
-                        originalBounds, original, original, EVIDENCE_CENTER).orElseThrow();
-                final BoundingBox fittedBounds = template.getBoundingBox(settings, fitted.position());
+        for (final int[] footprint : new int[][]{{38, 12}, {12, 38}}) {
+            final BoundingBox originalBounds = new BoundingBox(
+                    original.getX(), original.getY(), original.getZ(),
+                    original.getX() + footprint[0] - 1, original.getY() + 21,
+                    original.getZ() + footprint[1] - 1);
+            final FalloutStructurePlacementBounds.Placement fitted = FalloutStructurePlacementBounds.fit(
+                    originalBounds, original, original, EVIDENCE_CENTER).orElseThrow();
+            final BoundingBox fittedBounds = originalBounds.moved(fitted.shiftX(), 0, fitted.shiftZ());
 
-                assertInsideWritableEnvelope(fittedBounds);
-                assertEquals(expectedMinimalShift(
-                                originalBounds.minX(), originalBounds.maxX(), FIT_MIN_X, FIT_MAX_X),
-                        fitted.shiftX());
-                assertEquals(expectedMinimalShift(
-                                originalBounds.minZ(), originalBounds.maxZ(), FIT_MIN_Z, FIT_MAX_Z),
-                        fitted.shiftZ());
-                assertEquals(fitted.position(), fitted.pivot());
-            }
+            assertInsideWritableEnvelope(fittedBounds);
+            assertEquals(expectedMinimalShift(
+                            originalBounds.minX(), originalBounds.maxX(), FIT_MIN_X, FIT_MAX_X),
+                    fitted.shiftX());
+            assertEquals(expectedMinimalShift(
+                            originalBounds.minZ(), originalBounds.maxZ(), FIT_MIN_Z, FIT_MAX_Z),
+                    fitted.shiftZ());
+            assertEquals(fitted.position(), fitted.pivot());
         }
     }
 
@@ -101,14 +92,6 @@ final class FalloutStructurePlacementBoundsTest {
         assertEquals(46, placeableEnvelope.getXSpan());
         assertEquals(46, placeableEnvelope.getZSpan());
         assertInsideWritableEnvelope(expandHorizontally(placeableEnvelope, 1));
-    }
-
-    private static StructureTemplate templateWithSize(final int x, final int y, final int z) throws Exception {
-        final StructureTemplate template = new StructureTemplate();
-        final Field size = StructureTemplate.class.getDeclaredField("size");
-        size.setAccessible(true);
-        size.set(template, new Vec3i(x, y, z));
-        return template;
     }
 
     private static void assertInsideWritableEnvelope(final BoundingBox bounds) {

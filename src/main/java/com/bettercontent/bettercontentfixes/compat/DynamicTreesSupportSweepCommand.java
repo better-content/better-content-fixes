@@ -25,18 +25,13 @@ public final class DynamicTreesSupportSweepCommand {
 
     private static int run(final CommandSourceStack source) {
         final ServerLevel level = source.getServer().overworld();
-        try {
-            final BlockPos origin = BlockPos.containing(source.getPosition()).offset(0, 4, 0);
-            final List<String> failures = DynamicTreesSupportSweep.run(level, origin);
-            if (failures.isEmpty()) {
-                source.sendSuccess(() -> Component.literal("[BCFIXES] DT support sweep passed for all registered species."), true);
-                return 1;
-            }
-            source.sendFailure(Component.literal("[BCFIXES] DT support sweep failures: " + String.join("; ", failures)));
-            return 0;
-        } catch (ReflectiveOperationException e) {
-            source.sendFailure(Component.literal("[BCFIXES] DT support sweep reflection failure: " + e.getMessage()));
-            return 0;
+        final BlockPos origin = BlockPos.containing(source.getPosition()).offset(0, 4, 0);
+        final List<String> failures = DynamicTreesSupportSweep.run(level, origin);
+        if (failures.isEmpty()) {
+            source.sendSuccess(() -> Component.literal("[BCFIXES] DT support sweep passed for all registered species."), true);
+            return 1;
         }
+        source.sendFailure(Component.literal("[BCFIXES] DT support sweep failures: " + String.join("; ", failures)));
+        return 0;
     }
 }

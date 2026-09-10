@@ -1,6 +1,6 @@
 package com.bettercontent.bettercontentfixes.mixin.sgi;
 
-import java.lang.reflect.Method;
+import net.mcreator.structuregenerationimprover.TerrainConformUtil;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -13,9 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ChunkGenerator.class, priority = 900)
 public abstract class ChunkGeneratorMixin {
-    private static final String SGI_TERRAIN_CONFORM_UTIL =
-            "net.mcreator.structuregenerationimprover.TerrainConformUtil";
-
     // SGI injects this call at decoration HEAD. Deferring it lets it sample Hyle's final palette.
     @Redirect(
             method = "m_213609_",
@@ -38,13 +35,6 @@ public abstract class ChunkGeneratorMixin {
             final ChunkAccess chunk,
             final StructureManager structureManager,
             final CallbackInfo ci) {
-        try {
-            final Class<?> terrainConform = Class.forName(SGI_TERRAIN_CONFORM_UTIL);
-            final Method applyDuringSurface = terrainConform.getMethod(
-                    "applyDuringSurface", WorldGenLevel.class, StructureManager.class, ChunkAccess.class);
-            applyDuringSurface.invoke(null, level, structureManager, chunk);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Could not defer SGI terrain conforming", e);
-        }
+        TerrainConformUtil.applyDuringSurface(level, structureManager, chunk);
     }
 }

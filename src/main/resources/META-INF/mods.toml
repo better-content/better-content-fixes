@@ -24,6 +24,34 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="dynamictrees"
+    mandatory=false
+    versionRange="[1.20.1-1.4.10]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="distanthorizons"
+    mandatory=false
+    versionRange="[2.4.5-b]"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="structure_generation_improver"
+    mandatory=false
+    versionRange="[1.0.0]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="dynamic_survival_hud"
+    mandatory=false
+    versionRange="[1.0.0,1.1)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
     modId="bettercaves"
     mandatory=false
     versionRange="[1.20.1-Forge-2.0.6]"

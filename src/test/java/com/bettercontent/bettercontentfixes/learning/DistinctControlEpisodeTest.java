@@ -13,6 +13,16 @@ final class DistinctControlEpisodeTest {
     }
 
     @Test
+    void restartsWhenPersistedCorrelationIsMalformed() {
+        assertEquals(
+                DistinctControlEpisode.Transition.FIRST,
+                DistinctControlEpisode.advance("not printable\n", "parcool:dodge", "parcool:vault"));
+        assertEquals(
+                DistinctControlEpisode.Transition.FIRST,
+                DistinctControlEpisode.advance("x".repeat(129), "parcool:dodge", "parcool:vault"));
+    }
+
+    @Test
     void repeatingTheFirstActionDoesNotComplete() {
         assertEquals(
                 DistinctControlEpisode.Transition.REPEAT,

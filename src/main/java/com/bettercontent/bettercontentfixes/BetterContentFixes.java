@@ -22,6 +22,7 @@ import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTest
 import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DecorativeVegetationTrampleGameTests;
+import com.bettercontent.bettercontentfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.ExtendedItemPickupGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
@@ -30,6 +31,8 @@ import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGa
 import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
+import com.bettercontent.bettercontentfixes.learning.CustomControlEpisodeGameTests;
+import com.bettercontent.bettercontentfixes.compat.sleeping.SleepTimelapseEventGameTests;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
 import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
 import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
@@ -71,15 +74,19 @@ public final class BetterContentFixes {
         BurntGrassPalette.ITEMS.register(modEventBus);
         RegolithFarmlandPalette.BLOCKS.register(modEventBus);
         RegolithFarmlandPalette.ITEMS.register(modEventBus);
-        modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
+        if (ModList.get().isLoaded("dynamictrees")) {
+            modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
+        }
         modEventBus.addListener(this::onRegisterGameTests);
         MinecraftForge.EVENT_BUS.register(FarmlandTrampleProtection.class);
         MinecraftForge.EVENT_BUS.register(AmbientSurfaceSpawnControl.class);
         MinecraftForge.EVENT_BUS.register(FluidMixBlocker.class);
-        MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
         MinecraftForge.EVENT_BUS.register(DecorativeVegetationTrample.class);
         MinecraftForge.EVENT_BUS.register(ExtendedItemPickup.class);
-        MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
+        if (ModList.get().isLoaded("dynamictrees")) {
+            MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
+            MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
+        }
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(PerformanceGovernorService.class);
@@ -100,6 +107,11 @@ public final class BetterContentFixes {
         event.register(VanillaBoatGameTests.class);
         event.register(WaterWheelBiomePolicyGameTests.class);
         event.register(OptionalIntegrationGameTests.class);
+        event.register(CustomControlEpisodeGameTests.class);
+        event.register(SleepTimelapseEventGameTests.class);
+        if (ModList.get().isLoaded("dynamictrees")) {
+            event.register(DynamicTreesUnsupportedTreeGameTests.class);
+        }
         if (ModList.get().isLoaded("sophisticatedstorage")) {
             event.register(SophisticatedBarrelHopperGameTests.class);
         }

@@ -14,20 +14,18 @@ final class ParCoolControlLearningResourceTest {
     @Test
     void usesTheAuthoritativeServerStartBoundaryAndPersistentEpisode() throws IOException {
         final String source = Files.readString(SOURCE_ROOT.resolve("learning/ParCoolControlLearning.java"));
+        final String episodes = Files.readString(SOURCE_ROOT.resolve("learning/CustomControlEpisodes.java"));
         assertTrue(source.contains("ParCoolActionEvent.Start.Post"));
         assertTrue(source.contains("instanceof ServerPlayer"));
-        assertTrue(source.contains("Player.PERSISTED_NBT_TAG"));
-        assertTrue(source.contains("custom_control_used"));
-        assertTrue(source.contains("custom_control_mastered"));
-        assertTrue(source.contains("distinct_second"));
+        assertTrue(episodes.contains("Player.PERSISTED_NBT_TAG"));
+        assertTrue(episodes.contains("CustomControlEpisodeEvent.Kind.FIRST_ACCEPTED"));
+        assertTrue(episodes.contains("CustomControlEpisodeEvent.Kind.DISTINCT_SECOND"));
     }
 
     @Test
-    void optionalBridgeTargetsOnlyThePublicThreadsApi() throws IOException {
-        final String bridge = Files.readString(SOURCE_ROOT.resolve("learning/ThreadSignalsBridge.java"));
-        assertTrue(bridge.contains("com.bettercontent.threads.api.ThreadSignals"));
-        assertTrue(bridge.contains("ServerPlayer.class, String.class, String.class, String.class"));
-        assertTrue(bridge.contains("activeCorrelation"));
-        assertTrue(!bridge.contains("com.bettercontent.threads.ThreadSignals"));
+    void publishesProviderOwnedEventsWithoutAThreadsDependency() throws IOException {
+        final String episodes = Files.readString(SOURCE_ROOT.resolve("learning/CustomControlEpisodes.java"));
+        assertTrue(episodes.contains("MinecraftForge.EVENT_BUS.post"));
+        assertTrue(!episodes.contains("ThreadSignals"));
     }
 }

@@ -1,30 +1,23 @@
 package com.bettercontent.bettercontentfixes.compat.sleeping;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.bettercontent.bettercontentfixes.api.event.SleepTimelapseEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraftforge.common.MinecraftForge;
 
 /** Bridges Sleeping Overhaul's authoritative timelapse boundaries to optional Threads evidence. */
 public final class SleepThreadEpisodes {
     private static final String ROOT = "BetterContentSleepThreadEpisode";
     private static final String TOKEN = "token";
+    private static final String STARTED_PUBLISHED = "startedPublished";
     private static final String DIMENSION = "dimension";
     private static final String HAS_POSITION = "hasPosition";
     private static final String POSITION = "position";
     private static final String ANGLE = "angle";
     private static final String FORCED = "forced";
-    static final String THREAD_ID = "sleep_is_not_an_anchor";
-    static final String START_TYPE = "sleep_started";
-    static final String START_VALUE = "night";
-    static final String FINISH_TYPE = "sleep_finished";
-    static final String FINISH_VALUE = "simulated_time";
-
     private static MinecraftServer observedServer;
     private static boolean previouslyActive;
 
@@ -62,22 +55,24 @@ public final class SleepThreadEpisodes {
         return Transition.NONE;
     }
 
-    static String episodeToken(final String activeToken, final String persistedToken, final String generatedToken) {
-        if (validToken(activeToken)) {
-            return activeToken;
-        }
-        if (validToken(persistedToken)) {
+    static String episodeToken(
+            final boolean continuingPersistedEpisode,
+            final String persistedToken,
+            final String generatedToken
+    ) {
+        if (continuingPersistedEpisode && validToken(persistedToken)) {
             return persistedToken;
         }
         return generatedToken;
     }
 
-    private static void start(final ServerPlayer player) {
+    static void start(final ServerPlayer player) {
         final CompoundTag persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
         final CompoundTag prior = persisted.getCompound(ROOT);
-        final String active = ThreadSignalsReflection.activeCorrelation(player, THREAD_ID);
+        final boolean continuing = prior.getBoolean(STARTED_PUBLISHED)
+                && sameRespawnContract(player, prior);
         final String token = episodeToken(
-                active,
+                continuing,
                 prior.getString(TOKEN),
                 player.getUUID() + ":sleep:" + player.server.getTickCount());
         if (!validToken(token)) {
@@ -86,14 +81,16 @@ public final class SleepThreadEpisodes {
 
         final CompoundTag episode = respawnContract(player);
         episode.putString(TOKEN, token);
+        final boolean alreadyPublished = continuing;
+        episode.putBoolean(STARTED_PUBLISHED, true);
         persisted.put(ROOT, episode);
         player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
-        if (active == null) {
-            ThreadSignalsReflection.emit(player, START_TYPE, START_VALUE, token);
+        if (!alreadyPublished) {
+            MinecraftForge.EVENT_BUS.post(event(player, SleepTimelapseEvent.Kind.STARTED, token));
         }
     }
 
-    private static void finish(final ServerPlayer player) {
+    static void finish(final ServerPlayer player) {
         final CompoundTag persisted = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
         if (!persisted.contains(ROOT)) {
             return;
@@ -103,14 +100,27 @@ public final class SleepThreadEpisodes {
             return;
         }
         final String token = episode.getString(TOKEN);
-        final String active = ThreadSignalsReflection.activeCorrelation(player, THREAD_ID);
-        if (!validToken(token) || !token.equals(active)) {
+        if (!validToken(token) || !episode.getBoolean(STARTED_PUBLISHED)) {
             return;
         }
-        if (ThreadSignalsReflection.emit(player, FINISH_TYPE, FINISH_VALUE, token)) {
-            persisted.remove(ROOT);
-            player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
-        }
+        persisted.remove(ROOT);
+        player.getPersistentData().put(Player.PERSISTED_NBT_TAG, persisted);
+        MinecraftForge.EVENT_BUS.post(event(player, SleepTimelapseEvent.Kind.FINISHED, token));
+    }
+
+    private static SleepTimelapseEvent event(
+            final ServerPlayer player,
+            final SleepTimelapseEvent.Kind kind,
+            final String token
+    ) {
+        return new SleepTimelapseEvent(
+                player,
+                kind,
+                token,
+                player.getRespawnDimension(),
+                player.getRespawnPosition(),
+                player.getRespawnAngle(),
+                player.isRespawnForced());
     }
 
     private static CompoundTag respawnContract(final ServerPlayer player) {
@@ -154,56 +164,4 @@ public final class SleepThreadEpisodes {
         NONE
     }
 
-    private static final class ThreadSignalsReflection {
-        private static final Logger LOGGER = LogManager.getLogger();
-        private static final String API = "com.bettercontent.threads.api.ThreadSignals";
-        private static boolean failureLogged;
-
-        private ThreadSignalsReflection() {
-        }
-
-        static boolean emit(
-                final ServerPlayer player,
-                final String type,
-                final String value,
-                final String correlationToken
-        ) {
-            try {
-                Class.forName(API, false, SleepThreadEpisodes.class.getClassLoader())
-                        .getMethod(
-                                "emit",
-                                ServerPlayer.class,
-                                String.class,
-                                String.class,
-                                String.class)
-                        .invoke(null, player, type, value, correlationToken);
-                return true;
-            } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-                return false;
-            } catch (IllegalAccessException | InvocationTargetException | LinkageError failure) {
-                logFailure(failure);
-                return false;
-            }
-        }
-
-        static String activeCorrelation(final ServerPlayer player, final String threadId) {
-            try {
-                final Method method = Class.forName(API, false, SleepThreadEpisodes.class.getClassLoader())
-                        .getMethod("activeCorrelation", ServerPlayer.class, String.class);
-                return (String) method.invoke(null, player, threadId);
-            } catch (ClassNotFoundException | NoSuchMethodException ignored) {
-                return null;
-            } catch (IllegalAccessException | InvocationTargetException | ClassCastException | LinkageError failure) {
-                logFailure(failure);
-                return null;
-            }
-        }
-
-        private static void logFailure(final Throwable failure) {
-            if (!failureLogged) {
-                failureLogged = true;
-                LOGGER.warn("Could not emit optional Sleeping Overhaul evidence through {}", API, failure);
-            }
-        }
-    }
 }
