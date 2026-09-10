@@ -18,18 +18,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DispenserBlock.class)
 public abstract class DispenserBlockMixin {
-    // The runtime JAR intentionally ships without a refmap, so use the 1.20.1 SRG name directly.
-    @Shadow(remap = false)
+    // Resolve the named development field and retain the 1.20.1 SRG alias for the refmap-free runtime JAR.
+    @Shadow(aliases = "f_52661_", remap = false)
     @Final
     @Mutable
-    private static Map<Item, DispenseItemBehavior> f_52661_;
+    private static Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY;
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void better_content_fixes$makeBehaviorRegistryThreadSafe(final CallbackInfo callback) {
-        f_52661_ = Collections.synchronizedMap(f_52661_);
+        DISPENSER_REGISTRY = Collections.synchronizedMap(DISPENSER_REGISTRY);
     }
 
-    @WrapMethod(method = "registerBehavior")
+    @WrapMethod(method = {"registerBehavior", "m_52672_"}, remap = false)
     private static void better_content_fixes$serializeBehaviorRegistration(
             final ItemLike item,
             final DispenseItemBehavior behavior,
