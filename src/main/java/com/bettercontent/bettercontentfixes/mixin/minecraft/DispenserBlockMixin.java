@@ -18,15 +18,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DispenserBlock.class)
 public abstract class DispenserBlockMixin {
-    // Resolve the named development field and retain the 1.20.1 SRG alias for the refmap-free runtime JAR.
-    @Shadow(aliases = "f_52661_", remap = false)
+    // Target the production SRG field directly: Mixin aliases are invalid for this public field.
+    @Shadow(remap = false)
     @Final
     @Mutable
-    private static Map<Item, DispenseItemBehavior> DISPENSER_REGISTRY;
+    public static Map<Item, DispenseItemBehavior> f_52661_;
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void better_content_fixes$makeBehaviorRegistryThreadSafe(final CallbackInfo callback) {
-        DISPENSER_REGISTRY = Collections.synchronizedMap(DISPENSER_REGISTRY);
+        f_52661_ = Collections.synchronizedMap(f_52661_);
     }
 
     @WrapMethod(method = {"registerBehavior", "m_52672_"}, remap = false)

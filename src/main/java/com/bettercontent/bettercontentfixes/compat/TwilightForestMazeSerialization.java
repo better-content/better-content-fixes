@@ -1,9 +1,12 @@
 package com.bettercontent.bettercontentfixes.compat;
 
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /** Serializes maze placement only among mazes that share one Twilight Forest random source. */
 public final class TwilightForestMazeSerialization {
+    private static final Object STRONGHOLD_GENERATION_LOCK = new Object();
+
     private TwilightForestMazeSerialization() {
     }
 
@@ -16,6 +19,12 @@ public final class TwilightForestMazeSerialization {
     public static void runSerialized(final Object randomSource, final Runnable operation) {
         synchronized (randomSource) {
             operation.run();
+        }
+    }
+
+    public static <T> T callStrongholdSerialized(final Supplier<T> operation) {
+        synchronized (STRONGHOLD_GENERATION_LOCK) {
+            return operation.get();
         }
     }
 }

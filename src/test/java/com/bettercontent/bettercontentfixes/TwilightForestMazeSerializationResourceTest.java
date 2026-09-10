@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 final class TwilightForestMazeSerializationResourceTest {
     private static final Path MIXIN = Path.of(
             "src/main/java/com/bettercontent/bettercontentfixes/mixin/twilightforest/TFMazeMixin.java");
+    private static final Path STRONGHOLD_MIXIN = Path.of(
+            "src/main/java/com/bettercontent/bettercontentfixes/mixin/twilightforest/ConquerableStructureMixin.java");
 
     @Test
     void commonMixinLocksOnlyTheSharedMazeRandomAroundPlacement() throws IOException {
@@ -38,5 +40,22 @@ final class TwilightForestMazeSerializationResourceTest {
         assertTrue(manifest.contains("modId=\"twilightforest\"")
                 && manifest.contains("versionRange=\"[4.3.2508]\""));
         assertTrue(build.contains("compileOnly(fg.deobf(\"curse.maven:the-twilight-forest-227639:5468648\"))"));
+    }
+
+    @Test
+    void knightStrongholdGenerationSerializesSharedStaticPieceState() throws IOException {
+        final JsonObject config = JsonParser.parseReader(Files.newBufferedReader(
+                Path.of("src/main/resources/better_content_fixes.mixins.json"))).getAsJsonObject();
+        final String source = Files.readString(STRONGHOLD_MIXIN);
+        final String helper = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/compat/TwilightForestMazeSerialization.java"));
+
+        assertTrue(config.getAsJsonArray("mixins").toString().contains("twilightforest.ConquerableStructureMixin"));
+        assertTrue(source.contains("twilightforest.world.components.structures.util.ConquerableStructure")
+                && source.contains("KnightStrongholdStructure")
+                && source.contains("@WrapMethod(method = \"generateCustom\")")
+                && source.contains("callStrongholdSerialized"));
+        assertTrue(helper.contains("STRONGHOLD_GENERATION_LOCK")
+                && helper.contains("callStrongholdSerialized"));
     }
 }

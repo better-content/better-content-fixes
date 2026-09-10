@@ -428,11 +428,23 @@ val verifyRuntimeTwilightForestMazeSerialization by tasks.registering {
                 "Runtime Twilight Forest mixin lacks its exact maze placement/random-source wrapper: $runtimeJar"
             }
 
+            val strongholdMixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/twilightforest/ConquerableStructureMixin.class")
+            check(strongholdMixin.contains("twilightforest.world.components.structures.util.ConquerableStructure")
+                    && strongholdMixin.contains("KnightStrongholdStructure")
+                    && strongholdMixin.contains("generateCustom")
+                    && strongholdMixin.contains("callStrongholdSerialized")) {
+                "Runtime Twilight Forest mixin lacks full Knight Stronghold generation serialization: $runtimeJar"
+            }
+
             val mixinConfig = zip.getEntry("better_content_fixes.mixins.json")
                 ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
             val mixins = zip.getInputStream(mixinConfig).use { it.readBytes() }.toString(Charsets.UTF_8)
             check(mixins.contains("twilightforest.TFMazeMixin")) {
                 "Runtime mixin configuration is missing the Twilight Forest maze wrapper: $runtimeJar"
+            }
+            check(mixins.contains("twilightforest.ConquerableStructureMixin")) {
+                "Runtime mixin configuration is missing the Twilight Forest stronghold wrapper: $runtimeJar"
             }
         }
     }

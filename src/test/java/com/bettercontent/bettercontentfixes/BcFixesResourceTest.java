@@ -89,9 +89,10 @@ final class BcFixesResourceTest {
         String source = Files.readString(Path.of(
                 "src/main/java/com/bettercontent/bettercontentfixes/mixin/minecraft/DispenserBlockMixin.java"));
 
-        assertTrue(source.contains("@Shadow(aliases = \"f_52661_\", remap = false)")
-                        && source.contains("Collections.synchronizedMap(DISPENSER_REGISTRY)"),
-                "the dispenser registry must resolve in development and retain its production SRG alias");
+        assertTrue(source.contains("@Shadow(remap = false)")
+                        && source.contains("public static Map<Item, DispenseItemBehavior> f_52661_;")
+                        && source.contains("Collections.synchronizedMap(f_52661_)"),
+                "the public dispenser registry must use its production SRG name without an invalid alias");
         assertTrue(source.contains("@WrapMethod(method = {\"registerBehavior\", \"m_52672_\"}, remap = false)"),
                 "dispenser registration must resolve its named and production SRG methods without a refmap");
     }

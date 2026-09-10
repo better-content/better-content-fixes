@@ -27,6 +27,7 @@
     "epicfightvs.MultiColliderMixin",
     "falloutwastelands.StructureFeatureMixin",
     "twilightforest.TFMazeMixin",
+    "twilightforest.ConquerableStructureMixin",
     "forge.VanillaInventoryCodeHooksMixin",
     "hyle.BiomeInjectorMixin",
     "hyle.RoughNoiseSamplerMixin",
