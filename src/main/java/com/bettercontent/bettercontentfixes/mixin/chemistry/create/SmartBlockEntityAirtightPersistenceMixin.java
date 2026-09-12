@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class SmartBlockEntityAirtightPersistenceMixin {
     @Unique private static final String BETTER_CONTENT_FIXES$AIRTIGHT_TAG = "better_content_fixes:Airtight";
 
-    @Inject(method = "saveAdditional", at = @At("TAIL"), require = 1)
+    @Inject(method = {"saveAdditional", "m_183515_"}, at = @At("TAIL"), require = 1, remap = false)
     private void betterContentFixes$writeAirtight(final CompoundTag tag, final CallbackInfo callback) {
         if ((Object) this instanceof AirtightUpgradeHolder holder) {
             tag.putBoolean(BETTER_CONTENT_FIXES$AIRTIGHT_TAG, holder.isAirtight());
         }
     }
 
-    @Inject(method = "load", at = @At("TAIL"), require = 1)
+    @Inject(method = {"load", "m_142466_"}, at = @At("TAIL"), require = 1, remap = false)
     private void betterContentFixes$readAirtight(final CompoundTag tag, final CallbackInfo callback) {
         if ((Object) this instanceof AirtightUpgradeHolder holder) {
             holder.betterContentFixes$setAirtight(tag.getBoolean(BETTER_CONTENT_FIXES$AIRTIGHT_TAG));

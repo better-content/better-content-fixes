@@ -334,6 +334,7 @@ val verifyRuntimePlacementPreviewTargets by tasks.registering {
                 ?: throw GradleException("Could not resolve exactly one $marker dependency from $configuration")
 
         val rotaVisionJar = dependencyJar("compileClasspath", "rotavision")
+        val createJar = dependencyJar("compileClasspath", "create-1.20.1-6.0.8")
         val rbpJar = dependencyJar("compileClasspath", "realistic-block-physics")
         val realisticPhysicsJar = dependencyJar("compileClasspath", "realistic-physics-1030082")
 
@@ -345,8 +346,19 @@ val verifyRuntimePlacementPreviewTargets by tasks.registering {
                     && bytes.contains("isRotatable")
                     && bytes.contains("applyRotation")
                     && bytes.contains("TintedVertexConsumer")
+                    && bytes.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIII)V")
                     && bytes.contains("renderBlockEntity")) {
                 "RotaVision 1.0.2 GhostRenderer bytecode drifted from the supported preview targets"
+            }
+        }
+        ZipFile(createJar).use { zip ->
+            val smartBlockEntity = zip.getEntry(
+                "com/simibubi/create/foundation/blockEntity/SmartBlockEntity.class")
+                ?: throw GradleException("Create 6.0.8 is missing SmartBlockEntity")
+            val bytes = zip.getInputStream(smartBlockEntity).use { it.readBytes() }
+                .toString(Charsets.ISO_8859_1)
+            check(bytes.contains("saveAdditional") && bytes.contains("load")) {
+                "Mapped Create 6.0.8 SmartBlockEntity bytecode drifted from the airtight persistence targets"
             }
         }
         ZipFile(rbpJar).use { zip ->
@@ -361,6 +373,27 @@ val verifyRuntimePlacementPreviewTargets by tasks.registering {
             check(zip.getEntry("xbigellx/realisticphysics/internal/level/RPLevelAccessor.class") != null
                     && zip.getEntry("xbigellx/realisticphysics/internal/level/chunk/RPChunkAccessor.class") != null) {
                 "Realistic Physics 1.0.1 is missing the virtual overlay interfaces"
+            }
+        }
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            fun classBytes(path: String): String {
+                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path")
+                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            }
+
+            val ghostMixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/rotavision/GhostRendererMixin.class")
+            check(ghostMixin.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIII)V")
+                    && !ghostMixin.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIIII)V")) {
+                "Runtime RotaVision tint hook does not target the exact four-channel constructor"
+            }
+
+            val airtightMixin = classBytes(
+                "com/bettercontent/bettercontentfixes/mixin/chemistry/create/SmartBlockEntityAirtightPersistenceMixin.class")
+            check(airtightMixin.contains("saveAdditional") && airtightMixin.contains("m_183515_")
+                    && airtightMixin.contains("load") && airtightMixin.contains("m_142466_")) {
+                "Runtime airtight persistence hook lacks its named and production SRG targets"
             }
         }
     }

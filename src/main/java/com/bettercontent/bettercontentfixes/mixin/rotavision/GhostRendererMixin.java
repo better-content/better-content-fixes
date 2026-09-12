@@ -74,7 +74,7 @@ public abstract class GhostRendererMixin {
             },
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/sharpesthead/rotavision/GhostRenderer$TintedVertexConsumer;<init>(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIIII)V",
+                    target = "Lnet/sharpesthead/rotavision/GhostRenderer$TintedVertexConsumer;<init>(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIII)V",
                     remap = false),
             require = 1,
             remap = false)
