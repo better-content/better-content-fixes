@@ -129,6 +129,10 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
     compileOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
+    compileOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
+    runtimeOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
+    runtimeOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
+    runtimeOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
     compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     testRuntimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     runtimeOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
@@ -318,6 +322,52 @@ val verifyRuntimeBetterCavesBounds by tasks.registering {
             }
         }
     }
+}
+
+val verifyRuntimePlacementPreviewTargets by tasks.registering {
+    group = "verification"
+    description = "Requires the pinned RotaVision and RBP integration bytecode targets to remain exact."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        fun dependencyJar(configuration: String, marker: String): java.io.File =
+            configurations.getByName(configuration).files.singleOrNull { it.name.contains(marker) }
+                ?: throw GradleException("Could not resolve exactly one $marker dependency from $configuration")
+
+        val rotaVisionJar = dependencyJar("compileClasspath", "rotavision")
+        val rbpJar = dependencyJar("compileClasspath", "realistic-block-physics")
+        val realisticPhysicsJar = dependencyJar("compileClasspath", "realistic-physics-1030082")
+
+        ZipFile(rotaVisionJar).use { zip ->
+            val renderer = zip.getEntry("net/sharpesthead/rotavision/GhostRenderer.class")
+                ?: throw GradleException("RotaVision 1.0.2 is missing GhostRenderer")
+            val bytes = zip.getInputStream(renderer).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            check(bytes.contains("onRenderLevel")
+                    && bytes.contains("isRotatable")
+                    && bytes.contains("applyRotation")
+                    && bytes.contains("TintedVertexConsumer")
+                    && bytes.contains("renderBlockEntity")) {
+                "RotaVision 1.0.2 GhostRenderer bytecode drifted from the supported preview targets"
+            }
+        }
+        ZipFile(rbpJar).use { zip ->
+            val engine = zip.getEntry("xbigellx/rbp/internal/physics/engine/PhysicsEngine.class")
+                ?: throw GradleException("RBP 1.0.0 is missing PhysicsEngine")
+            val bytes = zip.getInputStream(engine).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            check(bytes.contains("processBlock") && bytes.contains("ProcessedBlockOperation")) {
+                "RBP 1.0.0 PhysicsEngine bytecode drifted from the supported preview adapter"
+            }
+        }
+        ZipFile(realisticPhysicsJar).use { zip ->
+            check(zip.getEntry("xbigellx/realisticphysics/internal/level/RPLevelAccessor.class") != null
+                    && zip.getEntry("xbigellx/realisticphysics/internal/level/chunk/RPChunkAccessor.class") != null) {
+                "Realistic Physics 1.0.1 is missing the virtual overlay interfaces"
+            }
+        }
+    }
+}
+
+tasks.named("verifyFast") {
+    dependsOn(verifyRuntimePlacementPreviewTargets)
 }
 
 val verifyRuntimeLostCitiesSerialization by tasks.registering {

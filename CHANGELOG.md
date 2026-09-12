@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.1.8 - 2026-09-12
 
+- Extended RotaVision 1.0.2 ghosts to every BlockItem and added a rate-limited, server-authoritative, read-only RBP placement prediction with supported, fall/crush, and neutral fallback tints.
+- Added keymap profile v2 for RotaVision, Relics, More Artifacts, and Quark conflicts while preserving customized controls.
 - Removed the redundant full-body first-person add-on integration and applied armor-limb suppression directly to Epic Fight's native animated first-person renderer.
 - Disabled ParCool's native and pack-added directional double-tap dodge paths while retaining its explicit dodge binding and vanilla forward double-tap sprint.
 - Added active-tick percentile monitoring and a hysteretic Distant Horizons generation governor, with read-only operator status output.

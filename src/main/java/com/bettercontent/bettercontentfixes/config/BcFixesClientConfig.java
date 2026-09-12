@@ -3,7 +3,7 @@ package com.bettercontent.bettercontentfixes.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class BcFixesClientConfig {
-    public static final int CURRENT_KEYMAP_PROFILE_VERSION = 1;
+    public static final int CURRENT_KEYMAP_PROFILE_VERSION = 2;
     public static final ForgeConfigSpec SPEC;
 
     public static final ForgeConfigSpec.BooleanValue EPIC_FIGHT_HIDE_FIRST_PERSON_LIMBS;

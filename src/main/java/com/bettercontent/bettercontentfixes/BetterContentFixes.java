@@ -42,6 +42,8 @@ import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
 import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorService;
+import com.bettercontent.bettercontentfixes.placementpreview.SupportPreviewNetwork;
+import com.bettercontent.bettercontentfixes.placementpreview.SupportPreviewGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
@@ -56,6 +58,7 @@ public final class BetterContentFixes {
 
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
+        SupportPreviewNetwork.initialize();
         EmiDefaultsBootstrap.seedIfApplicable();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
@@ -120,6 +123,11 @@ public final class BetterContentFixes {
         event.register(AirtightChemistryGameTests.class);
         event.register(CustomControlEpisodeGameTests.class);
         event.register(SleepTimelapseEventGameTests.class);
+        if (ModList.get().isLoaded("rotavision")
+                && ModList.get().isLoaded("rbp")
+                && ModList.get().isLoaded("realisticphysics")) {
+            event.register(SupportPreviewGameTests.class);
+        }
         if (ModList.get().isLoaded("dynamictrees")) {
             event.register(DynamicTreesUnsupportedTreeGameTests.class);
         }

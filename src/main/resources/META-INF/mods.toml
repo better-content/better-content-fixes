@@ -255,6 +255,13 @@ versionRange="[0.1.0,)"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="rotavision"
+    mandatory=false
+    versionRange="[1.0.2]"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="lostcities"
     mandatory=false
     versionRange="[1.20-7.4.11]"

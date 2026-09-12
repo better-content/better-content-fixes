@@ -37,6 +37,16 @@ disabled ParCool directional double-tap dodge, recommended control migration, fi
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
 weight-based ReHooked mob grappling, and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
 
+With exactly RotaVision 1.0.2, Realistic Block Physics 1.0.0, and Realistic Physics 1.0.1, every held
+BlockItem receives RotaVision's translucent placement ghost, including its context orientation at rotation
+index zero. Valid ghosts use a short-lived, server-authoritative snapshot prediction: teal means RBP found
+the proposed state supported, pulsing amber means it predicted a fall or crushing failure, and white means
+the prediction is unavailable, unmanaged, pending, or stale. Vanilla-invalid placement remains red. The
+overlay is advisory only: it neither places nor blocks anything and never schedules or mutates RBP physics.
+Beds, doors, and double plants include deterministic companion states; unknown multi-block placement
+behaviour deliberately falls back to white. Building Gadgets and Create schematic previews are outside this
+integration.
+
 Newly placed structure templates remove vanilla effect potions, splash and lingering potions, and tipped
 arrows from embedded inventories. Plain water bottles and unrelated or mod-owned items remain intact, and
 cached templates, existing chunks, player inventories, and command-given stacks are not changed.
@@ -45,6 +55,10 @@ The client control profile moves ParCool Fast Run to Shift, ParCool's contextual
 Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized bindings are preserved;
 only exact legacy defaults are migrated once. ParCool's direct R dodge remains available, and vanilla's
 forward double-tap sprint behavior is left intact.
+
+Keymap profile v2 assigns RotaVision rotate/toggle to Alt+R and Alt+T, moves Relics' ability list to Alt+A
+and More Artifacts' Eye teleport to Alt+P, and unbinds Quark Lock Rotation. As with the original profile,
+only bindings still equal to the prior pack defaults migrate; player customizations always win.
 
 When Better Content Threads is installed, accepted server-side ParCool starts for the configured dodge,
 fast-run, and contextual actions emit optional learning signals. The first action opens one persistent

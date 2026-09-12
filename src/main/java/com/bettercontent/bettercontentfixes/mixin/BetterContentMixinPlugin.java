@@ -58,6 +58,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
     private static final String RBP_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.rbp.";
+    private static final String ROTAVISION_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.rotavision.";
     private static final String THIRST_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.thirst.";
     private static final String BURNT_MIXIN_PREFIX =
@@ -191,6 +193,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(RBP_MIXIN_PREFIX)) {
             return hasVersion(mods, "rbp", "1.0.0")
                     && hasVersion(mods, "realisticphysics", "1.0.1");
+        }
+        if (mixinClassName.startsWith(ROTAVISION_MIXIN_PREFIX)) {
+            return hasVersion(mods, "rotavision", "1.0.2");
         }
         if (mixinClassName.startsWith(THIRST_MIXIN_PREFIX)) {
             return hasVersion(mods, "thirst", "1.20.1-1.4.0");
