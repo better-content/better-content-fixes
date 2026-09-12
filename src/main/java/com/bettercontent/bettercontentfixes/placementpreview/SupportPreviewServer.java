@@ -24,23 +24,6 @@ import net.sharpesthead.rotavision.RotationUtils;
 
 final class SupportPreviewServer {
     private static final double MAX_DISTANCE_SQUARED = 8.0 * 8.0;
-    private static final ClassValue<Boolean> UNMODELLED_ITEM_PLACEMENT = new ClassValue<>() {
-        @Override
-        protected Boolean computeValue(final Class<?> itemClass) {
-            Class<?> candidate = itemClass;
-            while (candidate != null && BlockItem.class.isAssignableFrom(candidate)) {
-                try {
-                    candidate.getDeclaredMethod("placeBlock", BlockPlaceContext.class, BlockState.class);
-                    return candidate != BlockItem.class
-                            && candidate != BedItem.class
-                            && candidate != DoubleHighBlockItem.class;
-                } catch (final NoSuchMethodException ignored) {
-                    candidate = candidate.getSuperclass();
-                }
-            }
-            return true;
-        }
-    };
 
     private SupportPreviewServer() {
     }
@@ -111,7 +94,9 @@ final class SupportPreviewServer {
             final BlockState state,
             final BlockPos target
     ) {
-        if (UNMODELLED_ITEM_PLACEMENT.get(blockItem.getClass())) {
+        if (blockItem.getClass() != BlockItem.class
+                && !(blockItem instanceof BedItem)
+                && !(blockItem instanceof DoubleHighBlockItem)) {
             return null;
         }
         final Map<BlockPos, BlockState> states = new LinkedHashMap<>();
