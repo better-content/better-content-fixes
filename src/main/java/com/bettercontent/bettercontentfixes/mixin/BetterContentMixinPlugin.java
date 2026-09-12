@@ -70,6 +70,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.dtaether.";
     private static final String CREATE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.create.";
+    private static final String CREATE_SIFTER_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.createsifter.";
     private static final String HYLE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.hyle.";
     private static final String LOST_CITIES_MIXIN_PREFIX =
@@ -197,6 +199,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(CREATE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("create") != null;
+        }
+        if (mixinClassName.startsWith(CREATE_SIFTER_MIXIN_PREFIX)) {
+            return hasVersion(mods, "createsifter", "1.20.1-1.8.6-6.0.6");
         }
         if (mixinClassName.startsWith(HYLE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("hyle") != null;

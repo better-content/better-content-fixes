@@ -63,6 +63,7 @@ fun betterContentJar(repository: String, artifact: String): java.io.File {
 
 repositories {
     maven("https://maven.minecraftforge.net")
+    maven("https://api.modrinth.com/maven")
     maven("https://maven.createmod.net")
     maven("https://maven.ithundxr.dev/mirror")
     maven("https://maven.tterrag.com/")
@@ -82,6 +83,7 @@ dependencies {
     compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${property("minecraft_version")}:1.0.5"))
     runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${property("minecraft_version")}:1.0.5"))
     implementation(fg.deobf("com.tterrag.registrate:Registrate:MC1.20-1.3.3"))
+    runtimeOnly(fg.deobf("maven.modrinth:create-sifting:1.20.1-1.8.6-6.0.6"))
     compileOnly(fg.deobf("curse.maven:hyle-609850:7736352"))
     compileOnly(fg.deobf("curse.maven:thirst-was-taken-679270:6660408"))
     compileOnly(fg.deobf("curse.maven:cold-sweat-506194:7893262"))

@@ -10,6 +10,8 @@
     "burnt.Weather2SamplerMixin",
     "create.HandCrankBlockMixin",
     "create.WaterWheelBlockEntityMixin",
+    "createsifter.BrassSifterConfigMixin",
+    "createsifter.SifterBlockEntityMixin",
     "complicatedbees.ForgeConfigSpecMixin",
     "adpother.coldsweat.HearthBlockEntityMixin",
     "adpother.littlelogistics.SteamLocomotiveEntityMixin",
