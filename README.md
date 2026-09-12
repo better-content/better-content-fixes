@@ -37,6 +37,10 @@ disabled ParCool directional double-tap dodge, recommended control migration, fi
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
 weight-based ReHooked mob grappling, and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
 
+Newly placed structure templates remove vanilla effect potions, splash and lingering potions, and tipped
+arrows from embedded inventories. Plain water bottles and unrelated or mod-owned items remain intact, and
+cached templates, existing chunks, player inventories, and command-given stacks are not changed.
+
 The client control profile moves ParCool Fast Run to Shift, ParCool's contextual mouse actions to Mouse 5,
 Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized bindings are preserved;
 only exact legacy defaults are migrated once. ParCool's direct R dodge remains available, and vanilla's

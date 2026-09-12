@@ -43,6 +43,7 @@
     "minecraft.MonsterRoomFeatureMixin",
     "minecraft.DispenserBlockMixin",
     "minecraft.StepFeatureDataAccessor",
+    "minecraft.StructureTemplateMixin",
     "minecraft.AttributeModifierMixin",
     "minecraft.MobMixin",
     "minecraft.BoatMixin",

@@ -34,6 +34,7 @@ import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTe
 import com.bettercontent.bettercontentfixes.learning.CustomControlEpisodeGameTests;
 import com.bettercontent.bettercontentfixes.compat.sleeping.SleepTimelapseEventGameTests;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
+import com.bettercontent.bettercontentfixes.gametest.PotionStructureSanitizerGameTests;
 import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
 import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
@@ -107,6 +108,7 @@ public final class BetterContentFixes {
         event.register(VanillaBoatGameTests.class);
         event.register(WaterWheelBiomePolicyGameTests.class);
         event.register(OptionalIntegrationGameTests.class);
+        event.register(PotionStructureSanitizerGameTests.class);
         event.register(CustomControlEpisodeGameTests.class);
         event.register(SleepTimelapseEventGameTests.class);
         if (ModList.get().isLoaded("dynamictrees")) {
