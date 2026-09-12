@@ -92,7 +92,9 @@
     "tconstruct.PartBuilderPatternSlotBackgroundMixin",
     "tconstruct.PartBuilderPatternSlotRenderMixin",
     "weather2.FogAdjusterMixin",
-    "rotavision.GhostRendererMixin"
+    "rotavision.GhostRendererMixin",
+    "tacz.ClientIndexManagerMixin",
+    "tacz.ClientAssetsManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 0

@@ -130,6 +130,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
     compileOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
     compileOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
+    compileOnly(fg.deobf("curse.maven:timeless-and-classics-zero-1028108:8141310"))
     runtimeOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
     runtimeOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
     runtimeOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
