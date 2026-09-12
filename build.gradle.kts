@@ -69,15 +69,32 @@ repositories {
     maven("https://maven.tterrag.com/")
     maven("https://harleyoconnor.com/maven")
     maven("https://repo.spongepowered.org/repository/maven-public/")
+    maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.llamalad7.mixinextras.org/releases/")
     maven("https://maven.valkyrienskies.org") { content { includeGroup("org.valkyrienskies.core") } }
     maven("https://www.cursemaven.com") { content { includeGroup("curse.maven") } }
     mavenCentral()
+    flatDir {
+        dirs(
+            betterContentJar("latent-chemlib", "latent-chemlib-0.2.0.jar").parentFile,
+            betterContentJar("heat-sync", "heat-sync-0.1.0.jar").parentFile
+        )
+    }
 }
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
     compileOnly(files(betterContentJar("dynamic-survival-hud", "dynamic-survival-hud-1.0.0.jar")))
+    compileOnly(fg.deobf("local:latent-chemlib:0.2.0"))
+    runtimeOnly(fg.deobf("local:latent-chemlib:0.2.0"))
+    runtimeOnly(fg.deobf("local:heat-sync:0.1.0"))
+    runtimeOnly("thedarkcolour:kotlinforforge:4.11.0")
+    compileOnly(fg.deobf("curse.maven:chemlib-340666:5128632"))
+    runtimeOnly(fg.deobf("curse.maven:chemlib-340666:5128632"))
+    compileOnly(fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:7307654"))
+    runtimeOnly(fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:7307654"))
+    runtimeOnly(fg.deobf("curse.maven:pollution-of-the-realms-269973:8554528"))
+    runtimeOnly(fg.deobf("curse.maven:forgeendertech-244844:8554308"))
     implementation(fg.deobf("com.simibubi.create:create-${property("minecraft_version")}:6.0.8-291:slim"))
     implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${property("minecraft_version")}:1.0.92"))
     compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${property("minecraft_version")}:1.0.5"))

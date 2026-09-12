@@ -16,6 +16,8 @@ import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
 import com.bettercontent.bettercontentfixes.compat.ThirstLootModifierCompat;
 import com.bettercontent.bettercontentfixes.compat.emi.EmiDefaultsBootstrap;
+import com.bettercontent.bettercontentfixes.chemistry.AirtightUpgradeInteraction;
+import com.bettercontent.bettercontentfixes.chemistry.ChemistryContent;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
@@ -35,6 +37,7 @@ import com.bettercontent.bettercontentfixes.learning.CustomControlEpisodeGameTes
 import com.bettercontent.bettercontentfixes.compat.sleeping.SleepTimelapseEventGameTests;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
 import com.bettercontent.bettercontentfixes.gametest.PotionStructureSanitizerGameTests;
+import com.bettercontent.bettercontentfixes.gametest.AirtightChemistryGameTests;
 import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
 import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
 import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
@@ -75,6 +78,7 @@ public final class BetterContentFixes {
         BurntGrassPalette.ITEMS.register(modEventBus);
         RegolithFarmlandPalette.BLOCKS.register(modEventBus);
         RegolithFarmlandPalette.ITEMS.register(modEventBus);
+        ChemistryContent.ITEMS.register(modEventBus);
         if (ModList.get().isLoaded("dynamictrees")) {
             modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         }
@@ -91,6 +95,10 @@ public final class BetterContentFixes {
         MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
         MinecraftForge.EVENT_BUS.register(PerformanceGovernorService.class);
+        if (ModList.get().isLoaded("create") && ModList.get().isLoaded("pneumaticcraft")
+                && ModList.get().isLoaded("latent_chemlib") && ModList.get().isLoaded("chemlib")) {
+            MinecraftForge.EVENT_BUS.register(AirtightUpgradeInteraction.class);
+        }
         if (ModList.get().isLoaded("parcool")) {
             MinecraftForge.EVENT_BUS.register(ParCoolControlLearning.class);
         }
@@ -109,6 +117,7 @@ public final class BetterContentFixes {
         event.register(WaterWheelBiomePolicyGameTests.class);
         event.register(OptionalIntegrationGameTests.class);
         event.register(PotionStructureSanitizerGameTests.class);
+        event.register(AirtightChemistryGameTests.class);
         event.register(CustomControlEpisodeGameTests.class);
         event.register(SleepTimelapseEventGameTests.class);
         if (ModList.get().isLoaded("dynamictrees")) {

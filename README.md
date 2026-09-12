@@ -98,3 +98,10 @@ For modpack and mod discussion, playtest feedback, and bug reports, join the [Be
 - Runtime artifact: `build/libs/better-content-fixes-<version>.jar`
 
 The canonical identity is a clean break. Legacy mod IDs, resource namespaces, configuration paths, commands, network channels, and saved-data keys are not migrated or aliased.
+
+ChemLib gas-bearing Create Basins, PneumaticCraft Fluid Mixers, and
+Thermopneumatic Processing Plants accept a persistent Airtight Upgrade. Gas
+recipes in the two PneumaticCraft machines remain unavailable until sealed;
+sneak-use with an empty hand removes and refunds the upgrade. PneumaticCraft
+PCB processing uses canonical ChemLib nitric acid instead of its native
+etching-acid fluid.

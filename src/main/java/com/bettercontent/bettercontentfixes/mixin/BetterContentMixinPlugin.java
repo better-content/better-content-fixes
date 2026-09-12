@@ -70,6 +70,10 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.dtaether.";
     private static final String CREATE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.create.";
+    private static final String CHEMISTRY_CREATE_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.chemistry.create.";
+    private static final String CHEMISTRY_PNEUMATICCRAFT_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.chemistry.pneumaticcraft.";
     private static final String CREATE_SIFTER_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.createsifter.";
     private static final String HYLE_MIXIN_PREFIX =
@@ -101,6 +105,12 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
         final LoadingModList mods = FMLLoader.getLoadingModList();
+        if (mixinClassName.startsWith(CHEMISTRY_CREATE_MIXIN_PREFIX)) {
+            return hasMods(mods, "create", "latent_chemlib", "chemlib");
+        }
+        if (mixinClassName.startsWith(CHEMISTRY_PNEUMATICCRAFT_MIXIN_PREFIX)) {
+            return hasMods(mods, "pneumaticcraft", "latent_chemlib", "chemlib");
+        }
         if (mixinClassName.startsWith(BETTER_CAVES_MIXIN_PREFIX)) {
             return hasVersion(mods, "bettercaves", "1.20.1-Forge-2.0.6");
         }
@@ -241,6 +251,14 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         return mods.getModFileById(modId).getMods().stream()
                 .anyMatch(mod -> modId.equals(mod.getModId())
                         && expectedVersion.equals(mod.getVersion().toString()));
+    }
+
+    private static boolean hasMods(final LoadingModList mods, final String... modIds) {
+        if (mods == null) return false;
+        for (String modId : modIds) {
+            if (mods.getModFileById(modId) == null) return false;
+        }
+        return true;
     }
 
     @Override

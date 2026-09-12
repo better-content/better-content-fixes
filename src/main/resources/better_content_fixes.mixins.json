@@ -13,6 +13,11 @@
     "createsifter.BrassSifterConfigMixin",
     "createsifter.SifterBlockEntityMixin",
     "complicatedbees.ForgeConfigSpecMixin",
+    "chemistry.create.BasinAirtightMixin",
+    "chemistry.create.SmartBlockEntityAirtightPersistenceMixin",
+    "chemistry.pneumaticcraft.EmptyPcbEtchingFluidMixin",
+    "chemistry.pneumaticcraft.FluidMixerAirtightMixin",
+    "chemistry.pneumaticcraft.ThermopneumaticPlantAirtightMixin",
     "adpother.coldsweat.HearthBlockEntityMixin",
     "adpother.littlelogistics.SteamLocomotiveEntityMixin",
     "adpother.littlelogistics.SteamTugEntityMixin",
@@ -60,6 +65,7 @@
     "thirst.AddLootTableModifierMixin"
   ],
   "client": [
+    "chemistry.create.BasinRendererMixin",
     "ali.EmiCompatibilityMixin",
     "ambientsounds.AmbientSoundEngineMixin",
     "adpother.LevelRendererMixin",

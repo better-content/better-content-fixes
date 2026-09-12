@@ -24,6 +24,34 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="latent_chemlib"
+    mandatory=false
+    versionRange="[0.2.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="chemlib"
+    mandatory=false
+    versionRange="[2.0.19,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="pneumaticcraft"
+    mandatory=false
+    versionRange="[6.0.22,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="create"
+    mandatory=false
+    versionRange="[6.0.8,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="dynamictrees"
     mandatory=false
     versionRange="[1.20.1-1.4.10]"
