@@ -69,7 +69,9 @@ final class RbpSupportPreviewAdapter {
                                 crushed.set(true);
                             }
                         });
-                if (operation == ProcessedBlockOperation.FALL || crushed.get()) {
+                if (operation == ProcessedBlockOperation.FALL
+                        || operation == ProcessedBlockOperation.CRUSH
+                        || crushed.get()) {
                     return SupportPreviewVerdict.WILL_FALL;
                 }
             }
