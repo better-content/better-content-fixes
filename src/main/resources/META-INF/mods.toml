@@ -27,7 +27,7 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     modId="latent_chemlib"
     mandatory=false
     versionRange="[0.2.0,)"
-    ordering="AFTER"
+    ordering="NONE"
     side="BOTH"
 
 [[dependencies.${mod_id}]]

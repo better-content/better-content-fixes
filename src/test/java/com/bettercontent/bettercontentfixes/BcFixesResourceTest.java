@@ -127,6 +127,20 @@ final class BcFixesResourceTest {
     }
 
     @Test
+    void latentChemistryDependencyDoesNotConstrainForgeLoadOrder() throws IOException {
+        String manifest = Files.readString(Path.of("src/main/resources/META-INF/mods.toml"));
+
+        assertTrue(manifest.contains("""
+                [[dependencies.${mod_id}]]
+                    modId="latent_chemlib"
+                    mandatory=false
+                    versionRange="[0.2.0,)"
+                    ordering="NONE"
+                    side="BOTH"
+                """), "the optional chemistry adapter must not close the EMI/Heat Sync load-order cycle");
+    }
+
+    @Test
     void dtaetherGoldenOakDoesNotUseTheRemovedImbuedBranch() throws IOException {
         JsonObject species = JsonParser.parseReader(Files.newBufferedReader(Path.of(
                 "src/main/resources/trees/dtaether/species/golden_oak.json"))).getAsJsonObject();
