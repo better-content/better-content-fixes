@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraftforge.common.CreativeModeTabRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -12,13 +13,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(CreativeModeInventoryScreen.class)
 public abstract class CreativeModeInventoryScreenMixin {
     @Redirect(
-            method = {"mouseClicked", "mouseReleased", "render", "renderBg", "getTooltipFromContainerItem"},
+            method = "init",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/item/CreativeModeTabs;tabs()Ljava/util/List;"),
+                    target = "Lnet/minecraftforge/common/CreativeModeTabRegistry;getSortedCreativeModeTabs()Ljava/util/List;"),
             require = 1)
     private List<CreativeModeTab> betterContentFixes$visibleCreativeTabs() {
-        final List<CreativeModeTab> tabs = CreativeModeTabs.tabs();
+        final List<CreativeModeTab> tabs = CreativeModeTabRegistry.getSortedCreativeModeTabs();
         if (!BcFixesConfig.hideCreativeInventorySearchTab()) {
             return tabs;
         }
