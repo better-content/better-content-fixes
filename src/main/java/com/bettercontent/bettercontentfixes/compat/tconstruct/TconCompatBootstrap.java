@@ -1,7 +1,6 @@
 package com.bettercontent.bettercontentfixes.compat.tconstruct;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
-import com.bettercontent.bettercontentfixes.compat.tconstruct.polymorph.TconPolymorphCompat;
 import com.bettercontent.bettercontentfixes.gametest.TconCompatGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
@@ -20,9 +19,6 @@ public final class TconCompatBootstrap {
         if (!ModList.get().isLoaded("tconstruct")) return;
 
         MinecraftForge.EVENT_BUS.register(TconLoginToolSync.class);
-        if (ModList.get().isLoaded("polymorph")) {
-            event.enqueueWork(TconPolymorphCompat::register);
-        }
     }
 
     @SubscribeEvent

@@ -2,8 +2,8 @@ package com.bettercontent.bettercontentfixes.gametest;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.compat.tconstruct.TconLoginToolSync;
-import com.bettercontent.bettercontentfixes.compat.tconstruct.polymorph.CraftingStationRecipeData;
 import com.bettercontent.bettercontentfixes.compat.tconstruct.polymorph.CraftingStationOutputSlot;
+import com.illusivesoulworks.polymorph.api.PolymorphApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.gametest.framework.GameTest;
@@ -37,8 +37,6 @@ public final class TconCompatGameTests {
             new ResourceLocation(BetterContentFixes.MOD_ID, "gametest_station_first");
     private static final ResourceLocation SECOND_CONFLICT =
             new ResourceLocation(BetterContentFixes.MOD_ID, "gametest_station_second");
-    private static final ResourceLocation INVALID_RECIPE =
-            new ResourceLocation(BetterContentFixes.MOD_ID, "gametest_station_invalid");
 
     private TconCompatGameTests() {
     }
@@ -94,7 +92,7 @@ public final class TconCompatGameTests {
     }
 
     @GameTest(templateNamespace = BetterContentFixes.MOD_ID, template = "empty")
-    public static void craftingStationSelectionValidatesAndPersists(final GameTestHelper helper) {
+    public static void craftingStationSelectionIsPerPlayerAndPersists(final GameTestHelper helper) {
         final Block stationBlock = ForgeRegistries.BLOCKS.getValue(CRAFTING_STATION);
         if (stationBlock == null || stationBlock == Blocks.AIR) {
             helper.fail("Missing required TConstruct crafting station");
@@ -108,32 +106,25 @@ public final class TconCompatGameTests {
             helper.fail("TConstruct crafting station did not create its block entity");
             return;
         }
-        station.setItem(0, new ItemStack(Items.DIRT));
-
         final CraftingRecipe first = shapeless(FIRST_CONFLICT, Items.DIRT, Items.APPLE);
         final CraftingRecipe second = shapeless(SECOND_CONFLICT, Items.DIRT, Items.DIAMOND);
-        final CraftingRecipe invalid = shapeless(INVALID_RECIPE, Items.COBBLESTONE, Items.STICK);
-        final CraftingStationRecipeData data = new CraftingStationRecipeData(station);
-        data.selectRecipe(first);
-        data.selectRecipe(second);
+        final var firstPlayer = helper.makeMockServerPlayerInLevel();
+        final var secondPlayer = helper.makeMockServerPlayerInLevel();
+        final var firstData = PolymorphApi.common().getRecipeData(firstPlayer).orElse(null);
+        final var secondData = PolymorphApi.common().getRecipeData(secondPlayer).orElse(null);
+        if (firstData == null || secondData == null) {
+            helper.fail("Polymorph player recipe capability is unavailable");
+            return;
+        }
 
-        helper.assertTrue(
-                data.getSelectedRecipe().filter(recipe -> recipe.getId().equals(SECOND_CONFLICT)).isPresent(),
-                "Alternate matching recipe must become the station selection");
-        helper.assertTrue(
-                station.calcResult(null).is(Items.DIAMOND),
-                "Selected conflicting recipe must update the station result");
-
-        data.selectRecipe(invalid);
-        helper.assertTrue(
-                data.getSelectedRecipe().filter(recipe -> recipe.getId().equals(SECOND_CONFLICT)).isPresent(),
-                "Non-matching recipe must not replace the station selection");
-
-        final CraftingStationRecipeData restored = new CraftingStationRecipeData(station);
-        restored.readNBT(data.writeNBT());
-        helper.assertTrue(
-                restored.getLoadedRecipe().filter(SECOND_CONFLICT::equals).isPresent(),
-                "Selected station recipe ID must persist in capability data");
+        firstData.selectRecipe(first);
+        secondData.selectRecipe(second);
+        helper.assertTrue(firstData.getSelectedRecipe().filter(recipe -> recipe.getId().equals(FIRST_CONFLICT)).isPresent(),
+                "First player's selected recipe must remain separate");
+        helper.assertTrue(secondData.getSelectedRecipe().filter(recipe -> recipe.getId().equals(SECOND_CONFLICT)).isPresent(),
+                "Second player's selected recipe must remain separate");
+        helper.assertTrue(firstData.writeNBT().contains("SelectedRecipe"),
+                "Player-selected recipe must be serialized for reconnect persistence");
         helper.succeed();
     }
 

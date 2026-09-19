@@ -2,6 +2,7 @@ package com.bettercontent.bettercontentfixes.mixin.tconstruct;
 
 import com.illusivesoulworks.polymorph.common.crafting.RecipeSelection;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -27,12 +28,12 @@ public abstract class CraftingStationPolymorphMixin {
             final RecipeManager recipeManager,
             final RecipeType<T> recipeType,
             final C input,
-            final Level level
+        final Level level,
+        final Player player
     ) {
-        return RecipeSelection.getBlockEntityRecipe(
-                recipeType,
-                input,
-                level,
-                (CraftingStationBlockEntity) (Object) this);
+        // TCon calculates an individual result for each viewer. Keep the selection on that
+        // player, rather than on the station shared by every player who opens it.
+        if (player == null) return recipeManager.getRecipeFor(recipeType, input, level);
+        return RecipeSelection.getPlayerRecipe(player.containerMenu, recipeType, input, level, player);
     }
 }
