@@ -53,6 +53,7 @@
     "minecraft.MobMixin",
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
+    "minecraft.CreativeModeInventoryScreenMixin",
     "patchouli.BookRegistryMixin",
     "pollution.PlayerEventsMixin",
     "rehooked.HookEntityMixin",

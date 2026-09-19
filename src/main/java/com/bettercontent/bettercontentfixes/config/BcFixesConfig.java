@@ -39,6 +39,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
     public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
     public static final ForgeConfigSpec.BooleanValue TOGGLE_SNEAK;
+    public static final ForgeConfigSpec.BooleanValue CREATIVE_INVENTORY_HIDE_SEARCH_TAB;
     public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_PACE_TIMELAPSE;
     public static final ForgeConfigSpec.IntValue SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND;
     public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_INTERRUPT_IMMEDIATE_DANGER;
@@ -60,6 +61,14 @@ public final class BcFixesConfig {
                         "Enables the custom press-to-toggle sneak behavior.",
                         "When disabled, vanilla hold-to-sneak input remains active and the custom toggle handler is inert.")
                 .define("toggleSneak", false);
+        builder.pop();
+
+        builder.push("creativeInventory");
+        CREATIVE_INVENTORY_HIDE_SEARCH_TAB = builder
+                .comment(
+                        "Hides only Minecraft's Creative inventory search tab.",
+                        "JEI, EMI, item contents, and every other Creative tab remain available.")
+                .define("hideSearchTab", true);
         builder.pop();
 
         builder.push("sleepingOverhaul");
@@ -436,6 +445,10 @@ public final class BcFixesConfig {
 
     public static boolean toggleSneak() {
         return TOGGLE_SNEAK.get();
+    }
+
+    public static boolean hideCreativeInventorySearchTab() {
+        return CREATIVE_INVENTORY_HIDE_SEARCH_TAB.get();
     }
 
     public static boolean sleepingOverhaulPaceTimelapse() {
