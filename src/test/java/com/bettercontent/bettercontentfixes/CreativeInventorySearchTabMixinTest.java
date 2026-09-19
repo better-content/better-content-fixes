@@ -24,7 +24,8 @@ class CreativeInventorySearchTabMixinTest {
         assertTrue(usesForgePageSourceInInit());
 
         final String source = Files.readString(MIXIN);
-        assertTrue(source.contains("method = \"init\""));
+        assertTrue(source.contains("method = {\"init\", \"m_7856_\"}"));
+        assertTrue(source.contains("remap = false"));
         assertTrue(source.contains("CreativeModeTabRegistry;getSortedCreativeModeTabs()Ljava/util/List;"));
         assertTrue(source.contains("tab != CreativeModeTabs.searchTab()"));
         assertFalse(source.contains("CreativeModeTabs;tabs()Ljava/util/List;"));

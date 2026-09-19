@@ -594,6 +594,34 @@ val verifyRuntimeMonsterRoomSpawnerRecovery by tasks.registering {
     }
 }
 
+val verifyRuntimeCreativeSearchTabMixin by tasks.registering {
+    group = "verification"
+    description = "Requires the Creative search-tab redirect to retain both development and production selectors."
+    dependsOn(stageRuntimeJar)
+    doLast {
+        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
+        ZipFile(runtimeJar).use { zip ->
+            val entry = zip.getEntry(
+                "com/bettercontent/bettercontentfixes/mixin/minecraft/CreativeModeInventoryScreenMixin.class")
+                ?: throw GradleException("Runtime JAR is missing CreativeModeInventoryScreenMixin: $runtimeJar")
+            val bytecode = zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
+            check(bytecode.contains("init")
+                    && bytecode.contains("m_7856_")
+                    && bytecode.contains("CreativeModeTabRegistry")
+                    && bytecode.contains("getSortedCreativeModeTabs")
+                    && !bytecode.contains("CreativeModeTabs;tabs")) {
+                "Runtime Creative tab redirect lacks its dual mapped selectors or Forge page source: $runtimeJar"
+            }
+            val config = zip.getEntry("better_content_fixes.mixins.json")
+                ?: throw GradleException("Runtime JAR is missing its mixin configuration: $runtimeJar")
+            val configText = zip.getInputStream(config).use { it.readBytes() }.toString(Charsets.UTF_8)
+            check(!configText.contains("\"refmap\"")) {
+                "Runtime mixin configuration declares an unpackaged refmap: $runtimeJar"
+            }
+        }
+    }
+}
+
 tasks.named("verifyFast") {
     dependsOn(verifyRuntimeDispenserAlias)
     dependsOn(verifyRuntimeSprintBridge)
@@ -602,6 +630,7 @@ tasks.named("verifyFast") {
     dependsOn(verifyRuntimeFalloutStructureBounds)
     dependsOn(verifyRuntimeTwilightForestMazeSerialization)
     dependsOn(verifyRuntimeMonsterRoomSpawnerRecovery)
+    dependsOn(verifyRuntimeCreativeSearchTabMixin)
 }
 
 jacoco {

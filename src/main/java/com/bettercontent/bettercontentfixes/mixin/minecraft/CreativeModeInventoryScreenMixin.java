@@ -13,11 +13,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(CreativeModeInventoryScreen.class)
 public abstract class CreativeModeInventoryScreenMixin {
     @Redirect(
-            method = "init",
+            // This project intentionally ships without a refmap. Keep both the development and
+            // production names so the same client-only redirect resolves in either namespace.
+            method = {"init", "m_7856_"},
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraftforge/common/CreativeModeTabRegistry;getSortedCreativeModeTabs()Ljava/util/List;"),
-            require = 1)
+            require = 1,
+            remap = false)
     private List<CreativeModeTab> betterContentFixes$visibleCreativeTabs() {
         final List<CreativeModeTab> tabs = CreativeModeTabRegistry.getSortedCreativeModeTabs();
         if (!BcFixesConfig.hideCreativeInventorySearchTab()) {
