@@ -92,6 +92,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.distanthorizons.";
     private static final String SOPHISTICATED_STORAGE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.sophisticatedstorage.";
+    private static final String SOPHISTICATED_BACKPACKS_MIXIN_PREFIX =
+            "com.bettercontent.bettercontentfixes.mixin.sophisticatedbackpacks.";
     private static final String SLEEPING_OVERHAUL_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.sleepingoverhaul.";
     private static final String TACZ_MIXIN_PREFIX =
@@ -240,6 +242,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(SOPHISTICATED_STORAGE_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("sophisticatedstorage") != null;
+        }
+        if (mixinClassName.startsWith(SOPHISTICATED_BACKPACKS_MIXIN_PREFIX)) {
+            return mods != null && mods.getModFileById("sophisticatedbackpacks") != null;
         }
         if (mixinClassName.startsWith(SLEEPING_OVERHAUL_MIXIN_PREFIX)) {
             return hasVersion(mods, "sleepingoverhaul", "2.1.0-Forge-1.20.1");

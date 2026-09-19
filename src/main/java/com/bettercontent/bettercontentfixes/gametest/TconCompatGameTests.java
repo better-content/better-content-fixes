@@ -108,8 +108,11 @@ public final class TconCompatGameTests {
         }
         final CraftingRecipe first = shapeless(FIRST_CONFLICT, Items.DIRT, Items.APPLE);
         final CraftingRecipe second = shapeless(SECOND_CONFLICT, Items.DIRT, Items.DIAMOND);
-        final var firstPlayer = helper.makeMockServerPlayerInLevel();
-        final var secondPlayer = helper.makeMockServerPlayerInLevel();
+        // Polymorph's server-player sync sends an S2C packet, while GameTest's mock server
+        // player deliberately has no network channel. These plain GameTest players retain the
+        // player capability used by the selection and persistence assertions without that IO.
+        final var firstPlayer = helper.makeMockPlayer();
+        final var secondPlayer = helper.makeMockPlayer();
         final var firstData = PolymorphApi.common().getRecipeData(firstPlayer).orElse(null);
         final var secondData = PolymorphApi.common().getRecipeData(secondPlayer).orElse(null);
         if (firstData == null || secondData == null) {

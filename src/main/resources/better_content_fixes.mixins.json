@@ -61,6 +61,9 @@
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sleepingoverhaul.MinecraftServerMixin",
+    "sophisticatedbackpacks.JukeboxUpgradeContainerMixin",
+    "sophisticatedbackpacks.JukeboxUpgradeWrapperMixin",
+    "sophisticatedbackpacks.UpgradeWrapperBaseMixin",
     "sophisticatedstorage.StorageBlockEntityMixin",
     "thirst.AddLootTableModifierMixin"
   ],
