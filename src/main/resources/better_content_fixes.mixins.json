@@ -53,7 +53,6 @@
     "minecraft.MobMixin",
     "minecraft.BoatMixin",
     "minecraft.BushBlockMixin",
-    "minecraft.CreativeModeInventoryScreenMixin",
     "patchouli.BookRegistryMixin",
     "pollution.PlayerEventsMixin",
     "rehooked.HookEntityMixin",
@@ -67,6 +66,7 @@
   ],
   "client": [
     "chemistry.create.BasinRendererMixin",
+    "minecraft.CreativeModeInventoryScreenMixin",
     "ali.EmiCompatibilityMixin",
     "ambientsounds.AmbientSoundEngineMixin",
     "adpother.LevelRendererMixin",
