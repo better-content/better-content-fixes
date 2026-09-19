@@ -41,6 +41,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue TOGGLE_SNEAK;
     public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_PACE_TIMELAPSE;
     public static final ForgeConfigSpec.IntValue SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND;
+    public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_INTERRUPT_IMMEDIATE_DANGER;
     public static final ForgeConfigSpec.DoubleValue ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS;
     public static final ForgeConfigSpec.DoubleValue VEGETATION_DECORATIVE_TRAMPLE_CHANCE;
     public static final ForgeConfigSpec.BooleanValue PERFORMANCE_GOVERNOR_ENABLED;
@@ -68,6 +69,10 @@ public final class BcFixesConfig {
         SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND = builder
                 .comment("Target simulated ticks per real second while Sleeping Overhaul timelapse is active.")
                 .defineInRange("targetTicksPerSecond", 800, 20, 2000);
+        SLEEPING_OVERHAUL_INTERRUPT_IMMEDIATE_DANGER = builder
+                .comment("Stops only an active Sleeping Overhaul timelapse when a sleeping player takes damage or has a nearby hostile targeting them.",
+                        "World time, food, machines, weather, and ordinary server ticks remain owned by their normal systems.")
+                .define("interruptImmediateDanger", true);
         builder.pop();
 
         builder.push("items");
@@ -439,6 +444,10 @@ public final class BcFixesConfig {
 
     public static int sleepingOverhaulTargetTicksPerSecond() {
         return SLEEPING_OVERHAUL_TARGET_TICKS_PER_SECOND.get();
+    }
+
+    public static boolean sleepingOverhaulInterruptImmediateDanger() {
+        return SLEEPING_OVERHAUL_INTERRUPT_IMMEDIATE_DANGER.get();
     }
 
     public static double itemsExtraPickupHorizontalRadius() {

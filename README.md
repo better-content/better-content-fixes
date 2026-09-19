@@ -69,7 +69,10 @@ Part Builder and Tinker Station pinned in EMI. The file is created before EMI in
 EMI data is never parsed, merged, or replaced, so players can remove either favorite permanently.
 
 Sleeping Overhaul's timelapse keeps simulating the world but is paced to 800 ticks per second by
-default, making a full 12,000-tick night take about 15 seconds. Ordinary item pickup extends one
+default, making a full 12,000-tick night take about 15 seconds. An active timelapse stops when a
+sleeper takes damage or a nearby hostile has that sleeper targeted with line of sight; owners of a
+committed immediate warning, injury, or Font danger can call the typed interruption bridge. World
+time, food, machines, and ordinary ticking continue under their existing owners. Ordinary item pickup extends one
 block horizontally without changing vertical reach, and moving living entities have one 10% roll
 per block entry to remove vanilla grass or tall grass. These policies are configurable in the
 common Better Content Fixes config.

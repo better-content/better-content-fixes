@@ -35,6 +35,7 @@ import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
 import com.bettercontent.bettercontentfixes.learning.CustomControlEpisodeGameTests;
 import com.bettercontent.bettercontentfixes.compat.sleeping.SleepTimelapseEventGameTests;
+import com.bettercontent.bettercontentfixes.compat.sleeping.SleepDangerInterruption;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
 import com.bettercontent.bettercontentfixes.gametest.PotionStructureSanitizerGameTests;
 import com.bettercontent.bettercontentfixes.gametest.AirtightChemistryGameTests;
@@ -104,6 +105,9 @@ public final class BetterContentFixes {
         }
         if (ModList.get().isLoaded("parcool")) {
             MinecraftForge.EVENT_BUS.register(ParCoolControlLearning.class);
+        }
+        if (ModList.get().isLoaded("sleepingoverhaul")) {
+            MinecraftForge.EVENT_BUS.register(SleepDangerInterruption.class);
         }
     }
 

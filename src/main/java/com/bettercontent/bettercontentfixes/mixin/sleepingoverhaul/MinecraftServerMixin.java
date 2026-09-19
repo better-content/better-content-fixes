@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.mixin.sleepingoverhaul;
 
 import com.bettercontent.bettercontentfixes.compat.sleeping.SleepThreadEpisodes;
+import com.bettercontent.bettercontentfixes.compat.sleeping.SleepDangerInterruption;
 import com.bettercontent.bettercontentfixes.compat.sleeping.TimelapsePacer;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import github.cosmicdan.sleepingoverhaul.SleepingOverhaul;
@@ -14,6 +15,11 @@ import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
 abstract class MinecraftServerMixin {
+    @Inject(method = "tickServer", at = @At("HEAD"))
+    private void betterContent$interruptTimelapseForImmediateDanger(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
+        SleepDangerInterruption.interruptIfImmediateDanger((MinecraftServer) (Object) this);
+    }
+
     @Inject(method = "tickServer", at = @At("TAIL"))
     private void betterContent$paceSleepingOverhaulTimelapse(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
         final boolean active = SleepingOverhaul.serverState != null
