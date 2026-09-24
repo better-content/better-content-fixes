@@ -20,6 +20,7 @@ final class MovementPresentationResourceTest {
         final String client = config.getAsJsonArray("client").toString();
 
         assertTrue(client.contains("parcool.DodgeMixin"));
+        assertTrue(client.contains("parcool.ClingToCliffPlayerRotationMixin"));
         assertFalse(client.contains("minecraft.LocalPlayerSprintMixin"));
         assertTrue(client.contains("epicfight.FirstPersonRendererMixin"));
         assertTrue(client.contains("epicfight.WearableItemLayerMixin"));
@@ -54,22 +55,36 @@ final class MovementPresentationResourceTest {
     }
 
     @Test
-    void firstPersonPolicyHidesLimbsWithoutTouchingHeldItemRendering() throws IOException {
+    void parCoolClimbOnlySuppressesItsForcedBodyRotation() throws IOException {
+        final String mixin = Files.readString(
+                SOURCE_ROOT.resolve("mixin/parcool/ClingToCliffPlayerRotationMixin.java"));
+
+        assertTrue(mixin.contains("com.alrex.parcool.common.action.impl.ClingToCliff"));
+        assertTrue(mixin.contains("method = \"onRenderTick\""));
+        assertTrue(mixin.contains("cancellable = true"));
+        assertTrue(mixin.contains("callbackInfo.cancel()"));
+        assertTrue(mixin.contains("climb motion and camera input"));
+    }
+
+    @Test
+    void firstPersonPolicyKeepsEpicFightActionArmsVisibleAndDoesNotTouchItemLayers() throws IOException {
         final String visibility = Files.readString(SOURCE_ROOT.resolve("client/FirstPersonLimbVisibility.java"));
         final String renderer = Files.readString(SOURCE_ROOT.resolve("mixin/epicfight/FirstPersonRendererMixin.java"));
+        final String config = Files.readString(SOURCE_ROOT.resolve("config/BcFixesClientConfig.java"));
         final String armorRenderer = Files.readString(
                 SOURCE_ROOT.resolve("mixin/epicfight/WearableItemLayerMixin.java"));
 
-        assertTrue(visibility.contains("leftArm.setHidden(true)"));
-        assertTrue(visibility.contains("rightArm.setHidden(true)"));
+        assertFalse(visibility.contains("leftArm.setHidden(true)"));
+        assertFalse(visibility.contains("rightArm.setHidden(true)"));
         assertTrue(visibility.contains("leftLeg.setHidden(true)"));
         assertTrue(visibility.contains("rightLeg.setHidden(true)"));
-        assertTrue(visibility.contains("leftSleeve.setHidden(true)"));
-        assertTrue(visibility.contains("rightSleeve.setHidden(true)"));
+        assertFalse(visibility.contains("leftSleeve.setHidden(true)"));
+        assertFalse(visibility.contains("rightSleeve.setHidden(true)"));
         assertTrue(visibility.contains("leftPants.setHidden(true)"));
         assertTrue(visibility.contains("rightPants.setHidden(true)"));
+        assertTrue(config.contains("Animated arms remain visible for attack, swim, and held-item poses."));
         assertTrue(visibility.contains("hideArmorLimbs"));
-        assertTrue(renderer.contains("hidePlayerLimbs"));
+        assertTrue(renderer.contains("hideLowerBodyLimbs"));
         assertTrue(renderer.contains("HumanoidMesh;draw"));
         assertTrue(renderer.contains("require = 2"));
         assertTrue(renderer.contains("hideFirstPersonPlayerLimbsBeforeDraw"));

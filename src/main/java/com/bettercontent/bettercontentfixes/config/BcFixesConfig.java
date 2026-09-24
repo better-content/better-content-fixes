@@ -11,6 +11,7 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_UNEARTHED_REGOLITH_SOILS;
     public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES;
+    public static final ForgeConfigSpec.BooleanValue DYNAMIC_TREES_SPECIES_HARDNESS;
     public static final ForgeConfigSpec.BooleanValue HYLE_SAFE_TERTIARY_SELECTION;
     public static final ForgeConfigSpec.BooleanValue HYLE_COMPLETE_BOTTOM_SECTION;
     public static final ForgeConfigSpec.BooleanValue HYLE_RUN_AFTER_UNDERGROUND_DECORATION;
@@ -136,6 +137,12 @@ public final class BcFixesConfig {
                         "Disabled by default because its chunk-load scan can alter an already-generated world.",
                         "Enable only after a verified backup and an operator-approved maintenance window.")
                 .define("destroyUnsupportedTrees", false);
+        DYNAMIC_TREES_SPECIES_HARDNESS = builder
+                .comment(
+                        "Makes each Dynamic Trees branch use the destroy hardness of its family's native primitive log.",
+                        "This preserves wood-species mining differences shared with native log felling instead of Dynamic Trees' global 2.0 hardness.",
+                        "Disable to restore Dynamic Trees' default branch hardness.")
+                .define("speciesHardness", true);
         builder.pop();
 
         builder.push("pollution");
@@ -361,6 +368,10 @@ public final class BcFixesConfig {
 
     public static boolean dynamicTreesDestroyUnsupportedTrees() {
         return DYNAMIC_TREES_DESTROY_UNSUPPORTED_TREES.get() && isLoaded("dynamictrees");
+    }
+
+    public static boolean dynamicTreesSpeciesHardness() {
+        return DYNAMIC_TREES_SPECIES_HARDNESS.get() && isLoaded("dynamictrees");
     }
 
     public static boolean hyleSafeTertiarySelection() {

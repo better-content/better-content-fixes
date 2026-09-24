@@ -11,13 +11,11 @@ public final class FirstPersonLimbVisibility {
     private FirstPersonLimbVisibility() {
     }
 
-    public static void hidePlayerLimbs(final HumanoidMesh mesh) {
-        mesh.leftArm.setHidden(true);
-        mesh.rightArm.setHidden(true);
+    public static void hideLowerBodyLimbs(final HumanoidMesh mesh) {
+        // Epic Fight supplies the active attack/swim pose through these bones. Hiding them here
+        // overrides its per-animation visibility and removes the first-person attack motion.
         mesh.leftLeg.setHidden(true);
         mesh.rightLeg.setHidden(true);
-        mesh.leftSleeve.setHidden(true);
-        mesh.rightSleeve.setHidden(true);
         mesh.leftPants.setHidden(true);
         mesh.rightPants.setHidden(true);
     }

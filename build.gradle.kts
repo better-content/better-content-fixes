@@ -163,6 +163,7 @@ dependencies {
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:[$mixinExtrasVersion,0.6.0)")!!)
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("com.google.code.gson:gson:2.10.1")
+    testImplementation(fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:7307654"))
 }
 
 tasks.named<Jar>("jar") {

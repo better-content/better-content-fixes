@@ -42,6 +42,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.patchouli.";
     private static final String PNEUMATICCRAFT_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.pneumaticcraft.";
+    private static final String PNEUMATICCRAFT_TCON_HEAD_MIXIN_PREFIX =
+            PNEUMATICCRAFT_MIXIN_PREFIX + "tconhead.";
     private static final String COMPLICATED_BEES_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.complicatedbees.";
     private static final String ADPOTHER_COLD_SWEAT_MIXIN_PREFIX =
@@ -68,6 +70,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.kubejs.";
     private static final String DYNAMIC_TREES_POISSON_MIXIN =
             "com.bettercontent.bettercontentfixes.mixin.dynamictrees.LevelPoissonDiscProviderMixin";
+    private static final String DYNAMIC_TREES_BRANCH_HARDNESS_MIXIN =
+            "com.bettercontent.bettercontentfixes.mixin.dynamictrees.BranchHardnessMixin";
     private static final String DTAETHER_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.dtaether.";
     private static final String CREATE_MIXIN_PREFIX =
@@ -116,6 +120,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         }
         if (mixinClassName.startsWith(CHEMISTRY_PNEUMATICCRAFT_MIXIN_PREFIX)) {
             return hasMods(mods, "pneumaticcraft", "latent_chemlib", "chemlib");
+        }
+        if (mixinClassName.startsWith(PNEUMATICCRAFT_TCON_HEAD_MIXIN_PREFIX)) {
+            return hasMods(mods, "pneumaticcraft", "tconstruct");
         }
         if (mixinClassName.startsWith(BETTER_CAVES_MIXIN_PREFIX)) {
             return hasVersion(mods, "bettercaves", "1.20.1-Forge-2.0.6");
@@ -211,6 +218,9 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             return hasVersion(mods, "kubejs", "2001.6.5-build.16");
         }
         if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {
+            return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");
+        }
+        if (DYNAMIC_TREES_BRANCH_HARDNESS_MIXIN.equals(mixinClassName)) {
             return hasVersion(mods, "dynamictrees", "1.20.1-1.4.10");
         }
         if (mixinClassName.startsWith(DTAETHER_MIXIN_PREFIX)) {

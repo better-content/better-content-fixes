@@ -1,5 +1,11 @@
 {
   "item.better_content_fixes.airtight_upgrade": "Airtight Upgrade",
+  "item.better_content_fixes.soap_on_a_rope": "Soap on a Rope",
+  "item.better_content_fixes.block_and_tackle": "Block and Tackle",
+  "item.better_content_fixes.grapnel_bundle": "Grapnel Bundle",
+  "item.better_content_fixes.climbing_vine": "Climbing Vine",
+  "item.better_content_fixes.ratchet_reel": "Ratchet Reel",
+  "item.better_content_fixes.anglers_gaff": "Angler's Gaff",
   "block.better_content_fixes.beige_limestone_regolith_farmland": "Beige Limestone Regolith Farmland",
   "block.better_content_fixes.conglomerate_regolith_farmland": "Conglomerate Regolith Farmland",
   "block.better_content_fixes.dolomite_regolith_farmland": "Dolomite Regolith Farmland",
@@ -17,5 +23,6 @@
   "block.better_content_fixes.slate_regolith_farmland": "Slate Regolith Farmland",
   "block.better_content_fixes.stone_regolith_farmland": "Stone Regolith Farmland",
   "block.better_content_fixes.white_granite_regolith_farmland": "White Granite Regolith Farmland",
-  "key.categories.better_content_fixes": "Better Content"
+  "key.categories.better_content_fixes": "Better Content",
+  "options.better_content_fixes.mod_settings": "Mod Settings"
 }

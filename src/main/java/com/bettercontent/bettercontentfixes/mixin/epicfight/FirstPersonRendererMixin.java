@@ -38,7 +38,7 @@ public abstract class FirstPersonRendererMixin {
             final Operation<Void> original
     ) {
         if (BcFixesClientConfig.hideFirstPersonLimbs()) {
-            FirstPersonLimbVisibility.hidePlayerLimbs(mesh);
+            FirstPersonLimbVisibility.hideLowerBodyLimbs(mesh);
         }
         original.call(mesh, poseStack, buffers, renderType, packedLight,
                 red, green, blue, alpha, overlay, armature, poses);

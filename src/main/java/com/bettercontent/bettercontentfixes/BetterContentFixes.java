@@ -15,6 +15,7 @@ import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
 import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
 import com.bettercontent.bettercontentfixes.compat.ThirstLootModifierCompat;
+import com.bettercontent.bettercontentfixes.compat.rehooked.IntroHookContent;
 import com.bettercontent.bettercontentfixes.compat.emi.EmiDefaultsBootstrap;
 import com.bettercontent.bettercontentfixes.chemistry.AirtightUpgradeInteraction;
 import com.bettercontent.bettercontentfixes.chemistry.ChemistryContent;
@@ -83,6 +84,9 @@ public final class BetterContentFixes {
         RegolithFarmlandPalette.BLOCKS.register(modEventBus);
         RegolithFarmlandPalette.ITEMS.register(modEventBus);
         ChemistryContent.ITEMS.register(modEventBus);
+        if (ModList.get().isLoaded("rehooked")) {
+            IntroHookContent.register(modEventBus);
+        }
         if (ModList.get().isLoaded("dynamictrees")) {
             modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         }

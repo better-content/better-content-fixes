@@ -16,8 +16,8 @@ public final class BcFixesClientConfig {
         builder.push("epicFight");
         EPIC_FIGHT_HIDE_FIRST_PERSON_LIMBS = builder
                 .comment(
-                        "Hides the local player's arm and leg geometry in Epic Fight first person.",
-                        "Held-item rendering and Epic Fight weapon animation layers remain enabled.")
+                        "Hides the local player's lower-body geometry in Epic Fight first person.",
+                        "Animated arms remain visible for attack, swim, and held-item poses.")
                 .define("hideFirstPersonLimbs", true);
         builder.pop();
 

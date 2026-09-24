@@ -2,6 +2,7 @@ package com.bettercontent.bettercontentfixes.compat.tconstruct;
 
 import com.bettercontent.bettercontentfixes.BetterContentFixes;
 import com.bettercontent.bettercontentfixes.gametest.TconCompatGameTests;
+import com.bettercontent.bettercontentfixes.compat.pneumaticcraft.TconJackhammerHeadWear;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +20,9 @@ public final class TconCompatBootstrap {
         if (!ModList.get().isLoaded("tconstruct")) return;
 
         MinecraftForge.EVENT_BUS.register(TconLoginToolSync.class);
+        if (ModList.get().isLoaded("pneumaticcraft")) {
+            MinecraftForge.EVENT_BUS.register(TconJackhammerHeadWear.class);
+        }
     }
 
     @SubscribeEvent

@@ -36,4 +36,21 @@ final class TconCompatResourceTest {
         assertTrue(modsToml.contains("modId=\"polymorph\""));
         assertTrue(modsToml.contains("versionRange=\"[0.49.10,0.50)\""));
     }
+
+    @Test
+    void pneumaticJackhammerHeadBridgeIsRegisteredOnlyWithBothProviders() throws IOException {
+        final String mixins = Files.readString(Path.of("src/main/resources/better_content_fixes.mixins.json"));
+        final String plugin = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/mixin/BetterContentMixinPlugin.java"));
+        final String policy = Files.readString(Path.of(
+                "src/main/java/com/bettercontent/bettercontentfixes/compat/pneumaticcraft/TconJackhammerHeadPolicy.java"));
+
+        assertTrue(mixins.contains("pneumaticcraft.tconhead.JackHammerDrillBitHeadMixin"));
+        assertTrue(mixins.contains("pneumaticcraft.tconhead.JackhammerSetupSlotHeadMixin"));
+        assertTrue(mixins.contains("pneumaticcraft.tconhead.JackHammerTconHeadMixin"));
+        assertTrue(plugin.contains("PNEUMATICCRAFT_TCON_HEAD_MIXIN_PREFIX"));
+        assertTrue(plugin.contains("hasMods(mods, \"pneumaticcraft\", \"tconstruct\")"));
+        assertTrue(policy.contains("new ResourceLocation(\"tconstruct\", \"pick_head\")"));
+        assertTrue(policy.contains("head.save(new CompoundTag())"));
+    }
 }
