@@ -13,6 +13,10 @@ public abstract class LostCityFeatureMixin {
     private boolean better_content_fixes$serializeLostCityFeaturePlacement(
             final FeaturePlaceContext<NoneFeatureConfiguration> context,
             final Operation<Boolean> original) {
+        if (LostCitiesC2meDhSerialization.shouldSkipGeneration(context.level())) {
+            return false;
+        }
+
         if (!LostCitiesC2meDhSerialization.shouldSerialize(context.level())) {
             return original.call(context);
         }

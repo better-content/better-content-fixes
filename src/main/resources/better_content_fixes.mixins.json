@@ -47,6 +47,7 @@
     "kubejs.ConsoleJSMixin",
     "lostcities.ChunkGeneratorMixin",
     "lostcities.ChunkDriverMixin",
+    "lostcities.ForgeEventHandlersMixin",
     "lostcities.LostCityFeatureMixin",
     "minecraft.FeatureSorterMixin",
     "minecraft.MonsterRoomFeatureMixin",

@@ -17,6 +17,10 @@ public abstract class ChunkGeneratorMixin {
             final ChunkAccess chunk,
             final StructureManager structureManager,
             final Operation<Void> original) {
+        if (LostCitiesC2meDhSerialization.shouldSkipGeneration(level)) {
+            return;
+        }
+
         if (!LostCitiesC2meDhSerialization.shouldSerialize(level)) {
             original.call(level, chunk, structureManager);
             return;

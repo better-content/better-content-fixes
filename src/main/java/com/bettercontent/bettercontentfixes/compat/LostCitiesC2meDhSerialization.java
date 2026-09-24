@@ -10,6 +10,7 @@ import net.minecraft.world.level.WorldGenLevel;
 public final class LostCitiesC2meDhSerialization {
     private static final ResourceLocation LOSTCITY_DIMENSION = new ResourceLocation("lostcities", "lostcity");
     private static final ReentrantLock LOSTCITY_GENERATION_LOCK = new ReentrantLock();
+    private static volatile boolean serverStopping;
 
     private LostCitiesC2meDhSerialization() {
     }
@@ -17,6 +18,32 @@ public final class LostCitiesC2meDhSerialization {
     public static boolean shouldSerialize(final WorldGenLevel level) {
         return BcFixesConfig.lostCitiesSerializeDhC2meFeaturePlacement()
                 && LOSTCITY_DIMENSION.equals(level.getLevel().dimension().location());
+    }
+
+    public static boolean shouldSkipGeneration(final WorldGenLevel level) {
+        return serverStopping && LOSTCITY_DIMENSION.equals(level.getLevel().dimension().location());
+    }
+
+    public static boolean shouldSkipGeneration(final boolean isLostCityDimension) {
+        return serverStopping && isLostCityDimension;
+    }
+
+    public static void beginServerStopping() {
+        LOSTCITY_GENERATION_LOCK.lock();
+        try {
+            serverStopping = true;
+        } finally {
+            LOSTCITY_GENERATION_LOCK.unlock();
+        }
+    }
+
+    public static void beginServerStarting() {
+        LOSTCITY_GENERATION_LOCK.lock();
+        try {
+            serverStopping = false;
+        } finally {
+            LOSTCITY_GENERATION_LOCK.unlock();
+        }
     }
 
     public static boolean dependenciesAvailable(
