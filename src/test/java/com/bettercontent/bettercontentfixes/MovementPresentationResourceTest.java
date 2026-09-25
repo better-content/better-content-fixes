@@ -67,24 +67,17 @@ final class MovementPresentationResourceTest {
     }
 
     @Test
-    void firstPersonPolicyKeepsEpicFightActionArmsVisibleAndDoesNotTouchItemLayers() throws IOException {
+    void firstPersonPolicyHidesTheFullPlayerModelAndDoesNotTouchItemLayers() throws IOException {
         final String visibility = Files.readString(SOURCE_ROOT.resolve("client/FirstPersonLimbVisibility.java"));
         final String renderer = Files.readString(SOURCE_ROOT.resolve("mixin/epicfight/FirstPersonRendererMixin.java"));
         final String config = Files.readString(SOURCE_ROOT.resolve("config/BcFixesClientConfig.java"));
         final String armorRenderer = Files.readString(
                 SOURCE_ROOT.resolve("mixin/epicfight/WearableItemLayerMixin.java"));
 
-        assertFalse(visibility.contains("leftArm.setHidden(true)"));
-        assertFalse(visibility.contains("rightArm.setHidden(true)"));
-        assertTrue(visibility.contains("leftLeg.setHidden(true)"));
-        assertTrue(visibility.contains("rightLeg.setHidden(true)"));
-        assertFalse(visibility.contains("leftSleeve.setHidden(true)"));
-        assertFalse(visibility.contains("rightSleeve.setHidden(true)"));
-        assertTrue(visibility.contains("leftPants.setHidden(true)"));
-        assertTrue(visibility.contains("rightPants.setHidden(true)"));
-        assertTrue(config.contains("Animated arms remain visible for attack, swim, and held-item poses."));
+        assertTrue(visibility.contains("mesh.getAllParts().forEach(part -> part.setHidden(true))"));
+        assertTrue(config.contains("Hides the local player's full body in Epic Fight first person."));
         assertTrue(visibility.contains("hideArmorLimbs"));
-        assertTrue(renderer.contains("hideLowerBodyLimbs"));
+        assertTrue(renderer.contains("hidePlayerModel"));
         assertTrue(renderer.contains("HumanoidMesh;draw"));
         assertTrue(renderer.contains("require = 2"));
         assertTrue(renderer.contains("hideFirstPersonPlayerLimbsBeforeDraw"));
