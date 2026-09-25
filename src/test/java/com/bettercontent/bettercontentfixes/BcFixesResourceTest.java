@@ -43,10 +43,6 @@ final class BcFixesResourceTest {
                 "missing serialized attribute modifiers must be discarded before vanilla logs a warning");
         assertTrue(mixins.contains(new JsonPrimitive("thirst.AddLootTableModifierMixin")),
                 "Thirst nested chest loot must bypass recursive global modifiers");
-        assertTrue(mixins.contains(new JsonPrimitive("rehooked.HookEntityMixin")),
-                "ReHooked hook entities must carry synchronized mob targets");
-        assertTrue(mixins.contains(new JsonPrimitive("rehooked.SPlayerHookHandlerMixin")),
-                "ReHooked server handlers must apply weight-based mob tugging");
         assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.ColliderMixin")),
                 "Epic Fight single colliders must be transformed on mounted ships");
         assertTrue(mixins.contains(new JsonPrimitive("epicfightvs.MultiColliderMixin")),
@@ -65,8 +61,6 @@ final class BcFixesResourceTest {
                 "vanilla pack root discovery must stay limited to built-in pack types");
         assertTrue(mixins.contains(new JsonPrimitive("kubejs.ConsoleJSMixin")),
                 "KubeJS initial-world log-location notices must not be emitted as warnings");
-        assertTrue(mixins.contains(new JsonPrimitive("rbp.BlockDefinitionCatalogFactoryMixin")),
-                "Realistic Block Physics definitions must be filtered to usable registered states");
         assertTrue(mixins.contains(new JsonPrimitive("dtaether.TagEntryMixin")),
                 "DTAether's obsolete imbued branch tag entry must remain a common mixin");
         assertTrue(clientMixins.contains(new JsonPrimitive("adpother.LevelRendererMixin")),
@@ -124,20 +118,6 @@ final class BcFixesResourceTest {
 
         assertTrue(plugin.contains("hasVersion(mods, \"dtaether\", \"1.20.1-1.3.3\")"));
         assertTrue(manifest.contains("versionRange=\"[1.20.1-1.3.3,1.20.1-1.3.4)\""));
-    }
-
-    @Test
-    void latentChemistryDependencyDoesNotConstrainForgeLoadOrder() throws IOException {
-        String manifest = Files.readString(Path.of("src/main/resources/META-INF/mods.toml"));
-
-        assertTrue(manifest.contains("""
-                [[dependencies.${mod_id}]]
-                    modId="latent_chemlib"
-                    mandatory=false
-                    versionRange="[0.2.0,)"
-                    ordering="NONE"
-                    side="BOTH"
-                """), "the optional chemistry adapter must not close the EMI/Heat Sync load-order cycle");
     }
 
     @Test

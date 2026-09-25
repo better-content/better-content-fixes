@@ -2,7 +2,6 @@ package com.bettercontent.bettercontentfixes;
 
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import com.bettercontent.bettercontentfixes.compat.AmbientSurfaceSpawnControl;
-import com.bettercontent.bettercontentfixes.compat.BurntGrassPalette;
 import com.bettercontent.bettercontentfixes.compat.ButcherKnifeDurability;
 import com.bettercontent.bettercontentfixes.compat.FarmlandTrampleProtection;
 import com.bettercontent.bettercontentfixes.compat.ExtendedItemPickup;
@@ -11,27 +10,19 @@ import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnsupportedTreeFa
 import com.bettercontent.bettercontentfixes.compat.DecorativeVegetationTrample;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesUnearthedSoils;
 import com.bettercontent.bettercontentfixes.compat.DynamicTreesSupportSweepCommand;
-import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandPalette;
-import com.bettercontent.bettercontentfixes.compat.RegolithFarmlandTilling;
 import com.bettercontent.bettercontentfixes.compat.VoidWormSpawnRemoval;
 import com.bettercontent.bettercontentfixes.compat.ThirstLootModifierCompat;
-import com.bettercontent.bettercontentfixes.compat.rehooked.IntroHookContent;
 import com.bettercontent.bettercontentfixes.compat.emi.EmiDefaultsBootstrap;
-import com.bettercontent.bettercontentfixes.chemistry.AirtightUpgradeInteraction;
-import com.bettercontent.bettercontentfixes.chemistry.ChemistryContent;
 import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.bettercontent.bettercontentfixes.config.BcFixesClientConfig;
 import com.bettercontent.bettercontentfixes.gametest.AmbientSurfaceSpawnGameTests;
-import com.bettercontent.bettercontentfixes.gametest.BurntGrassReplacementGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DaylightProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DecorativeVegetationTrampleGameTests;
 import com.bettercontent.bettercontentfixes.gametest.DynamicTreesUnsupportedTreeGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FarmlandTrampleProtectionGameTests;
 import com.bettercontent.bettercontentfixes.gametest.ExtendedItemPickupGameTests;
 import com.bettercontent.bettercontentfixes.gametest.FluidMixBlockerGameTests;
-import com.bettercontent.bettercontentfixes.gametest.RehookedMobGrapplingGameTests;
 import com.bettercontent.bettercontentfixes.gametest.SophisticatedBarrelHopperGameTests;
-import com.bettercontent.bettercontentfixes.gametest.SourceberryFarmlandGameTests;
 import com.bettercontent.bettercontentfixes.gametest.VanillaBoatGameTests;
 import com.bettercontent.bettercontentfixes.gametest.WaterWheelBiomePolicyGameTests;
 import com.bettercontent.bettercontentfixes.learning.CustomControlEpisodeGameTests;
@@ -39,13 +30,7 @@ import com.bettercontent.bettercontentfixes.compat.sleeping.SleepTimelapseEventG
 import com.bettercontent.bettercontentfixes.compat.sleeping.SleepDangerInterruption;
 import com.bettercontent.bettercontentfixes.gametest.OptionalIntegrationGameTests;
 import com.bettercontent.bettercontentfixes.gametest.PotionStructureSanitizerGameTests;
-import com.bettercontent.bettercontentfixes.gametest.AirtightChemistryGameTests;
 import com.bettercontent.bettercontentfixes.learning.ParCoolControlLearning;
-import com.bettercontent.bettercontentfixes.performance.DistantHorizonsGenerationControl;
-import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorPolicy;
-import com.bettercontent.bettercontentfixes.performance.PerformanceGovernorService;
-import com.bettercontent.bettercontentfixes.placementpreview.SupportPreviewNetwork;
-import com.bettercontent.bettercontentfixes.placementpreview.SupportPreviewGameTests;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
@@ -60,33 +45,14 @@ public final class BetterContentFixes {
 
     public BetterContentFixes() {
         MixinExtrasBootstrap.init();
-        SupportPreviewNetwork.initialize();
         EmiDefaultsBootstrap.seedIfApplicable();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, BcFixesConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, BcFixesClientConfig.SPEC);
-        PerformanceGovernorService.configure(
-                () -> new PerformanceGovernorService.Configuration(
-                        BcFixesConfig.performanceGovernorEnabled(),
-                        new PerformanceGovernorPolicy.Settings(
-                                BcFixesConfig.performanceSampleWindowTicks(),
-                                BcFixesConfig.performancePauseP95Ms(),
-                                Math.min(BcFixesConfig.performanceResumeP95Ms(), BcFixesConfig.performancePauseP95Ms()),
-                                Math.max(BcFixesConfig.performanceSpikePauseMs(), BcFixesConfig.performancePauseP95Ms()),
-                                BcFixesConfig.performanceRecoveryTicks())),
-                DistantHorizonsGenerationControl::create);
         final var modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         if (ModList.get().isLoaded("thirst")) {
             ThirstLootModifierCompat.register(modEventBus);
         }
         VoidWormSpawnRemoval.SERIALIZERS.register(modEventBus);
-        BurntGrassPalette.BLOCKS.register(modEventBus);
-        BurntGrassPalette.ITEMS.register(modEventBus);
-        RegolithFarmlandPalette.BLOCKS.register(modEventBus);
-        RegolithFarmlandPalette.ITEMS.register(modEventBus);
-        ChemistryContent.ITEMS.register(modEventBus);
-        if (ModList.get().isLoaded("rehooked")) {
-            IntroHookContent.register(modEventBus);
-        }
         if (ModList.get().isLoaded("dynamictrees")) {
             modEventBus.addListener(DynamicTreesUnearthedSoils::onCommonSetup);
         }
@@ -100,13 +66,7 @@ public final class BetterContentFixes {
             MinecraftForge.EVENT_BUS.register(DynamicTreesUnsupportedTreeFallover.class);
             MinecraftForge.EVENT_BUS.register(DynamicTreesSupportSweepCommand.class);
         }
-        MinecraftForge.EVENT_BUS.register(RegolithFarmlandTilling.class);
         MinecraftForge.EVENT_BUS.register(ButcherKnifeDurability.class);
-        MinecraftForge.EVENT_BUS.register(PerformanceGovernorService.class);
-        if (ModList.get().isLoaded("create") && ModList.get().isLoaded("pneumaticcraft")
-                && ModList.get().isLoaded("latent_chemlib") && ModList.get().isLoaded("chemlib")) {
-            MinecraftForge.EVENT_BUS.register(AirtightUpgradeInteraction.class);
-        }
         if (ModList.get().isLoaded("parcool")) {
             MinecraftForge.EVENT_BUS.register(ParCoolControlLearning.class);
         }
@@ -116,34 +76,23 @@ public final class BetterContentFixes {
     }
 
     private void onRegisterGameTests(final RegisterGameTestsEvent event) {
-        event.register(BurntGrassReplacementGameTests.class);
         event.register(AmbientSurfaceSpawnGameTests.class);
         event.register(DaylightProtectionGameTests.class);
         event.register(DecorativeVegetationTrampleGameTests.class);
         event.register(ExtendedItemPickupGameTests.class);
         event.register(FarmlandTrampleProtectionGameTests.class);
         event.register(FluidMixBlockerGameTests.class);
-        event.register(SourceberryFarmlandGameTests.class);
         event.register(VanillaBoatGameTests.class);
         event.register(WaterWheelBiomePolicyGameTests.class);
         event.register(OptionalIntegrationGameTests.class);
         event.register(PotionStructureSanitizerGameTests.class);
-        event.register(AirtightChemistryGameTests.class);
         event.register(CustomControlEpisodeGameTests.class);
         event.register(SleepTimelapseEventGameTests.class);
-        if (ModList.get().isLoaded("rotavision")
-                && ModList.get().isLoaded("rbp")
-                && ModList.get().isLoaded("realisticphysics")) {
-            event.register(SupportPreviewGameTests.class);
-        }
         if (ModList.get().isLoaded("dynamictrees")) {
             event.register(DynamicTreesUnsupportedTreeGameTests.class);
         }
         if (ModList.get().isLoaded("sophisticatedstorage")) {
             event.register(SophisticatedBarrelHopperGameTests.class);
-        }
-        if (ModList.get().isLoaded("rehooked")) {
-            event.register(RehookedMobGrapplingGameTests.class);
         }
     }
 }

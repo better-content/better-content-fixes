@@ -35,17 +35,7 @@ work remain parallel.
 Runtime behavior includes pack-owned compatibility fixes, including permanent Epic Fight Battle mode,
 disabled ParCool directional double-tap dodge, recommended control migration, first-person player-limb hiding
 that preserves Epic Fight held-item animations, automatic affirmative Explosion Overhaul scan decisions,
-weight-based ReHooked mob grappling, and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
-
-With exactly RotaVision 1.0.2, Realistic Block Physics 1.0.0, and Realistic Physics 1.0.1, every held
-BlockItem receives RotaVision's translucent placement ghost, including its context orientation at rotation
-index zero. Valid ghosts use a short-lived, server-authoritative snapshot prediction: teal means RBP found
-the proposed state supported, pulsing amber means it predicted a fall or crushing failure, and white means
-the prediction is unavailable, unmanaged, pending, or stale. Vanilla-invalid placement remains red. The
-overlay is advisory only: it neither places nor blocks anything and never schedules or mutates RBP physics.
-Beds, doors, and double plants include deterministic companion states; unknown multi-block placement
-behaviour deliberately falls back to white. Building Gadgets and Create schematic previews are outside this
-integration.
+and the pinned Dynamic Trees Aether 1.3.3 obsolete-branch tag repair.
 
 Newly placed structure templates remove vanilla effect potions, splash and lingering potions, and tipped
 arrows from embedded inventories. Plain water bottles and unrelated or mod-owned items remain intact, and
@@ -56,7 +46,7 @@ Ping Wheel to Mouse 4, and Epic Fight lock-on to Caps Lock. Existing customized 
 only exact legacy defaults are migrated once. ParCool's direct R dodge remains available, and vanilla's
 forward double-tap sprint behavior is left intact.
 
-Keymap profile v2 assigns RotaVision rotate/toggle to Alt+R and Alt+T, moves Relics' ability list to Alt+A
+Keymap profile v2 moves Relics' ability list to Alt+A
 and More Artifacts' Eye teleport to Alt+P, and unbinds Quark Lock Rotation. As with the original profile,
 only bindings still equal to the prior pack defaults migrate; player customizations always win.
 
@@ -80,12 +70,9 @@ common Better Content Fixes config.
 When Better Content Threads is installed, each participating sleeper emits one correlated
 `sleep_started/night` to `sleep_finished/simulated_time` episode across a successfully simulated night.
 
-The foreground tick governor records active server-tick p50/p95/p99/max over a 100-tick window.
-When p95 exceeds 50 ms or a tick exceeds 100 ms, it uses Distant Horizons 2.4.5's API to pause only
-optional distant generation. It clears only its own in-memory override after 600 consecutive ticks
-at p95 40 ms or better, never rewrites DH configuration, and never enables a user-disabled setting.
-Use the permission-level-2 `/better_content_fixes performance_status` command to inspect the current
-window and governor state. C2ME scheduling and IO settings are not changed by this service.
+Several formerly bundled features now ship as standalone Better Content mods: Realistic Placement
+Preview, Exploration Tick Governor, Airtight Machinery, Regolith Farmland, Burnt Grass Compatibility,
+and ReHooked Intro Hooks. Their registries, assets, config, and commands live in those repositories.
 
 ## Common commands
 
@@ -115,10 +102,3 @@ For modpack and mod discussion, playtest feedback, and bug reports, join the [Be
 - Runtime artifact: `build/libs/better-content-fixes-<version>.jar`
 
 The canonical identity is a clean break. Legacy mod IDs, resource namespaces, configuration paths, commands, network channels, and saved-data keys are not migrated or aliased.
-
-ChemLib gas-bearing Create Basins, PneumaticCraft Fluid Mixers, and
-Thermopneumatic Processing Plants accept a persistent Airtight Upgrade. Gas
-recipes in the two PneumaticCraft machines remain unavailable until sealed;
-sneak-use with an empty hand removes and refunds the upgrade. PneumaticCraft
-PCB processing uses canonical ChemLib nitric acid instead of its native
-etching-acid fluid.

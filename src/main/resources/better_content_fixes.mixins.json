@@ -6,18 +6,11 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "bettercaves.AbstractCarverMixin",
-    "burnt.GrassCatchProcedureMixin",
-    "burnt.Weather2SamplerMixin",
     "create.HandCrankBlockMixin",
     "create.WaterWheelBlockEntityMixin",
     "createsifter.BrassSifterConfigMixin",
     "createsifter.SifterBlockEntityMixin",
     "complicatedbees.ForgeConfigSpecMixin",
-    "chemistry.create.BasinAirtightMixin",
-    "chemistry.create.SmartBlockEntityAirtightPersistenceMixin",
-    "chemistry.pneumaticcraft.EmptyPcbEtchingFluidMixin",
-    "chemistry.pneumaticcraft.FluidMixerAirtightMixin",
-    "chemistry.pneumaticcraft.ThermopneumaticPlantAirtightMixin",
     "pneumaticcraft.tconhead.JackHammerDrillBitHeadMixin",
     "pneumaticcraft.tconhead.JackhammerSetupSlotHeadMixin",
     "pneumaticcraft.tconhead.JackHammerTconHeadMixin",
@@ -57,12 +50,8 @@
     "minecraft.AttributeModifierMixin",
     "minecraft.MobMixin",
     "minecraft.BoatMixin",
-    "minecraft.BushBlockMixin",
     "patchouli.BookRegistryMixin",
     "pollution.PlayerEventsMixin",
-    "rehooked.HookEntityMixin",
-    "rehooked.SPlayerHookHandlerMixin",
-    "rbp.BlockDefinitionCatalogFactoryMixin",
     "sgi.ChunkGeneratorMixin",
     "sgi.TerrainConformUtilMixin",
     "sleepingoverhaul.MinecraftServerMixin",
@@ -73,7 +62,6 @@
     "thirst.AddLootTableModifierMixin"
   ],
   "client": [
-    "chemistry.create.BasinRendererMixin",
     "minecraft.CreativeModeInventoryScreenMixin",
     "ali.EmiCompatibilityMixin",
     "ambientsounds.AmbientSoundEngineMixin",
@@ -102,11 +90,11 @@
     "tconstruct.PartBuilderPatternSlotBackgroundMixin",
     "tconstruct.PartBuilderPatternSlotRenderMixin",
     "weather2.FogAdjusterMixin",
-    "rotavision.GhostRendererMixin",
     "tacz.ClientIndexManagerMixin",
     "tacz.ClientAssetsManagerAccessor"
   ],
   "injectors": {
     "defaultRequire": 0
-  }
+  },
+  "server": []
 }

@@ -30,8 +30,6 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.twilightforest.";
     private static final String PARCOOL_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.parcool.";
-    private static final String REHOOKED_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.rehooked.";
     private static final String ALI_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.ali.";
     private static final String APOTHEOSIS_MIXIN_PREFIX =
@@ -58,14 +56,8 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.valkyrienskies.";
     private static final String JSON_THINGS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.jsonthings.";
-    private static final String RBP_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.rbp.";
-    private static final String ROTAVISION_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.rotavision.";
     private static final String THIRST_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.thirst.";
-    private static final String BURNT_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.burnt.";
     private static final String KUBEJS_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.kubejs.";
     private static final String DYNAMIC_TREES_POISSON_MIXIN =
@@ -76,10 +68,6 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
             "com.bettercontent.bettercontentfixes.mixin.dtaether.";
     private static final String CREATE_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.create.";
-    private static final String CHEMISTRY_CREATE_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.chemistry.create.";
-    private static final String CHEMISTRY_PNEUMATICCRAFT_MIXIN_PREFIX =
-            "com.bettercontent.bettercontentfixes.mixin.chemistry.pneumaticcraft.";
     private static final String CREATE_SIFTER_MIXIN_PREFIX =
             "com.bettercontent.bettercontentfixes.mixin.createsifter.";
     private static final String HYLE_MIXIN_PREFIX =
@@ -115,13 +103,7 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(final String targetClassName, final String mixinClassName) {
         final LoadingModList mods = FMLLoader.getLoadingModList();
-        if (mixinClassName.startsWith(CHEMISTRY_CREATE_MIXIN_PREFIX)) {
-            return hasMods(mods, "create", "latent_chemlib", "chemlib");
-        }
-        if (mixinClassName.startsWith(CHEMISTRY_PNEUMATICCRAFT_MIXIN_PREFIX)) {
-            return hasMods(mods, "pneumaticcraft", "latent_chemlib", "chemlib");
-        }
-        if (mixinClassName.startsWith(PNEUMATICCRAFT_TCON_HEAD_MIXIN_PREFIX)) {
+                        if (mixinClassName.startsWith(PNEUMATICCRAFT_TCON_HEAD_MIXIN_PREFIX)) {
             return hasMods(mods, "pneumaticcraft", "tconstruct");
         }
         if (mixinClassName.startsWith(BETTER_CAVES_MIXIN_PREFIX)) {
@@ -160,10 +142,7 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(EPIC_FIGHT_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("epicfight") != null;
         }
-        if (mixinClassName.startsWith(REHOOKED_MIXIN_PREFIX)) {
-            return mods != null && mods.getModFileById("rehooked") != null;
-        }
-        if (mixinClassName.startsWith(ALI_MIXIN_PREFIX)) {
+                if (mixinClassName.startsWith(ALI_MIXIN_PREFIX)) {
             return mods != null && mods.getModFileById("ali") != null;
         }
         if (mixinClassName.startsWith(APOTHEOSIS_MIXIN_PREFIX)) {
@@ -201,20 +180,10 @@ public final class BetterContentMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith(JSON_THINGS_MIXIN_PREFIX)) {
             return hasVersion(mods, "jsonthings", "0.9.13");
         }
-        if (mixinClassName.startsWith(RBP_MIXIN_PREFIX)) {
-            return hasVersion(mods, "rbp", "1.0.0")
-                    && hasVersion(mods, "realisticphysics", "1.0.1");
-        }
-        if (mixinClassName.startsWith(ROTAVISION_MIXIN_PREFIX)) {
-            return hasVersion(mods, "rotavision", "1.0.2");
-        }
-        if (mixinClassName.startsWith(THIRST_MIXIN_PREFIX)) {
+                        if (mixinClassName.startsWith(THIRST_MIXIN_PREFIX)) {
             return hasVersion(mods, "thirst", "1.20.1-1.4.0");
         }
-        if (mixinClassName.startsWith(BURNT_MIXIN_PREFIX)) {
-            return mods != null && mods.getModFileById("burnt") != null;
-        }
-        if (mixinClassName.startsWith(KUBEJS_MIXIN_PREFIX)) {
+                if (mixinClassName.startsWith(KUBEJS_MIXIN_PREFIX)) {
             return hasVersion(mods, "kubejs", "2001.6.5-build.16");
         }
         if (DYNAMIC_TREES_POISSON_MIXIN.equals(mixinClassName)) {

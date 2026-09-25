@@ -24,20 +24,6 @@ description='''Isolated, config-toggleable compatibility fixes for the Better Co
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="latent_chemlib"
-    mandatory=false
-    versionRange="[0.2.0,)"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
-    modId="chemlib"
-    mandatory=false
-    versionRange="[2.0.19,)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
     modId="pneumaticcraft"
     mandatory=false
     versionRange="[6.0.22,)"
@@ -192,13 +178,6 @@ versionRange="[0.1.0,)"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="rehooked"
-    mandatory=false
-    versionRange="[1.8.3-1.20.1,1.9)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
     modId="dtaether"
     mandatory=false
     versionRange="[1.20.1-1.3.3,1.20.1-1.3.4)"
@@ -239,27 +218,6 @@ versionRange="[0.1.0,)"
     versionRange="[2.4,2.5)"
     ordering="AFTER"
     side="CLIENT"
-
-[[dependencies.${mod_id}]]
-    modId="rbp"
-    mandatory=false
-    versionRange="[1.0.0,1.0.1)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
-    modId="realisticphysics"
-    mandatory=false
-    versionRange="[1.0.1,1.0.2)"
-    ordering="AFTER"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
-    modId="rotavision"
-    mandatory=false
-    versionRange="[1.0.2]"
-    ordering="AFTER"
-    side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="lostcities"

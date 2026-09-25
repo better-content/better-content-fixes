@@ -74,23 +74,11 @@ repositories {
     maven("https://maven.valkyrienskies.org") { content { includeGroup("org.valkyrienskies.core") } }
     maven("https://www.cursemaven.com") { content { includeGroup("curse.maven") } }
     mavenCentral()
-    flatDir {
-        dirs(
-            betterContentJar("latent-chemlib", "latent-chemlib-0.2.0.jar").parentFile,
-            betterContentJar("heat-sync", "heat-sync-0.1.0.jar").parentFile
-        )
-    }
 }
 
 dependencies {
     minecraft("net.minecraftforge:forge:${property("minecraft_version")}-${property("forge_version")}")
     compileOnly(files(betterContentJar("dynamic-survival-hud", "dynamic-survival-hud-1.0.0.jar")))
-    compileOnly(fg.deobf("local:latent-chemlib:0.2.0"))
-    runtimeOnly(fg.deobf("local:latent-chemlib:0.2.0"))
-    runtimeOnly(fg.deobf("local:heat-sync:0.1.0"))
-    runtimeOnly("thedarkcolour:kotlinforforge:4.11.0")
-    compileOnly(fg.deobf("curse.maven:chemlib-340666:5128632"))
-    runtimeOnly(fg.deobf("curse.maven:chemlib-340666:5128632"))
     compileOnly(fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:7307654"))
     runtimeOnly(fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:7307654"))
     runtimeOnly(fg.deobf("curse.maven:pollution-of-the-realms-269973:8554528"))
@@ -128,15 +116,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:the-twilight-forest-227639:5468648"))
     compileOnly(fg.deobf("curse.maven:explosion-overhaul-a-new-level-of-destruction-1296203:7659431"))
     compileOnly(fg.deobf("curse.maven:valkyrien-skies-258371:7906689"))
-    compileOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
-    compileOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
-    compileOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
     compileOnly(fg.deobf("curse.maven:timeless-and-classics-zero-1028108:8141310"))
-    runtimeOnly(fg.deobf("curse.maven:realistic-block-physics-375616:6393411"))
-    runtimeOnly(fg.deobf("curse.maven:realistic-physics-1030082:6026115"))
-    runtimeOnly(fg.deobf("curse.maven:rotavision-1535985:8715474"))
-    compileOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
-    testRuntimeOnly(fg.deobf("curse.maven:rehooked-1096531:6341096"))
     runtimeOnly(fg.deobf("curse.maven:sleeping-overhaul-2-887716:6471182"))
     runtimeOnly(fg.deobf("curse.maven:yungs-api-421850:5769971"))
     runtimeOnly(fg.deobf("curse.maven:yungs-better-caves-340583:8686226"))
@@ -327,83 +307,7 @@ val verifyRuntimeBetterCavesBounds by tasks.registering {
     }
 }
 
-val verifyRuntimePlacementPreviewTargets by tasks.registering {
-    group = "verification"
-    description = "Requires the pinned RotaVision and RBP integration bytecode targets to remain exact."
-    dependsOn(stageRuntimeJar)
-    doLast {
-        fun dependencyJar(configuration: String, marker: String): java.io.File =
-            configurations.getByName(configuration).files.singleOrNull { it.name.contains(marker) }
-                ?: throw GradleException("Could not resolve exactly one $marker dependency from $configuration")
-
-        val rotaVisionJar = dependencyJar("compileClasspath", "rotavision")
-        val createJar = dependencyJar("compileClasspath", "create-1.20.1-6.0.8")
-        val rbpJar = dependencyJar("compileClasspath", "realistic-block-physics")
-        val realisticPhysicsJar = dependencyJar("compileClasspath", "realistic-physics-1030082")
-
-        ZipFile(rotaVisionJar).use { zip ->
-            val renderer = zip.getEntry("net/sharpesthead/rotavision/GhostRenderer.class")
-                ?: throw GradleException("RotaVision 1.0.2 is missing GhostRenderer")
-            val bytes = zip.getInputStream(renderer).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
-            check(bytes.contains("onRenderLevel")
-                    && bytes.contains("isRotatable")
-                    && bytes.contains("applyRotation")
-                    && bytes.contains("TintedVertexConsumer")
-                    && bytes.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIII)V")
-                    && bytes.contains("renderBlockEntity")) {
-                "RotaVision 1.0.2 GhostRenderer bytecode drifted from the supported preview targets"
-            }
-        }
-        ZipFile(createJar).use { zip ->
-            val smartBlockEntity = zip.getEntry(
-                "com/simibubi/create/foundation/blockEntity/SmartBlockEntity.class")
-                ?: throw GradleException("Create 6.0.8 is missing SmartBlockEntity")
-            val bytes = zip.getInputStream(smartBlockEntity).use { it.readBytes() }
-                .toString(Charsets.ISO_8859_1)
-            check(bytes.contains("saveAdditional") && bytes.contains("load")) {
-                "Mapped Create 6.0.8 SmartBlockEntity bytecode drifted from the airtight persistence targets"
-            }
-        }
-        ZipFile(rbpJar).use { zip ->
-            val engine = zip.getEntry("xbigellx/rbp/internal/physics/engine/PhysicsEngine.class")
-                ?: throw GradleException("RBP 1.0.0 is missing PhysicsEngine")
-            val bytes = zip.getInputStream(engine).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
-            check(bytes.contains("processBlock") && bytes.contains("ProcessedBlockOperation")) {
-                "RBP 1.0.0 PhysicsEngine bytecode drifted from the supported preview adapter"
-            }
-        }
-        ZipFile(realisticPhysicsJar).use { zip ->
-            check(zip.getEntry("xbigellx/realisticphysics/internal/level/RPLevelAccessor.class") != null
-                    && zip.getEntry("xbigellx/realisticphysics/internal/level/chunk/RPChunkAccessor.class") != null) {
-                "Realistic Physics 1.0.1 is missing the virtual overlay interfaces"
-            }
-        }
-        val runtimeJar = layout.buildDirectory.file("libs/${base.archivesName.get()}-$version.jar").get().asFile
-        ZipFile(runtimeJar).use { zip ->
-            fun classBytes(path: String): String {
-                val entry = zip.getEntry(path) ?: throw GradleException("Runtime JAR is missing $path")
-                return zip.getInputStream(entry).use { it.readBytes() }.toString(Charsets.ISO_8859_1)
-            }
-
-            val ghostMixin = classBytes(
-                "com/bettercontent/bettercontentfixes/mixin/rotavision/GhostRendererMixin.class")
-            check(ghostMixin.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIII)V")
-                    && !ghostMixin.contains("(Lcom/mojang/blaze3d/vertex/VertexConsumer;IIIII)V")) {
-                "Runtime RotaVision tint hook does not target the exact four-channel constructor"
-            }
-
-            val airtightMixin = classBytes(
-                "com/bettercontent/bettercontentfixes/mixin/chemistry/create/SmartBlockEntityAirtightPersistenceMixin.class")
-            check(airtightMixin.contains("saveAdditional") && airtightMixin.contains("m_183515_")
-                    && airtightMixin.contains("load") && airtightMixin.contains("m_142466_")) {
-                "Runtime airtight persistence hook lacks its named and production SRG targets"
-            }
-        }
-    }
-}
-
 tasks.named("verifyFast") {
-    dependsOn(verifyRuntimePlacementPreviewTargets)
 }
 
 val verifyRuntimeLostCitiesSerialization by tasks.registering {
@@ -644,38 +548,6 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         html.required.set(true)
     }
-    classDirectories.setFrom(
-        files(classDirectories.files.map {
-            fileTree(it) {
-                include(
-                    "com/bettercontent/bettercontentfixes/compat/BurntGrassReplacementDefinitions*"
-                )
-            }
-        })
-    )
 }
 
-tasks.jacocoTestCoverageVerification {
-    dependsOn(tasks.jacocoTestReport)
-    classDirectories.setFrom(tasks.jacocoTestReport.map { it.classDirectories })
-    violationRules {
-        rule {
-            element = "CLASS"
-            includes = listOf("com.bettercontent.bettercontentfixes.compat.BurntGrassReplacementDefinitions")
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
-                minimum = "0.90".toBigDecimal()
-            }
-            limit {
-                counter = "BRANCH"
-                value = "COVEREDRATIO"
-                minimum = "0.75".toBigDecimal()
-            }
-        }
-    }
-}
 
-tasks.check {
-    dependsOn(tasks.jacocoTestCoverageVerification)
-}

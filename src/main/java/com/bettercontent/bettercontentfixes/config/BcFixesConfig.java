@@ -28,7 +28,6 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue THE_FLESH_THAT_HATES_DISABLE_PROXIMITY_MUSIC;
     public static final ForgeConfigSpec.BooleanValue WEATHER2_DISABLE_FOG_OVERRIDE_WITH_SHADERS;
     public static final ForgeConfigSpec.BooleanValue SOPHISTICATED_STORAGE_BARREL_HOPPER_EXTRACTION;
-    public static final ForgeConfigSpec.BooleanValue BURNT_MODDED_GRASS_REPLACEMENTS;
     public static final ForgeConfigSpec.BooleanValue FLUID_MIXING_BLOCK_GENERATED_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue FARMLAND_PREVENT_TRAMPLE;
     public static final ForgeConfigSpec.BooleanValue MOBS_DISABLE_SUN_BURN_TICK;
@@ -38,7 +37,6 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue POLLUTION_DISABLE_PLAYER_BLOCK_BREAK_EMISSIONS;
     public static final ForgeConfigSpec.DoubleValue VANILLA_BOAT_DURABILITY_MULTIPLIER;
     public static final ForgeConfigSpec.BooleanValue VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP;
-    public static final ForgeConfigSpec.BooleanValue REHOOKED_MOB_GRAPPLING;
     public static final ForgeConfigSpec.BooleanValue TOGGLE_SNEAK;
     public static final ForgeConfigSpec.BooleanValue CREATIVE_INVENTORY_HIDE_SEARCH_TAB;
     public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_PACE_TIMELAPSE;
@@ -46,12 +44,6 @@ public final class BcFixesConfig {
     public static final ForgeConfigSpec.BooleanValue SLEEPING_OVERHAUL_INTERRUPT_IMMEDIATE_DANGER;
     public static final ForgeConfigSpec.DoubleValue ITEMS_EXTRA_PICKUP_HORIZONTAL_RADIUS;
     public static final ForgeConfigSpec.DoubleValue VEGETATION_DECORATIVE_TRAMPLE_CHANCE;
-    public static final ForgeConfigSpec.BooleanValue PERFORMANCE_GOVERNOR_ENABLED;
-    public static final ForgeConfigSpec.IntValue PERFORMANCE_SAMPLE_WINDOW_TICKS;
-    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_PAUSE_P95_MS;
-    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_RESUME_P95_MS;
-    public static final ForgeConfigSpec.DoubleValue PERFORMANCE_SPIKE_PAUSE_MS;
-    public static final ForgeConfigSpec.IntValue PERFORMANCE_RECOVERY_TICKS;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -97,26 +89,7 @@ public final class BcFixesConfig {
                 .defineInRange("decorativeTrampleChance", 0.10D, 0.0D, 1.0D);
         builder.pop();
 
-        builder.push("performance");
-        PERFORMANCE_GOVERNOR_ENABLED = builder
-                .comment("Measures active server tick time and pauses only optional Distant Horizons generation under sustained pressure.")
-                .define("governorEnabled", true);
-        PERFORMANCE_SAMPLE_WINDOW_TICKS = builder
-                .comment("Sliding tick-time sample count used for p50, p95, p99, and maximum measurements.")
-                .defineInRange("sampleWindowTicks", 100, 20, 1200);
-        PERFORMANCE_PAUSE_P95_MS = builder
-                .comment("Pause DH distant generation when the sampled p95 exceeds this many milliseconds.")
-                .defineInRange("pauseP95Ms", 50.0D, 1.0D, 1000.0D);
-        PERFORMANCE_RESUME_P95_MS = builder
-                .comment("Recovery p95 threshold. Values above pauseP95Ms are clamped to pauseP95Ms at runtime.")
-                .defineInRange("resumeP95Ms", 40.0D, 1.0D, 1000.0D);
-        PERFORMANCE_SPIKE_PAUSE_MS = builder
-                .comment("Pause DH distant generation when any sampled active tick exceeds this many milliseconds.")
-                .defineInRange("spikePauseMs", 100.0D, 1.0D, 5000.0D);
-        PERFORMANCE_RECOVERY_TICKS = builder
-                .comment("Consecutive healthy ticks required before the governor clears its own DH API override.")
-                .defineInRange("recoveryTicks", 600, 20, 12000);
-        builder.pop();
+
 
         builder.push("dynamicTrees");
         DYNAMIC_TREES_SEASON_CONTEXT_CONCURRENT_MAP = builder
@@ -230,14 +203,7 @@ public final class BcFixesConfig {
                 .defineInRange("maxConcussionDurationSeconds", 45, 1, 100);
         builder.pop();
 
-        builder.push("burnt");
-        BURNT_MODDED_GRASS_REPLACEMENTS = builder
-                .comment(
-                        "Replaces Burnt's generic burnt grass result with pack-specific burnt variants for modded grass-like blocks.",
-                        "Uses native Burnt outputs when they exist andbetter_content_fixes-owned burnt palette blocks otherwise.",
-                        "Disable only when diagnosing Burnt grass spread behavior.")
-                .define("moddedGrassReplacements", true);
-        builder.pop();
+
 
         builder.push("fluidMixing");
         FLUID_MIXING_BLOCK_GENERATED_BLOCKS = builder
@@ -343,14 +309,7 @@ public final class BcFixesConfig {
                 .define("barrelHopperExtraction", true);
         builder.pop();
 
-        builder.push("rehooked");
-        REHOOKED_MOB_GRAPPLING = builder
-                .comment(
-                        "Allows ReHooked projectiles to attach to mobs, including bosses and modded Mob subclasses.",
-                        "A mob hit creates a weight-based tug that moves both the player and mob without dealing impact damage.",
-                        "Players, vehicles, and non-Mob living entities remain invalid grapple targets.")
-                .define("mobGrappling", true);
-        builder.pop();
+
 
         SPEC = builder.build();
     }
@@ -410,10 +369,6 @@ public final class BcFixesConfig {
         return EXPLOSION_OVERHAUL_MAX_CONCUSSION_DURATION_SECONDS.get();
     }
 
-    public static boolean burntModdedGrassReplacements() {
-        return isLoaded("burnt") && BURNT_MODDED_GRASS_REPLACEMENTS.get();
-    }
-
     public static boolean fluidMixingBlockGeneratedBlocks() {
         return FLUID_MIXING_BLOCK_GENERATED_BLOCKS.get();
     }
@@ -450,10 +405,6 @@ public final class BcFixesConfig {
         return VANILLA_BOAT_SUPPRESS_DESTRUCTION_DROP.get();
     }
 
-    public static boolean rehookedMobGrappling() {
-        return isLoaded("rehooked") && REHOOKED_MOB_GRAPPLING.get();
-    }
-
     public static boolean toggleSneak() {
         return TOGGLE_SNEAK.get();
     }
@@ -480,30 +431,6 @@ public final class BcFixesConfig {
 
     public static double vegetationDecorativeTrampleChance() {
         return VEGETATION_DECORATIVE_TRAMPLE_CHANCE.get();
-    }
-
-    public static boolean performanceGovernorEnabled() {
-        return PERFORMANCE_GOVERNOR_ENABLED.get();
-    }
-
-    public static int performanceSampleWindowTicks() {
-        return PERFORMANCE_SAMPLE_WINDOW_TICKS.get();
-    }
-
-    public static double performancePauseP95Ms() {
-        return PERFORMANCE_PAUSE_P95_MS.get();
-    }
-
-    public static double performanceResumeP95Ms() {
-        return PERFORMANCE_RESUME_P95_MS.get();
-    }
-
-    public static double performanceSpikePauseMs() {
-        return PERFORMANCE_SPIKE_PAUSE_MS.get();
-    }
-
-    public static int performanceRecoveryTicks() {
-        return PERFORMANCE_RECOVERY_TICKS.get();
     }
 
     public static boolean sgiRerunHyleAfterSurfaceConform() {
