@@ -4,6 +4,7 @@ import com.bettercontent.bettercontentfixes.config.BcFixesConfig;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +20,7 @@ import org.lwjgl.glfw.GLFW;
 public final class ToggleSneakHandler {
     private static boolean toggled;
     private static boolean physicalKeyWasDown;
+    private static boolean wasSurvival;
 
     private ToggleSneakHandler() {}
 
@@ -26,13 +28,29 @@ public final class ToggleSneakHandler {
     public static void onClientTick(final TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
 
+        final Minecraft minecraft = Minecraft.getInstance();
+        final boolean survival = minecraft.player != null && minecraft.gameMode != null
+                && minecraft.gameMode.getPlayerMode() == GameType.SURVIVAL;
+        if (!survival) {
+            toggled = false;
+            physicalKeyWasDown = false;
+            if (wasSurvival) {
+                KeyMapping sneak = minecraft.options.keyShift;
+                sneak.setDown(minecraft.player != null && minecraft.screen == null
+                        && physicalKeyDown(minecraft, sneak.getKey()));
+            }
+            wasSurvival = false;
+            notifyDynamicHudCancel();
+            return;
+        }
+        wasSurvival = true;
+
         if (!BcFixesConfig.toggleSneak()) {
             toggled = false;
             physicalKeyWasDown = false;
             return;
         }
 
-        final Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.screen != null) {
             physicalKeyWasDown = false;
             notifyDynamicHudCancel();
