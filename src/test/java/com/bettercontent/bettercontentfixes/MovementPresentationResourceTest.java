@@ -75,8 +75,9 @@ final class MovementPresentationResourceTest {
                 SOURCE_ROOT.resolve("mixin/epicfight/WearableItemLayerMixin.java"));
 
         assertTrue(visibility.contains("mesh.getAllParts().forEach(part -> part.setHidden(true))"));
-        assertTrue(config.contains("Hides the local player's full body in Epic Fight first person."));
+        assertTrue(config.contains("Animated arms remain visible while swimming or submerged."));
         assertTrue(visibility.contains("hideArmorLimbs"));
+        assertTrue(visibility.contains("player.isInWaterOrBubble() || player.isSwimming()"));
         assertTrue(renderer.contains("hidePlayerModel"));
         assertTrue(renderer.contains("HumanoidMesh;draw"));
         assertTrue(renderer.contains("require = 2"));

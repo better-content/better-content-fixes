@@ -16,8 +16,8 @@ public final class BcFixesClientConfig {
         builder.push("epicFight");
         EPIC_FIGHT_HIDE_FIRST_PERSON_LIMBS = builder
                 .comment(
-                        "Hides the local player's full body in Epic Fight first person.",
-                        "Held items remain visible.")
+                        "Hides the local player's body in Epic Fight first person.",
+                        "Animated arms remain visible while swimming or submerged.")
                 .define("hideFirstPersonLimbs", true);
         builder.pop();
 

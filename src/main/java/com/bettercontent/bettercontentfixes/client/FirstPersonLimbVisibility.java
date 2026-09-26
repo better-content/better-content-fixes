@@ -1,6 +1,7 @@
 package com.bettercontent.bettercontentfixes.client;
 
 import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
 import yesman.epicfight.api.client.model.SkinnedMesh;
 import yesman.epicfight.client.mesh.HumanoidMesh;
@@ -12,9 +13,12 @@ public final class FirstPersonLimbVisibility {
     }
 
     public static void hidePlayerModel(final HumanoidMesh mesh) {
-        // Hide every player-model part, including the head and torso. Held items and armor are
-        // rendered by separate layers and keep their own visibility policy.
+        // Keep the camera clear, but retain Epic Fight's animated arms in water.
         mesh.getAllParts().forEach(part -> part.setHidden(true));
+        if (showSwimArms()) {
+            ARM_PARTS.stream().filter(mesh::hasPart).map(mesh::getPart)
+                    .forEach(part -> part.setHidden(false));
+        }
     }
 
     public static void hideArmorLimbs(final SkinnedMesh mesh, final EquipmentSlot slot) {
@@ -25,9 +29,15 @@ public final class FirstPersonLimbVisibility {
         if (slot != EquipmentSlot.CHEST) {
             return;
         }
+        if (showSwimArms()) return;
         ARM_PARTS.stream()
                 .filter(mesh::hasPart)
                 .map(mesh::getPart)
                 .forEach(part -> part.setHidden(true));
+    }
+
+    private static boolean showSwimArms() {
+        var player = Minecraft.getInstance().player;
+        return player != null && (player.isInWaterOrBubble() || player.isSwimming());
     }
 }
