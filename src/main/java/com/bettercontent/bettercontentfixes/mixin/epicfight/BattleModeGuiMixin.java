@@ -10,11 +10,20 @@ import yesman.epicfight.skill.SkillContainer;
 
 @Mixin(value = BattleModeGui.class, remap = false)
 public abstract class BattleModeGuiMixin {
-    @Redirect(method = {"renderNormalSkills", "lambda$renderNormalSkills$0"},
+    @Redirect(method = "renderNormalSkills",
             at = @At(value = "INVOKE",
                     target = "Lyesman/epicfight/skill/Skill;shouldDraw(Lyesman/epicfight/skill/SkillContainer;)Z"),
-            require = 2)
-    private static boolean betterContentFixes$hideZeroNormalSkill(
+            require = 1)
+    private boolean betterContentFixes$hideZeroNormalSkill(
+            final Skill skill, final SkillContainer container) {
+        return skill.shouldDraw(container) && ZeroSkillHudPolicy.hasVisibleValue(skill, container);
+    }
+
+    @Redirect(method = "lambda$renderNormalSkills$0",
+            at = @At(value = "INVOKE",
+                    target = "Lyesman/epicfight/skill/Skill;shouldDraw(Lyesman/epicfight/skill/SkillContainer;)Z"),
+            require = 1)
+    private static boolean betterContentFixes$hideZeroSkillInLayout(
             final Skill skill, final SkillContainer container) {
         return skill.shouldDraw(container) && ZeroSkillHudPolicy.hasVisibleValue(skill, container);
     }
